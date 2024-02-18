@@ -23,7 +23,7 @@
                 android:layout_width="151dp"
                 android:layout_height="113dp"
                 android:layout_marginBottom="40dp"
-                app:srcCompat="@drawable/developeru" />
+                app:srcCompat="@drawable/vaquita_2" />
 
             <EditText
                 android:id="@+id/edtNomeUsuario"
@@ -104,7 +104,12 @@
                 android:id="@+id/btn_activity_logIn"
                 android:layout_width="315dp"
                 android:layout_height="wrap_content"
-                android:text="Iniciar sesión" />
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="#1976d2"
+                android:text="Iniciar sesión"
+                android:textColor="#FFF"
+                android:textSize="18sp" />
 
         </LinearLayout>
     </FrameLayout>
