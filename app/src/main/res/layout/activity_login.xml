@@ -26,7 +26,7 @@
                 app:srcCompat="@drawable/developeru" />
 
             <EditText
-                android:id="@+id/edtUsuario"
+                android:id="@+id/edtNomeUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -39,7 +39,7 @@
                 android:paddingLeft="5dp" />
 
             <EditText
-                android:id="@+id/edtPassword"
+                android:id="@+id/edtUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -63,6 +63,19 @@
                 android:text="Iniciar Sesión"
                 android:textColor="#FFF"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Or"
+                android:gravity="center"/>
+
+            <Button
+                android:id="@+id/btn_activity_singUp"
+                android:layout_width="315dp"
+                android:layout_height="wrap_content"
+                android:text="Crear usuario" />
 
         </LinearLayout>
     </FrameLayout>

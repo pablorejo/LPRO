@@ -20,41 +20,41 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class SingUpActivity extends AppCompatActivity {
 
-    EditText edtUsuario, edtPassword;
-    Button btnLogin, btnActivitySingUp;
+    EditText edtUsuario, edtPassword,edtNombre,edtApellidos;
+    Button btnLogin,btnActivityLogIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_sing_up);
 
-        // Vinculamos variables con los controles del layout
-        edtUsuario=findViewById(R.id.edtNomeUsuario);
-        edtPassword=findViewById(R.id.edtUsuario);
+        edtUsuario=findViewById(R.id.edtUsuario);
+        edtPassword=findViewById(R.id.edtPassword2);
+        edtNombre=findViewById(R.id.edtNomeUsuario);
+        edtApellidos=findViewById(R.id.edtApellidos);
+
         btnLogin=findViewById(R.id.btnLogin);
-        btnActivitySingUp=findViewById(R.id.btn_activity_singUp);
+        btnActivityLogIn=findViewById(R.id.btn_activity_logIn);
 
-        // Evento click de nuestro botón
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validarUsuario("https://pablopio.ddns.net:9443/api/validar_usuario.php");
+                crearUsuario("https://pablopio.ddns.net:9443/api/crear_usuario.php");
             }
         });
 
-        btnActivitySingUp.setOnClickListener(new View.OnClickListener() {
+        btnActivityLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SingUpActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
         });
     }
 
-    // Método validarUsuario: llama a nuestro servicio PHP
-    private void validarUsuario(String URL){
+    private void crearUsuario(String URL){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
-                    System.out.println("Usuario o contraseña incorrecta");
-                    Toast.makeText(MainActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                    System.out.println("Algo ha salido mal");
+                    Toast.makeText(SingUpActivity.this, "Algo ha salido mal", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 // Mensaje que capture y muestre el error (no recomendable para el usuario final)
                 System.out.println( error.toString());
-                Toast.makeText(MainActivity.this,error.toString() , Toast.LENGTH_SHORT).show();
+                Toast.makeText(SingUpActivity.this,error.toString() , Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
                 // Ingresamos los datos a enviar al servicio PHP
                 parametros.put("usuario", edtUsuario.getText().toString());
                 parametros.put("password", edtPassword.getText().toString());
+                parametros.put("nombre", edtNombre.getText().toString());
+                parametros.put("apellidos", edtApellidos.getText().toString());
                 return parametros;
             }
         };
