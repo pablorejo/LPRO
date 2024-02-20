@@ -25,6 +25,7 @@
                 android:layout_marginBottom="40dp"
                 app:srcCompat="@drawable/vaquita_2" />
 
+
             <EditText
                 android:id="@+id/edtNomeUsuario"
                 android:layout_width="match_parent"
