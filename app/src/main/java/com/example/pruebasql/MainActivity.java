@@ -40,7 +40,9 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validarUsuario("https://pablopio.ddns.net:9443/api/validar_usuario.php");
+                Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
+                startActivity(intent);
+                //validarUsuario("https://pablopio.ddns.net:9443/api/validar_usuario.php");
             }
         });
 
@@ -60,12 +62,14 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 // Validamos que el response no esta vacío.
                 // Por tanto, usuario y password ingresados existen -> servicio php nos está devolviendo la fila encontrada
+
                 if(!response.isEmpty()){
                     // Lanzamos la activida "PrincipalActivity" como respuesta a usuario y password existentes
                     Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
                     startActivity(intent);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
+                    Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
                     System.out.println("Usuario o contraseña incorrecta");
                     Toast.makeText(MainActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                 }

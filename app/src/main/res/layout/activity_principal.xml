@@ -6,11 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".PrincipalActivity">
 
+    <include
+        layout="@layout/custom_tool_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/textView"
@@ -31,51 +39,26 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <LinearLayout
+
+                <TextView
+                    android:id="@+id/textViewCowFinder"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
+                    android:drawableTop="@drawable/gps_128x128"
+                    android:gravity="center"
+                    android:paddingRight="20dp"
+                    android:text="CowList"
+                    android:textSize="30dp" />
 
-                    <ImageView
-                        android:id="@+id/imageViewGPS"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:src="@tools:sample/avatars"
-                        tools:srcCompat="@drawable/GPS_128x128" />
 
-                    <TextView
-                        android:id="@+id/textViewGPS"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="bottom|center"
-                        android:text="CowFinder"
-                        android:textSize="30dp" />
-                </LinearLayout>
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/idCowList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/imageViewCow"
-                        android:layout_width="match_parent"
-                        android:layout_height="148dp"
-                        android:layout_marginHorizontal="20dp"
-                        android:src="@tools:sample/avatars"
-                        tools:srcCompat="@drawable/Cow_128x128" />
-
-                    <TextView
-                        android:id="@+id/textViewCow"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="CowGPS"
-                        android:textSize="30dp" />
-                </LinearLayout>
+                    android:drawableTop="@drawable/cow_128x128"
+                    android:gravity="center"
+                    android:text="CowList"
+                    android:textSize="30dp" />
 
             </TableRow>
 
@@ -85,56 +68,28 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/textViewAutomatizacion"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
+                    android:drawableTop="@drawable/automatizacion_128x128"
+                    android:gravity="bottom|center"
+                    android:paddingRight="20dp"
+                    android:text="Programacion"
+                    android:textSize="30dp" />
 
-                    <ImageView
-                        android:id="@+id/imageViewAutomatizacion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:src="@tools:sample/avatars"
-                        tools:srcCompat="@drawable/Automatizacion_128x128" />
-
-                    <TextView
-                        android:id="@+id/textViewAutomatizacion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="bottom|center"
-                        android:text="CowFinder"
-                        android:textSize="30dp" />
-                </LinearLayout>
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/textViewContactar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/imageViewContactar"
-                        android:layout_width="match_parent"
-                        android:layout_height="148dp"
-                        android:layout_marginHorizontal="20dp"
-                        android:src="@tools:sample/avatars"
-                        tools:srcCompat="@drawable/Contactar_128x128" />
-
-                    <TextView
-                        android:id="@+id/textViewContactar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Contactar"
-                        android:textSize="30dp" />
-                </LinearLayout>
+                    android:drawableTop="@drawable/contactar_128x128"
+                    android:gravity="center"
+                    android:text="Contactar"
+                    android:textSize="30dp" />
 
             </TableRow>
 
 
         </TableLayout>
-
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

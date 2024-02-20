@@ -15,6 +15,9 @@
         android:theme="@style/Theme.PruebaSQL"
         tools:targetApi="31">
         <activity
+            android:name=".CowList"
+            android:exported="false" />
+        <activity
             android:name=".SingUpActivity"
             android:exported="false" />
         <activity
