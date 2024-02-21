@@ -2,15 +2,14 @@ package com.example.pruebasql;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.view.View;
 import android.widget.TextView;
 
 public class PrincipalActivity extends AppCompatActivity {
 
-    TextView btnCowList, btnCowFinder, btnContactar, btnAutomatizacion;
+    TextView btnCowList, btnCowFinder, btnContact, btnAutonomization;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +18,40 @@ public class PrincipalActivity extends AppCompatActivity {
         // Vinculamos variables con los controles del layout
         btnCowList=findViewById(R.id.idCowList);
         btnCowFinder=findViewById(R.id.idCowGPS);
-        btnContactar=findViewById(R.id.btnLogin);
-        btnAutomatizacion=findViewById(R.id.btn_activity_singUp);
+        btnContact =findViewById(R.id.btnLogin);
+        btnAutonomization =findViewById(R.id.btn_activity_singUp);
+
+
+        btnCowList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CowList.class);
+                startActivity(intent);
+            }
+        });
+
+        btnCowFinder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CowList.class);
+                startActivity(intent);
+            }
+        });
+
+        btnContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CowList.class);
+                startActivity(intent);
+            }
+        });
+
+        btnAutonomization.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CowList.class);
+                startActivity(intent);
+            }
+        });
     }
 }

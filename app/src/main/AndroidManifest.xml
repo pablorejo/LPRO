@@ -15,6 +15,12 @@
         android:theme="@style/Theme.PruebaSQL"
         tools:targetApi="31">
         <activity
+            android:name=".Automatizar_item"
+            android:exported="false" />
+        <activity
+            android:name=".Automatizacion"
+            android:exported="false" />
+        <activity
             android:name=".CowList"
             android:exported="false" />
         <activity

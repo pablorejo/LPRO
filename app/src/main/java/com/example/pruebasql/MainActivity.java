@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
+    String url = "vacayisus.ddns.net:9001";
     EditText edtUsuario, edtPassword;
     Button btnLogin, btnActivitySingUp;
 
@@ -40,9 +40,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
-                startActivity(intent);
-                //validarUsuario("https://pablopio.ddns.net:9443/api/validar_usuario.php");
+                validarUsuario("https://"+url+"/api/validar_usuario.php");
             }
         });
 

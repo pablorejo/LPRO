@@ -22,6 +22,7 @@ import java.util.Map;
 
 public class SingUpActivity extends AppCompatActivity {
 
+    String url = "vacayisus.ddns.net:9001";
     EditText edtUsuario, edtPassword,edtNombre,edtApellidos;
     Button btnLogin,btnActivityLogIn;
 
@@ -41,7 +42,7 @@ public class SingUpActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                crearUsuario("https://pablopio.ddns.net:9443/api/crear_usuario.php");
+                crearUsuario("https://"+url+"/api/crear_usuario.php");
             }
         });
 
