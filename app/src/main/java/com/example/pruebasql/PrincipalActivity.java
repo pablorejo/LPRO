@@ -7,20 +7,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-public class PrincipalActivity extends AppCompatActivity {
+public class PrincipalActivity extends BarraSuperior {
 
     TextView btnCowList, btnCowFinder, btnContact, btnAutonomization;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
+        configureToolbar(); //Para hacer que funcione el boton atras
 
         // Vinculamos variables con los controles del layout
         btnCowList=findViewById(R.id.idCowList);
-        btnCowFinder=findViewById(R.id.idCowGPS);
-        btnContact =findViewById(R.id.btnLogin);
-        btnAutonomization =findViewById(R.id.btn_activity_singUp);
-
+        btnCowFinder=findViewById(R.id.idCowFinder);
+        btnContact =findViewById(R.id.idContactar);
+        btnAutonomization =findViewById(R.id.idAutomatizacion);
 
         btnCowList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,7 +33,7 @@ public class PrincipalActivity extends AppCompatActivity {
         btnCowFinder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CowList.class);
+                Intent intent = new Intent(getApplicationContext(), Automatizacion.class);
                 startActivity(intent);
             }
         });
@@ -49,7 +49,7 @@ public class PrincipalActivity extends AppCompatActivity {
         btnAutonomization.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CowList.class);
+                Intent intent = new Intent(getApplicationContext(), Automatizacion.class);
                 startActivity(intent);
             }
         });

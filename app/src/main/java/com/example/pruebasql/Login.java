@@ -20,7 +20,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class Login extends AppCompatActivity {
     String url = "vacayisus.ddns.net:9001";
     EditText edtUsuario, edtPassword;
     Button btnLogin, btnActivitySingUp;
@@ -40,7 +40,9 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validarUsuario("https://"+url+"/api/validar_usuario.php");
+                //validarUsuario("https://"+url+"/api/validar_usuario.php");
+                Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     // Mensaje: "Contraseñas incorrectas"
                     Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
                     System.out.println("Usuario o contraseña incorrecta");
-                    Toast.makeText(MainActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 // Mensaje que capture y muestre el error (no recomendable para el usuario final)
                 System.out.println( error.toString());
-                Toast.makeText(MainActivity.this,error.toString() , Toast.LENGTH_SHORT).show();
+                Toast.makeText(Login.this,error.toString() , Toast.LENGTH_SHORT).show();
             }
         }){
             @Override

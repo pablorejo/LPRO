@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/idCowGPS"
+        android:id="@+id/idTextViewCowItemList"
         android:layout_width="wrap_content"
         android:layout_height="128dp"
         android:drawableRight="@drawable/cow_128x128"
