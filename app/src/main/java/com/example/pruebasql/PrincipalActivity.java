@@ -1,10 +1,8 @@
 package com.example.pruebasql;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
 public class PrincipalActivity extends BarraSuperior {
@@ -22,36 +20,25 @@ public class PrincipalActivity extends BarraSuperior {
         btnContact =findViewById(R.id.idContactar);
         btnAutonomization =findViewById(R.id.idAutomatizacion);
 
-        btnCowList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CowList.class);
-                startActivity(intent);
-            }
+
+        btnCowList.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), CowList.class);
+            startActivity(intent);
         });
 
-        btnCowFinder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), Automatizacion.class);
-                startActivity(intent);
-            }
+        btnCowFinder.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), Automatizacion.class);
+            startActivity(intent);
         });
 
-        btnContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CowList.class);
+        btnContact.setOnClickListener(view -> {
+                Intent intent = new Intent(getApplicationContext(), Contactar.class);
                 startActivity(intent);
-            }
         });
 
-        btnAutonomization.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), Automatizacion.class);
-                startActivity(intent);
-            }
+        btnAutonomization.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), Automatizacion.class);
+            startActivity(intent);
         });
     }
 }

@@ -15,6 +15,9 @@
         android:theme="@style/Theme.PruebaSQL"
         tools:targetApi="31">
         <activity
+            android:name=".Contactar"
+            android:exported="false" />
+        <activity
             android:name=".BarraSuperior"
             android:exported="false" />
         <activity

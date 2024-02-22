@@ -11,6 +11,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/idLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
@@ -25,24 +26,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Automatización"
+            android:text="@string/automatizacion"
             android:textAllCaps="true"
-            android:textSize="30dp" />
+            android:textSize="30sp" />
 
-        <include
-            layout="@layout/automatizacion_item"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <include
-            layout="@layout/automatizacion_item"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <include
-            layout="@layout/automatizacion_item"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <include
-            layout="@layout/automatizacion_item"
-            app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

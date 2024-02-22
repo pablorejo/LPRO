@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Contactar">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/activity_barra_superior"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="72dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="@+id/include"
+        tools:layout_editor_absoluteX="-3dp">
+
+        <EditText
+            android:id="@+id/textoEnviar"
+            android:layout_width="match_parent"
+            android:layout_height="503dp"
+            android:autofillHints="Me gustaría"
+            android:ems="10"
+            android:gravity="start"
+            android:hint="@string/enviar"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/enviar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:includeFontPadding="true"
+            android:insetRight="15dp"
+            android:text="@string/enviar" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
