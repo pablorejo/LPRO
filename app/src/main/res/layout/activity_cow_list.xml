@@ -24,7 +24,7 @@
             android:layout_height="80dp"
             android:ems="10"
             android:inputType="text"
-            android:text="Buscar" />
+            android:hint="Buscar" />
 
         <LinearLayout
             android:id="@+id/idLinearLayout"

@@ -47,7 +47,7 @@
                     android:drawableTop="@drawable/gps_128x128"
                     android:gravity="center"
                     android:paddingRight="20dp"
-                    android:text="CowList"
+                    android:text="CowFinder"
                     android:textSize="30dp" />
 
 
