@@ -2,6 +2,7 @@ package com.example.pruebasql;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,12 @@ public class CowList extends BarraSuperior {
         TextView textView = newLayout.findViewById(R.id.idTextViewCowItemList);
 
         textView.setText(text);
+
+        textView.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), CowItem.class);
+            intent.putExtra("nombre_vaca", text);
+            startActivity(intent);
+        });
         linearLayout.addView(newLayout);
     }
 }
