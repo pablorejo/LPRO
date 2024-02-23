@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "pruebaSQL"
+rootProject.name = "VaCap"
 include(":app")
