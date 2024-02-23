@@ -15,6 +15,9 @@
         android:theme="@style/Theme.PruebaSQL"
         tools:targetApi="31">
         <activity
+            android:name=".CowFinder"
+            android:exported="false" />
+        <activity
             android:name=".Contactar"
             android:exported="false" />
         <activity

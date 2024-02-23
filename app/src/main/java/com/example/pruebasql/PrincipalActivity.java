@@ -27,7 +27,7 @@ public class PrincipalActivity extends BarraSuperior {
         });
 
         btnCowFinder.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), Automatizacion.class);
+            Intent intent = new Intent(getApplicationContext(), CowFinder.class);
             startActivity(intent);
         });
 

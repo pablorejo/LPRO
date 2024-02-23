@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Contactar">
+    tools:context=".CowFinder">
 
     <include
         android:id="@+id/include"
@@ -15,29 +15,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="72dp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="72dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/textoEnviar"
+        <TextView
+            android:id="@+id/textView4"
             android:layout_width="match_parent"
-            android:layout_height="503dp"
-            android:autofillHints="Me gustaría"
-            android:ems="10"
-            android:gravity="start"
-            android:hint="@string/enviar"
-            android:inputType="text" />
-
-        <Button
-            android:id="@+id/enviar"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:includeFontPadding="true"
-            android:insetRight="15dp"
-            android:text="@string/enviar" />
-    </LinearLayout>
+            android:gravity="center"
+            android:text="@string/CowFinder"
+            android:textSize="30sp" />
 
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="30dp"
+            app:srcCompat="@drawable/mapa_de_calor" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@tools:sample/avatars"
+            tools:srcCompat="@drawable/map_points" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
