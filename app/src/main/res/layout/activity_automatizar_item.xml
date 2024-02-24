@@ -2,22 +2,106 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".Automatizar_item">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/activity_barra_superior"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="72dp"
+        android:clipToPadding="true"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Switch
-            android:id="@+id/switch3"
-            android:layout_width="363dp"
-            android:layout_height="match_parent"
+
+        <TextView
+            android:id="@+id/textViewAutomatizacionItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            tools:ignore="TouchTargetSizeCheck" />
+            android:paddingTop="30dp"
+            android:text="Nombre Automatización"
+            android:textSize="30sp" />
+
+        <Switch
+            android:id="@+id/switch2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:paddingTop="30dp"
+            android:paddingBottom="60dp"
+            android:text="Off/On"
+            android:textSize="35sp" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingBottom="30dp">
+
+                <Button
+                    android:id="@+id/btnInicio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Hora de inicio"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/textHoraInicio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inputType="datetime"
+                    android:minHeight="48dp"
+                    android:paddingLeft="20dp"
+                    android:text="12:30"
+                    android:textSize="30sp"
+                    tools:ignore="RtlSymmetry" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btnFin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Hora de finalización"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/textHoraFin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inputType="datetime"
+                    android:minHeight="48dp"
+                    android:paddingLeft="20dp"
+                    android:text="13:30"
+                    android:textSize="30sp" />
+            </TableRow>
+
+        </TableLayout>
+
+
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

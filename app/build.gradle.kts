@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.pruebasql"
-        minSdk = 16
+        minSdk = 24
         //noinspection EditedTargetSdkVersion
         targetSdk = 34
         versionCode = 1

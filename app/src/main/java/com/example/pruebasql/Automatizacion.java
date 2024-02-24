@@ -1,11 +1,14 @@
 package com.example.pruebasql;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class Automatizacion extends BarraSuperior {
     LinearLayout linearLayout;
@@ -29,5 +32,12 @@ public class Automatizacion extends BarraSuperior {
 
         textView.setText(text);
         linearLayout.addView(newLayout);
+
+        TextView btnAutomatizacion = newLayout.findViewById(R.id.idTextAutomatizacionItemList);
+        btnAutomatizacion.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), Automatizar_item.class);
+            intent.putExtra("nombre_automatizacion", text);
+            startActivity(intent);
+        });
     }
 }
