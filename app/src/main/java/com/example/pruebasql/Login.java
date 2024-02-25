@@ -20,8 +20,8 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Login extends AppCompatActivity {
-    String url = "vacayisus.ddns.net:9001";
+public class Login extends AppCompatActivity implements Gloval{
+    String url = getURL();
     EditText edtUsuario, edtPassword;
     Button btnLogin, btnActivitySingUp;
 
@@ -40,9 +40,9 @@ public class Login extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //validarUsuario("https://"+url+"/api/validar_usuario.php");
                 Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
                 startActivity(intent);
+                //validarUsuario("https://"+url+"/api/validar_usuario.php");
             }
         });
 

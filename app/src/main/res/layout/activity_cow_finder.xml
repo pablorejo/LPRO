@@ -38,8 +38,14 @@
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/gps_128x128"
+            android:layout_height="286dp"
+            android:src="@drawable/map_points"
             tools:srcCompat="@drawable/map_points" />
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/CowFinder" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

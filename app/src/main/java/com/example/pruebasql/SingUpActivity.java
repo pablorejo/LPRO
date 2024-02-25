@@ -20,9 +20,9 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SingUpActivity extends AppCompatActivity {
+public class SingUpActivity extends AppCompatActivity implements Gloval{
 
-    String url = "vacayisus.ddns.net:9001";
+    String url = getURL();
     EditText edtUsuario, edtPassword,edtNombre,edtApellidos;
     Button btnLogin,btnActivityLogIn;
 
@@ -42,7 +42,9 @@ public class SingUpActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                crearUsuario("https://"+url+"/api/crear_usuario.php");
+                //crearUsuario("https://"+url+"/api/crear_usuario.php");
+                Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
+                startActivity(intent);
             }
         });
 
