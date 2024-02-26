@@ -4,5 +4,6 @@
     <string name="automatizacion">Automatización</string>
     <string name="prueba">Prueba</string>
     <string name="CowFinder">CowFinder</string>
+    <string name="on_off">On/Off</string>
 
 </resources>

@@ -1,6 +1,5 @@
 package com.example.pruebasql;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ public class CowList extends BarraSuperior {
 
         linearLayout = findViewById(R.id.idLinearLayout);
         configureToolbar();
+
 
         this.crearCowItem("vaca1");
         this.crearCowItem("vaca2");

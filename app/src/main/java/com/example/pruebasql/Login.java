@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -37,21 +36,13 @@ public class Login extends AppCompatActivity implements Gloval{
         btnActivitySingUp=findViewById(R.id.btn_activity_singUp);
 
         // Evento click de nuestro botón
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
-                startActivity(intent);
-                //validarUsuario("https://"+url+"/api/validar_usuario.php");
-            }
+        btnLogin.setOnClickListener(v -> {
+            validarUsuario("https://"+url+"/api/validar_usuario.php");
         });
 
-        btnActivitySingUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SingUpActivity.class);
-                startActivity(intent);
-            }
+        btnActivitySingUp.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), SingUpActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -69,7 +60,6 @@ public class Login extends AppCompatActivity implements Gloval{
                     startActivity(intent);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
-                    Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
                     System.out.println("Usuario o contraseña incorrecta");
                     Toast.makeText(Login.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                 }
@@ -85,7 +75,7 @@ public class Login extends AppCompatActivity implements Gloval{
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 // Creamos una instancia con el nombre parametros
-                Map<String,String> parametros = new HashMap<String,String>();
+                Map<String,String> parametros = new HashMap<>();
                 // Ingresamos los datos a enviar al servicio PHP
                 parametros.put("usuario", edtUsuario.getText().toString());
                 parametros.put("password", edtPassword.getText().toString());

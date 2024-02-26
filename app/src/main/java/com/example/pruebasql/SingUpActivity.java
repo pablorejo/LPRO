@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -39,21 +38,11 @@ public class SingUpActivity extends AppCompatActivity implements Gloval{
         btnLogin=findViewById(R.id.btnLogin);
         btnActivityLogIn=findViewById(R.id.btn_activity_logIn);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //crearUsuario("https://"+url+"/api/crear_usuario.php");
-                Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
-                startActivity(intent);
-            }
-        });
+        btnLogin.setOnClickListener(v -> {crearUsuario("https://"+url+"/api/crear_usuario.php");});
 
-        btnActivityLogIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), Login.class);
-                startActivity(intent);
-            }
+        btnActivityLogIn.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);
         });
     }
 
