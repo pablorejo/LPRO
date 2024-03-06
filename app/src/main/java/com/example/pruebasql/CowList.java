@@ -7,6 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.pruebasql.bbdd.Usuario;
+import com.example.pruebasql.bbdd.vacas.Vaca;
+
+import java.util.ArrayList;
 
 public class CowList extends BarraSuperior {
 
@@ -18,12 +24,23 @@ public class CowList extends BarraSuperior {
 
         linearLayout = findViewById(R.id.idLinearLayout);
         configureToolbar();
+        Usuario usuario = getIntent().getParcelableExtra("usuario");
 
+        Server server = new Server(this);
+        server.getVacas(usuario.getId(), new VacaResponseListener() {
+            @Override
+            public void onResponse(ArrayList<Vaca> listaVacas) {
+                usuario.setVacas(listaVacas);
+                for (Vaca vaca: listaVacas) {
+                    crearCowItem(String.valueOf(vaca.getNumeroPendiente()));
+                }
+            }
 
-        this.crearCowItem("vaca1");
-        this.crearCowItem("vaca2");
-        this.crearCowItem("vaca3");
-
+            @Override
+            public void onError(String mensaje) {
+                System.out.println("ok");
+            }
+        });
     }
 
 

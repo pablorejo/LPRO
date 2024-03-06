@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.pruebasql.bbdd.Usuario;
+
 import org.w3c.dom.Text;
 
 public class Automatizacion extends BarraSuperior {
@@ -19,6 +21,7 @@ public class Automatizacion extends BarraSuperior {
         setContentView(R.layout.activity_automatizacion);
         configureToolbar();
         linearLayout = findViewById(R.id.idLinearLayout);
+        Usuario usuario = getIntent().getParcelableExtra("usuario");
 
         crearAutomatizadorItem("Puerta 1");
         crearAutomatizadorItem("Puerta 2");

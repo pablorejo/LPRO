@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.example.pruebasql.bbdd.Usuario;
+
 public class CowFinder extends BarraSuperior {
 
     @Override
@@ -11,6 +13,7 @@ public class CowFinder extends BarraSuperior {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cow_finder);
         configureToolbar();
+        Usuario usuario = getIntent().getParcelableExtra("usuario");
 
 
     }
