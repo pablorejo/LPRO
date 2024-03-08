@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.pruebasql.bbdd.Usuario;
+
 public class BarraSuperior extends AppCompatActivity {
 
     @Override
@@ -25,5 +27,12 @@ public class BarraSuperior extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void iniciarActividad(Class<?> appCompatActivity, Usuario usuario){
+        Intent intent = new Intent(getApplicationContext(), appCompatActivity);
+        intent.putExtra("usuario", usuario);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
+        startActivity(intent);
     }
 }

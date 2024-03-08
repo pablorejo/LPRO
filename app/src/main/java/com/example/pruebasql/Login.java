@@ -28,16 +28,22 @@ public class Login extends AppCompatActivity {
         // Evento click de nuestro botón
         btnLogin.setOnClickListener(v -> {
 
+            /*
             String correo = edtUsuario.getText().toString();
             String pass =edtPassword.getText().toString();
 
             correo = "pablopiorejoiglesias@gmail.com";
             pass = "1234";
 
+
             server.validarUsuario(
                     correo,
                     pass
             );
+            */
+            Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
+            startActivity(intent);
+
         });
 
         btnActivitySingUp.setOnClickListener(v -> {

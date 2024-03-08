@@ -1,19 +1,11 @@
 package com.example.pruebasql;
 
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.hardware.camera2.CameraExtensionSession;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
-import androidx.annotation.RequiresApi;
-
-import org.w3c.dom.Text;
 
 public class Automatizar_item extends BarraSuperior {
 
@@ -33,7 +25,7 @@ public class Automatizar_item extends BarraSuperior {
         btnInicio = findViewById(R.id.btnInicio);
         btnFin = findViewById(R.id.btnFin);
         textHoraInicio = findViewById(R.id.textHoraInicio);
-        textHoraFin = findViewById(R.id.textHoraFin);
+        textHoraFin = findViewById(R.id.textFechaFin);
 
         btnInicio.setOnClickListener(v -> {
             openDialog(textHoraInicio);
@@ -54,6 +46,4 @@ public class Automatizar_item extends BarraSuperior {
 
         dialog.show();
     }
-
-
 }

@@ -13,6 +13,7 @@ public class Enfermedad {
 
     // Constructor sin parámetros
     public Enfermedad() {
+
     }
 
     // Constructor con parámetros

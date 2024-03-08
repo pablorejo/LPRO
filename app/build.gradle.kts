@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+    implementation ("com.github.prolificinteractive:material-calendarview:2.0.1")
     implementation ("org.mindrot:jbcrypt:0.4")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")

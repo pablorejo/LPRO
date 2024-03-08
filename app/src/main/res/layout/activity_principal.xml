@@ -31,7 +31,7 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="439dp">
+            android:layout_height="wrap_content">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -87,6 +87,22 @@
                     android:text="Contactar"
                     android:textSize="30dp" />
 
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/idCalendario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom|center"
+                    android:text="Calendario"
+                    android:textSize="30dp"
+                    app:drawableTopCompat="@drawable/calendar_128" />
             </TableRow>
 
 

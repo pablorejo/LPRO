@@ -15,6 +15,12 @@
         android:theme="@style/Theme.PruebaSQL"
         tools:targetApi="31">
         <activity
+            android:name=".calendario.AddEnfermedad"
+            android:exported="false" />
+        <activity
+            android:name=".Calendario"
+            android:exported="false" />
+        <activity
             android:name=".CowItem"
             android:exported="false" />
         <activity
