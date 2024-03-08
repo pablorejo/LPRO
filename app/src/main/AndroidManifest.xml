@@ -18,13 +18,13 @@
             android:name=".calendario.AddEnfermedad"
             android:exported="false" />
         <activity
-            android:name=".Calendario"
+            android:name=".calendario.Calendario"
             android:exported="false" />
         <activity
-            android:name=".CowItem"
+            android:name=".lista_vaca.CowItem"
             android:exported="false" />
         <activity
-            android:name=".CowFinder"
+            android:name=".mapa.CowFinder"
             android:exported="false" />
         <activity
             android:name=".Contactar"
@@ -33,13 +33,13 @@
             android:name=".BarraSuperior"
             android:exported="false" />
         <activity
-            android:name=".Automatizar_item"
+            android:name=".automatizacion.Automatizar_item"
             android:exported="false" />
         <activity
-            android:name=".Automatizacion"
+            android:name=".automatizacion.Automatizacion"
             android:exported="false" />
         <activity
-            android:name=".CowList"
+            android:name=".lista_vaca.CowList"
             android:exported="false" />
         <activity
             android:name=".SingUpActivity"

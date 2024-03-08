@@ -1,13 +1,14 @@
 package com.example.pruebasql;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.example.pruebasql.automatizacion.Automatizacion;
 import com.example.pruebasql.bbdd.Usuario;
+import com.example.pruebasql.calendario.Calendario;
+import com.example.pruebasql.mapa.CowFinder;
+import com.example.pruebasql.lista_vaca.CowList;
 
 public class PrincipalActivity extends BarraSuperior {
     private Usuario usuario;

@@ -13,6 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.example.pruebasql.lista_vaca.VacaResponseListener;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Server {

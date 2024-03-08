@@ -1,4 +1,4 @@
-package com.example.pruebasql;
+package com.example.pruebasql.lista_vaca;
 
 
 import android.content.Intent;
@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.pruebasql.BarraSuperior;
+import com.example.pruebasql.R;
+import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 

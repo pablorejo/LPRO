@@ -1,4 +1,4 @@
-package com.example.pruebasql;
+package com.example.pruebasql.automatizacion;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.example.pruebasql.BarraSuperior;
+import com.example.pruebasql.R;
 
 public class Automatizar_item extends BarraSuperior {
 

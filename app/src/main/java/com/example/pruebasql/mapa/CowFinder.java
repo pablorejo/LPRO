@@ -1,9 +1,11 @@
-package com.example.pruebasql;
+package com.example.pruebasql.mapa;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.example.pruebasql.BarraSuperior;
+import com.example.pruebasql.R;
 import com.example.pruebasql.bbdd.Usuario;
 
 public class CowFinder extends BarraSuperior {

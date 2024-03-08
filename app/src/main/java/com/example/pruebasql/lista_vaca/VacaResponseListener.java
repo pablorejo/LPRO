@@ -1,4 +1,4 @@
-package com.example.pruebasql;
+package com.example.pruebasql.lista_vaca;
 
 import com.example.pruebasql.bbdd.vacas.Vaca;
 

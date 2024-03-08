@@ -1,4 +1,4 @@
-package com.example.pruebasql;
+package com.example.pruebasql.automatizacion;
 
 
 import android.content.Intent;
@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.pruebasql.BarraSuperior;
+import com.example.pruebasql.R;
 import com.example.pruebasql.bbdd.Usuario;
-
-import org.w3c.dom.Text;
 
 public class Automatizacion extends BarraSuperior {
     LinearLayout linearLayout;
