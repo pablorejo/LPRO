@@ -12,8 +12,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.pruebasql.bbdd.Usuario;
+import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Vaca;
-import com.example.pruebasql.lista_vaca.VacaResponseListener;
+import com.example.pruebasql.listeners.EnfermedadesResponseListener;
+import com.example.pruebasql.listeners.VacaResponseListener;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -179,6 +181,90 @@ public class Server {
     }
 
 
+    public void getEnfermedades(int id_vaca, EnfermedadesResponseListener listener){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/";
+        ArrayList<Enfermedad> enfermedades = new ArrayList<>();
 
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        // Suponiendo que tienes un constructor adecuado en tu clase Vaca
+                        Enfermedad enfermedad = new Enfermedad(jsonObject);
+                        enfermedades.add(enfermedad);
+                    }
+                    listener.onResponse(enfermedades);
+                } catch (Exception e) {
+                    listener.onError(e.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.onError(error.toString());
+            }
+        });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
+
+
+    public void getEnfermedad(int id_enfermedad, EnfermedadesResponseListener listener){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/";
+        ArrayList<Enfermedad> enfermedades = new ArrayList<>();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Enfermedad enfermedad = new Enfermedad(response);
+                    listener.onResponse(enfermedad);
+
+                } catch (Exception e) {
+                    listener.onError(e.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.onError(error.toString());
+            }
+        });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
+
+    public void setEnfermedad(Enfermedad enfermedad){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/";
+        ArrayList<Enfermedad> enfermedades = new ArrayList<>();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(context, "Todo salio bien", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, "Algo ha salido mal", Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return enfermedad.getJson();
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
 
 }

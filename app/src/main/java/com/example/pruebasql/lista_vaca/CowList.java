@@ -13,6 +13,7 @@ import com.example.pruebasql.R;
 import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.example.pruebasql.listeners.VacaResponseListener;
 
 import java.util.ArrayList;
 
