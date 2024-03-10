@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -33,6 +34,8 @@ android {
 }
 
 dependencies {
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
+    implementation ("com.google.maps.android:android-maps-utils:2.2.5")
     implementation ("com.github.prolificinteractive:material-calendarview:2.0.1")
     implementation ("org.mindrot:jbcrypt:0.4")
     implementation("androidx.appcompat:appcompat:1.6.1")

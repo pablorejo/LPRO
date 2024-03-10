@@ -40,6 +40,11 @@ public class CowList extends BarraSuperior {
             }
 
             @Override
+            public void onResponse(Vaca vaca) {
+
+            }
+
+            @Override
             public void onError(String mensaje) {
                 System.out.println("ok");
             }

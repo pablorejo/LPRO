@@ -15,8 +15,7 @@ public class Enfermedad {
     private Date fechaInicio;
     private Date fechaFin;
     private int periodicidadEnDias;
-
-
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public Enfermedad(String json) throws Exception{
         // Convertir la respuesta String a un objeto JSONObject
@@ -28,6 +27,24 @@ public class Enfermedad {
         this.setJson(json);
     }
 
+    public Enfermedad(
+            int idEnfermedadVaca,
+            int numeroPendiente,
+            String medicamento,
+            String enfermedad,
+            Date fechaInicio,
+            Date fechaFin,
+            int periodicidadEnDias){
+        this.idEnfermedadVaca = idEnfermedadVaca;
+        this.numeroPendiente = numeroPendiente;
+        this.medicamento = medicamento;
+        this.enfermedad = enfermedad;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.periodicidadEnDias = periodicidadEnDias;
+    }
+
+
     private void setJson(JSONObject json) throws Exception{
 
         String idEnfermedadVaca =  json.getString("idEnfermedadVaca");
@@ -38,7 +55,6 @@ public class Enfermedad {
         String strfechaFin =  json.getString("fechaFin");
         String periodicidadEnDias =  json.getString("periodicidadEnDias");
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date fechaInicio = sdf.parse(strfechaInicio);
         Date fechaFin = sdf.parse(strfechaFin);
 

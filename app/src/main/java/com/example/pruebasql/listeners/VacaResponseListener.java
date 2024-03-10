@@ -7,6 +7,6 @@ import java.util.ArrayList;
 
 public interface VacaResponseListener {
     void onResponse(ArrayList<Vaca> listaVacas);
-
+    void onResponse(Vaca vaca);
     void onError(String mensaje);
 }
