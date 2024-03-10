@@ -14,6 +14,7 @@ import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.listeners.VacaResponseListener;
+import com.example.pruebasql.listeners.VacasResponseListener;
 
 import java.util.ArrayList;
 
@@ -29,8 +30,23 @@ public class CowList extends BarraSuperior {
         configureToolbar();
         Usuario usuario = getIntent().getParcelableExtra("usuario");
 
+        // METODOS PARA VACAS:
         Server server = new Server(this);
-        server.getVacas(usuario.getId(), new VacaResponseListener() {
+        server.getVacas(new VacasResponseListener() {
+            @Override
+            public void onResponse(ArrayList<Vaca> listaVacas) {
+                usuario.setVacas(listaVacas);
+                for (Vaca vaca : listaVacas) {
+                    crearCowItem(String.valueOf(vaca.getNumeroPendiente()));
+                }
+            }
+
+            @Override
+            public void onError(String mensaje) {
+                System.out.println("ok");
+            }
+        });
+        /*server.getVacas(usuario.getId(), new VacaResponseListener() {
             @Override
             public void onResponse(ArrayList<Vaca> listaVacas) {
                 usuario.setVacas(listaVacas);
@@ -43,7 +59,7 @@ public class CowList extends BarraSuperior {
             public void onError(String mensaje) {
                 System.out.println("ok");
             }
-        });
+        });*/
     }
 
 

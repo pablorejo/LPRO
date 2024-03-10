@@ -17,6 +17,10 @@ public class Vaca {
     private ArrayList<Leite> leiteHistorico;
 
     // Constructor con parámetros
+    public Vaca(int numeroPendiente, Date fechaNacimiento){
+        this.numeroPendiente = numeroPendiente;
+        this.fechaNacimiento = fechaNacimiento;
+    }
     public Vaca(int numeroPendiente, int idUsuario, Date fechaNacimiento) {
         this.setVaca(numeroPendiente, idUsuario,  fechaNacimiento);
     }
