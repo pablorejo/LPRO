@@ -1,7 +1,5 @@
 package com.example.pruebasql.calendario;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -11,8 +9,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pruebasql.BarraSuperior;
+import com.example.pruebasql.DataManager;
 import com.example.pruebasql.R;
 import com.example.pruebasql.Server;
+import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 
 import org.threeten.bp.LocalDate;
@@ -34,22 +34,23 @@ public class AddEnfermedad extends BarraSuperior {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_enfermedad);
         configureToolbar();
-        server = new Server(this);
         String localDate = getIntent().getStringExtra("fecha");
-        
+
+        Usuario usuario = DataManager.getInstance().getUsuario();
+
+        server = new Server(this,usuario);
+
         if (localDate == null){
             LocalDate date = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-            localDate = date.format(formatter);
+            localDate = formatter.format(date);
         }
 
-
-        btnInicio = findViewById(R.id.btnFechaInicio);
+        btnInicio = findViewById(R.id.btnFechaParto);
         btnFin = findViewById(R.id.btnFechaFin);
         btnGuardar = findViewById(R.id.btnGuardar);
         btnCancelar = findViewById(R.id.btnCancelar);
 
-        textFechaInicio = findViewById(R.id.textFechaInicio);
+        textFechaInicio = findViewById(R.id.textFechaParto);
         textFechaInicio.setText(localDate);
 
         textFechaFin = findViewById(R.id.textFechaFin);
@@ -79,40 +80,25 @@ public class AddEnfermedad extends BarraSuperior {
 
         btnGuardar.setOnClickListener(v -> {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-            try {
-                Date fechaInicio = sdf.parse(textFechaInicio.getText().toString());
-                Date fechaFin = sdf.parse(textFechaFin.getText().toString());
-                Enfermedad enfermedad = new Enfermedad(
-                        0,
-                        Integer.parseInt(textNumeroPendiente.getText().toString()),
-                        textMedicamento.getText().toString(),
-                        textNombreEnfermedad.getText().toString(),
-                        fechaInicio,
-                        fechaFin,
-                        Integer.parseInt(textPeriocidad.getText().toString())
-                );
-                Toast.makeText(this,"Creado con exito" , Toast.LENGTH_LONG).show();
-                getOnBackPressedDispatcher();
-            }catch (ParseException e){
-                Toast.makeText(this,e.toString() , Toast.LENGTH_LONG).show();
-            }
+            int numeroPendiente = Integer.parseInt(textNumeroPendiente.getText().toString());
+            Enfermedad enfermedad = new Enfermedad(
+                    0,
+                    numeroPendiente,
+                    textMedicamento.getText().toString(),
+                    textNombreEnfermedad.getText().toString(),
+                    LocalDate.parse(textFechaInicio.getText().toString(),formatter),
+                    LocalDate.parse(textFechaFin.getText().toString(),formatter),
+                    Integer.parseInt(textPeriocidad.getText().toString()),
+                    null
+            );
+            usuario.getVacaByNumeroPendiente(numeroPendiente).addEnfermedad(enfermedad);
+            server.addEnfermedad(enfermedad);
+            finish();
         });
 
         btnCancelar.setOnClickListener(v -> {
             Toast.makeText(this,"Crear enfermedad cancelado" , Toast.LENGTH_LONG).show();
-            getOnBackPressedDispatcher();
+            finish();
         });
-    }
-
-    private void openDialog(TextView text){
-
-        DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                text.setText(String.valueOf(year)+"/"+String.valueOf(month)+"/"+String.valueOf(dayOfMonth));
-            }
-        },2024,4,9);
-
-        dialog.show();
     }
 }

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.pruebasql.bbdd.Usuario;
+
 
 public class Login extends AppCompatActivity {
     EditText edtUsuario, edtPassword;
@@ -17,7 +19,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        server = new Server(this);
+        server = new Server(this, null);
 
         // Vinculamos variables con los controles del layout
         edtUsuario=findViewById(R.id.edtNomeUsuario);
@@ -28,7 +30,6 @@ public class Login extends AppCompatActivity {
         // Evento click de nuestro botón
         btnLogin.setOnClickListener(v -> {
 
-            /*
             String correo = edtUsuario.getText().toString();
             String pass =edtPassword.getText().toString();
 
@@ -40,9 +41,10 @@ public class Login extends AppCompatActivity {
                     correo,
                     pass
             );
-            */
+            /*
             Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
             startActivity(intent);
+            */
 
         });
 

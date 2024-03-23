@@ -1,0 +1,37 @@
+Todos los parámetros los mandaremos por JSON:
+Funciones de usuarios:
+ PUT   - createUsuario --> /usuarios/
+ UPDATE- updateUsuario --> /usuarios/
+ POST  - authenticateUsuario --> /usuarios/authenticate
+
+Funciones de vacas:
+ GET   - getVacas --> /vacas/ (coger todas las vacas)
+ GET   - getVaca --> /vacas/id_vaca/ (coger una vaca)
+ CREATE- createVaca --> /vacas/
+ UPDATE- updateVaca --> /vacas/
+ DELETE- deleteVaca --> /vacas/
+
+Funciones de enfermedades:
+ GET   - getEnfermedades --> /vacas/enfermedades
+ GET   - getEnfermedad --> /vacas/id_vaca/enfermedades/ (coger enfermedades de una vaca)
+ CREATE - addEnfermedad --> /vacas/enfermedades/
+ UPDATE - updateEnfermedades --> /vacas/enfermedades/
+ DELETE - deleteEnfermedad --> /vacas/enfermedades/
+
+Funciones de partos:
+ GET   - getFechasParto --> /vacas/id_vaca/fechas_parto/ (coger los partos que de una vaca)
+ PUT   - addFechaParto --> /vacas/fechas_parto/
+ UPDATE- updateFechaParto --> /vacas/fechas_parto/
+ DELETE- deleteFechaParto --> /vacas/fechas_parto/
+
+Funciones de leche:
+ GET- getVolumenLeche --> /vacas/id_vaca/volumen_leche/ (coger el volumen que de una vaca)
+ PUT- addVolumenLeche--> /vacas/volumen_leche/
+ UPDATE- updateVolumenLeche --> /vacas/volumen_leche/
+ DELETE- deleteVolumenLeche --> /vacas/volumen_leche/
+
+Funciones de pasto:
+ GET   - getDiasPasto --> /vacas/id_vaca/dias_pasto/ (coger los días de de pasto de una vaca)
+ PUT   - addDiasPasto --> /vacas/dias_pasto/
+ UPDATE- updateDiasPasto --> /vacas/dias_pasto/
+ DELETE- deleteDiasPasto --> /vacas/dias_pasto/

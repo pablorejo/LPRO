@@ -39,14 +39,5 @@ public class Automatizar_item extends BarraSuperior {
         });
     }
 
-    private  void openDialog(TextView text){
-        TimePickerDialog dialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                text.setText(String.valueOf(hourOfDay)+":"+String.valueOf(minute));
-            }
-        },13,00,true);
 
-        dialog.show();
-    }
 }

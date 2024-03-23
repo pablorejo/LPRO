@@ -7,39 +7,58 @@
     tools:context=".calendario.Calendario">
 
     <include layout="@layout/activity_barra_superior" />
-
-    <LinearLayout
-        android:layout_width="413dp"
-        android:layout_height="729dp"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="64dp"
-        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-            android:id="@+id/calendarView"
+        <LinearLayout
+            android:id="@+id/linearLayoutCalendario"
             android:layout_width="match_parent"
-            android:layout_height="379dp"
-            app:mcv_selectionColor="#00F"
-            app:mcv_showOtherDates="all" />
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal">
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="549dp"
+                app:mcv_selectionColor="#00F"
+                app:mcv_showOtherDates="all" >
 
-            <Button
-                android:id="@+id/btnAddEnfermedad"
-                android:layout_width="wrap_content"
+            </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerViewDatosDia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TableRow
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Añadir enfermedad" />
+                android:gravity="center_horizontal"
+                android:paddingTop="10dp">
 
-            <Button
-                android:id="@+id/btnAddParto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Añadir parto" />
-        </TableRow>
-    </LinearLayout>
+                <Button
+                    android:id="@+id/btnAddEnfermedad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Añadir enfermedad" />
+
+                <Button
+                    android:id="@+id/btnAddParto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Añadir parto" />
+            </TableRow>
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

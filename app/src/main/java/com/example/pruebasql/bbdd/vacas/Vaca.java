@@ -4,79 +4,57 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import org.json.JSONObject;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
 
 public class Vaca {
-    private int numeroPendiente;
-    private int idUsuario;
-    private Date fechaNacimiento;
+    private int Numero_pendiente;
+    private LocalDate Fecha_nacimiento;
 
     private ArrayList<Enfermedad> enfermedades;
 
     private ArrayList<Parto> partos;
 
+    private String nota;
+
     private ArrayList<Leite> leiteHistorico;
 
+    private int idUsuarioMadre;
+    private int idNumeroPendienteMadre;
+
+    protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     // Constructor con parámetros
-    public Vaca(int numeroPendiente, int idUsuario, Date fechaNacimiento) {
-        this.setVaca(numeroPendiente, idUsuario,  fechaNacimiento);
+
+    public Vaca(
+            int numeroPendiente,
+            LocalDate fechaNacimiento,
+            String nota,
+            int idUsuarioMadre,
+            int idNumeroPendienteMadre)
+    {
+        this.Numero_pendiente = numeroPendiente;
+        this.Fecha_nacimiento = fechaNacimiento;
+        this.nota = nota;
+        this.idUsuarioMadre = idUsuarioMadre;
+        this.idNumeroPendienteMadre = idNumeroPendienteMadre;
     }
-
-    public Vaca(String json) throws Exception{
-        // Convertir la respuesta String a un objeto JSONObject
-        JSONObject jsonResponse = new JSONObject(json);
-
-        this.setJson(jsonResponse);
-    }
-
-    public Vaca(JSONObject json) throws Exception{
-        this.setJson(json);
-    }
-
-    private void setJson(JSONObject json) throws Exception{
-        // Convertir la respuesta String a un objeto JSONObject
-
-        // Extraer los datos del usuario del objeto JSON
-        String numeroPendiente = json.getString("Numero_pendiente");
-        String idUsuario = json.getString("IdUsuario");
-        String fechaNacimiento = json.getString("Fecha_nacimiento");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date fecha = sdf.parse(fechaNacimiento);
-
-        // Crear una instancia de tu clase Usuario con los datos extraídos
-        this.setVaca(Integer.parseInt(numeroPendiente), Integer.parseInt(idUsuario),  fecha);
-    }
-
-
-    private void setVaca(int numeroPendiente, int idUsuario, Date fechaNacimiento){
-        this.numeroPendiente = numeroPendiente;
-        this.idUsuario = idUsuario;
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
 
     // Getters y Setters
     public int getNumeroPendiente() {
-        return numeroPendiente;
+        return Numero_pendiente;
     }
 
     public void setNumeroPendiente(int numeroPendiente) {
-        this.numeroPendiente = numeroPendiente;
+        this.Numero_pendiente = numeroPendiente;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public LocalDate getFechaNacimiento() {
+        return Fecha_nacimiento;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public Date getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.Fecha_nacimiento = fechaNacimiento;
     }
 
     //Arrays
@@ -84,7 +62,7 @@ public class Vaca {
         this.enfermedades.add(enfermedad);
     }
 
-    public void setEnfermedad(ArrayList<Enfermedad> enfermedades){
+    public void setEnfermedades(ArrayList<Enfermedad> enfermedades){
         this.enfermedades = enfermedades;
     }
 
@@ -115,6 +93,10 @@ public class Vaca {
         return this.leiteHistorico;
     }
 
+    public int getIdNumeroPendienteMadre(){ return this.idNumeroPendienteMadre; }
 
+    public String getNota() {return this.nota;}
+
+    public void setNota(String nota){ this.nota = nota;}
 }
 

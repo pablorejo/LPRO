@@ -3,78 +3,46 @@ package com.example.pruebasql.bbdd;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Parto;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 
 import org.json.JSONObject;
+import org.threeten.bp.format.DateTimeFormatter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
-public class Usuario implements Parcelable {
+public class Usuario {
     private String nombre;
     private String apellidos;
     private String correo;
     private int id;
+    private String session_id;
+
     private ArrayList<Vaca> vacas;
+    protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     // Constructor
-    public Usuario(String nombre, String apellidos, String correo, int id) {
-        this.setUsuario(nombre,apellidos,correo,id);
-    }
-
-    public Usuario(String json) throws Exception{
-        // Convertir la respuesta String a un objeto JSONObject
-        JSONObject jsonResponse = new JSONObject(json);
-
-        // Extraer los datos del usuario del objeto JSON
-        String nombre = jsonResponse.getString("nombre");
-        String apellidos = jsonResponse.getString("apellidos");
-        String correo = jsonResponse.getString("correo");
-        int id = jsonResponse.getInt("id"); // Asegúrate de que 'id' es un entero en tu JSON
-
-        // Crear una instancia de tu clase Usuario con los datos extraídos
-        this.setUsuario(nombre, apellidos,  correo,id);
-    }
-
-    private void setUsuario(String nombre, String apellidos, String correo, int id){
+    public Usuario(String nombre, String apellidos, String correo, int id, String sesion_id) {
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.correo = correo;
         this.id = id;
+        this.session_id = sesion_id;
     }
 
-    // Getters
-    public String getNombre() {
-        return nombre;
+    public String getSesion_id() {
+        return this.session_id;
     }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
     public int getId() {
         return id;
     }
 
     public ArrayList<Vaca> getVacas() {
         return vacas;
-    }
-
-    // Setters
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
     }
 
     public void setId(int id) {
@@ -85,38 +53,34 @@ public class Usuario implements Parcelable {
         this.vacas = vacas;
     }
 
-
-
-    // Métodos de Parcelable
-    protected Usuario(Parcel in) {
-        nombre = in.readString();
-        apellidos = in.readString();
-        correo = in.readString();
-        id = in.readInt();
+    public Vaca getVacaByNumeroPendiente(int Numero_pendiente){
+        for (Vaca vaca: vacas){
+            if (vaca.getNumeroPendiente() == Numero_pendiente){
+                return vaca;
+            }
+        }
+        return null;
     }
 
-    public static final Creator<Usuario> CREATOR = new Creator<Usuario>() {
-        @Override
-        public Usuario createFromParcel(Parcel in) {
-            return new Usuario(in);
-        }
-
-        @Override
-        public Usuario[] newArray(int size) {
-            return new Usuario[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public void addParto(Parto parto){
+        getVacaByNumeroPendiente(parto.getNumeroPendiente()).addParto(parto);
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(nombre);
-        parcel.writeString(apellidos);
-        parcel.writeString(correo);
-        parcel.writeInt(id);
+    public void addEnfermedad(Enfermedad enfermedad){
+        getVacaByNumeroPendiente(enfermedad.getNumero_pendiente()).addEnfermedad(enfermedad);
+    }
+
+    public Vaca getMadre(Vaca hija){
+        return getVacaByNumeroPendiente(hija.getIdNumeroPendienteMadre());
+    }
+
+    public ArrayList<Vaca> getHijos(Vaca madre){
+        ArrayList<Vaca> hijos = new ArrayList<Vaca>();
+        for (Vaca vaca: getVacas()){
+            if (vaca.getIdNumeroPendienteMadre() == madre.getNumeroPendiente()){
+                hijos.add(vaca);
+            }
+        }
+        return hijos;
     }
 }

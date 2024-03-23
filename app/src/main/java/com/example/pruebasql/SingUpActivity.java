@@ -18,7 +18,7 @@ public class SingUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sing_up);
 
-        server = new Server(this);
+        server = new Server(this,null);
 
         edtUsuario=findViewById(R.id.edtUsuario);
         edtPassword=findViewById(R.id.edtPassword2);

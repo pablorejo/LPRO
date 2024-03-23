@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.code.gson:gson:2.8.6")
     implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
     implementation ("com.google.maps.android:android-maps-utils:2.2.5")
     implementation ("com.github.prolificinteractive:material-calendarview:2.0.1")

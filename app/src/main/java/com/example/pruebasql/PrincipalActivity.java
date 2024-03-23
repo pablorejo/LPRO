@@ -19,7 +19,6 @@ public class PrincipalActivity extends BarraSuperior {
         setContentView(R.layout.activity_principal);
         configureToolbar(); //Para hacer que funcione el boton atras
 
-        usuario = getIntent().getParcelableExtra("usuario");
         // Vinculamos variables con los controles del layout
         btnCowList=findViewById(R.id.idCowList);
         btnCowFinder=findViewById(R.id.idCowFinder);
@@ -29,25 +28,23 @@ public class PrincipalActivity extends BarraSuperior {
 
 
         btnCowList.setOnClickListener(view -> {
-            iniciarActividad(CowList.class,usuario);
+            iniciarActividad(CowList.class);
         });
 
         btnCowFinder.setOnClickListener(view -> {
-            iniciarActividad(CowFinder.class,usuario);
+            iniciarActividad(CowFinder.class);
         });
 
         btnContact.setOnClickListener(view -> {
-            iniciarActividad(Contactar.class,usuario);
+            iniciarActividad(Contactar.class);
         });
 
         btnAutonomization.setOnClickListener(view -> {
-            iniciarActividad(Automatizacion.class,usuario);
+            iniciarActividad(Automatizacion.class);
         });
 
         btnCalendario.setOnClickListener(view -> {
-            iniciarActividad(Calendario.class,usuario);
+            iniciarActividad(Calendario.class);
         });
     }
-
-
 }
