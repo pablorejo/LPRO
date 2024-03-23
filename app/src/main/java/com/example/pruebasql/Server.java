@@ -963,7 +963,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 try {
-                    Leite leite = new Leite(response);
+                    Leite leite = gson.fromJson(response, Leite.class);
                     listener.onResponse(leite);
 
                 } catch (Exception e) {
@@ -1004,8 +1004,14 @@ public class Server {
                 Toast.makeText(context, "ERROR. No se ha podido añadir el volumen de leche a la Base de Datos!", Toast.LENGTH_SHORT).show();}
         }){
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                return leite.getJson();
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(leite);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -1044,10 +1050,16 @@ public class Server {
                 Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
             }
         }){
+
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Ingresamos los datos a enviar al servicio PHP
-                return leite.getJson();
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(leite);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -1061,7 +1073,7 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    public void deleteVolumenLeche(int idVaca, LocalDate fechaRecogida){
+    public void deleteVolumenLeche(Leite leite){
         // Configuración de la URL del servidor apache
         String url = URL + "/vacas/volumen_leche";
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
@@ -1086,13 +1098,14 @@ public class Server {
             }
         }){
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Creamos una instancia con el nombre parametros
-                HashMap<String, String> parametros = new HashMap<>();
-                // Ingresamos los datos a enviar al servicio PHP
-                parametros.put("idVaca", String.valueOf(idVaca));
-                parametros.put("fechaRecogida", String.valueOf(fechaRecogida));
-                return parametros;
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(leite);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
