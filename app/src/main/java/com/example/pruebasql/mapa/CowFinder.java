@@ -3,6 +3,8 @@ package com.example.pruebasql.mapa;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.example.pruebasql.BarraSuperior;
@@ -19,6 +21,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.common.collect.Maps;
@@ -32,6 +39,7 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
 
     private GoogleMap mMap;
 
+    List<Marker> markers = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +49,8 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
+
     }
 
 
@@ -70,6 +80,39 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
             // Añadir el overlay del mapa de calor al Google Map
             TileOverlay overlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(provider));
         }
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(point)
+                        .draggable(true)); // Permite que el marcador sea desplazable
+                if (marker != null) {
+                    markers.add(marker);
+                }
+                redrawPolygon();
+            }
+        });
+
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {}
+
+            @Override
+            public void onMarkerDrag(Marker marker) {}
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                // Actualizamos el array de marcadores.
+
+                for (int i = 0; i < markers.size(); i++){
+                    if (markers.get(i).getId().equals(marker.getId())){
+                        markers.get(i).setPosition(marker.getPosition());
+                    }
+                }
+                redrawPolygon();
+            }
+        });
     }
 
     private List<LatLng> getYourData() {
@@ -177,5 +220,21 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
         list.add(new LatLng(43.31138209054755, -8.417398202061468));
 
         return list;
+    }
+
+    private void redrawPolygon() {
+        mMap.clear(); // Limpia el mapa para eliminar polígonos y marcadores anteriores
+        List<LatLng> points = new ArrayList<>();
+        for (Marker marker : markers) {
+            points.add(marker.getPosition());
+            mMap.addMarker(new MarkerOptions().position(marker.getPosition()).draggable(true)); // Re-añade los marcadores para asegurarte de que se muestren después de limpiar el mapa
+        }
+
+        if (points.size() > 2) {
+            mMap.addPolygon(new PolygonOptions()
+                    .addAll(points)
+                    .strokeColor(Color.RED)
+                    .fillColor(Color.argb(128, 255, 0, 0)));
+        }
     }
 }

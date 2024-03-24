@@ -2,7 +2,12 @@ package com.example.pruebasql;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -52,5 +57,7 @@ public class Login extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), SingUpActivity.class);
             startActivity(intent);
         });
+
+
     }
 }
