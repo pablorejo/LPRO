@@ -1,8 +1,12 @@
 package com.example.pruebasql.bbdd.vacas;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -18,6 +22,8 @@ public class Vaca {
     private String nota;
 
     private ArrayList<Leite> leiteHistorico;
+
+    private ArrayList<Gps> datosGps;
 
     private int idUsuarioMadre;
     private int idNumeroPendienteMadre;
@@ -98,5 +104,16 @@ public class Vaca {
     public String getNota() {return this.nota;}
 
     public void setNota(String nota){ this.nota = nota;}
+
+    public List<LatLng> getCordenadasGps(){
+        List<LatLng> puntos = new ArrayList<LatLng>();
+        if (datosGps != null){
+            for (Gps gps: datosGps) {
+                LatLng cordenada = new LatLng(gps.getLatitud(),gps.getLongitud());
+                puntos.add(cordenada);
+            }
+        }
+        return puntos;
+    }
 }
 

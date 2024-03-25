@@ -13,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.pruebasql.bbdd.Parcela;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Leite;
@@ -26,6 +27,7 @@ import com.example.pruebasql.listeners.FechasPartoResponseListener;
 import com.example.pruebasql.listeners.VacaResponseListener;
 import com.example.pruebasql.listeners.VacasResponseListener;
 import com.example.pruebasql.listeners.VolumenLecheResponseListener;
+import com.google.android.gms.maps.model.Marker;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
@@ -33,8 +35,12 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -53,7 +59,7 @@ import java.io.IOException;
 import org.threeten.bp.format.DateTimeFormatter;
 public class Server {
     private Usuario usuario;
-    private String dnsActivo = "vacayisus.ddns.net";
+    private String dnsActivo = "vaca.ddns.net";
 
     private String URL = "https://" + dnsActivo;
     private Context context; // Contexto para Volley
@@ -64,8 +70,22 @@ public class Server {
             return LocalDate.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
     };
+
+    String pattern = "yyyy-MM-dd HH:mm:ss"; // Define el patrón del formato de fecha
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
     Gson gson = new GsonBuilder()
+            // Para que parsee bien los LocalDate.
             .registerTypeAdapter(LocalDate.class, deserializer)
+
+            // Para que parsee bien los Date.
+            .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context) -> {
+                try {
+                    return simpleDateFormat.parse(json.getAsJsonPrimitive().getAsString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return null; // O manejar de otra forma
+                }
+            })
             .create();
 
 
@@ -1118,4 +1138,141 @@ public class Server {
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
         requestQueue.add(stringRequest);
     }
+
+    /************ FUNCIONES PARA PARCELAS: ********/
+
+    public void addParcela(Parcela parcela){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/parcelas";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                System.out.println("Se ha añadido con EXITO la nueva parcela: " + parcela.getNombre());
+                Toast.makeText(context, "Se ha añadido con EXITO la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("ERROR. No se ha podido añadir la parcela");
+                Toast.makeText(context, "ERROR. No se ha podido añadir la parcela", Toast.LENGTH_SHORT).show();}
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(parcela);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
+                return headers;
+            }
+        };
+
+        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
+        requestQueue.add(stringRequest);
+    }
+
+    public void updateParcela(Parcela parcela){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/parcelas";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                if(!response.isEmpty()){
+                    System.out.println("Se ha modificado con EXITO la nueva parcela: " + parcela.getNombre());
+                    Toast.makeText(context, "Se ha modificado con EXITO la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
+                }else{
+                    // Mensaje: "Contraseñas incorrectas"
+                    System.out.println("ERROR. No se ha podido modificar la nueva parcela: " + parcela.getNombre());
+                    Toast.makeText(context, "ERROR. No se ha podido modificar la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Mensaje que capture y muestre el error (no recomendable para el usuario final)
+                System.out.println( error.toString());
+                Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
+            }
+        }){
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(parcela);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
+                return headers;
+            }
+        };
+        // Creamos una instancia
+        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
+        requestQueue.add(stringRequest);
+    }
+
+    public void deleteVolumenLeche(Parcela parcela){
+        // Configuración de la URL del servidor apache
+        String url = URL + "/parcelas";
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                if(!response.isEmpty()){
+                    System.out.println("Se ha eliminado con EXITO la nueva parcela: " + parcela.getNombre());
+                    Toast.makeText(context, "Se ha eliminado con EXITO la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
+                }else{
+                    // Mensaje: "Contraseñas incorrectas"
+                    System.out.println("ERROR. No se ha podido eliminar la nueva parcela: " + parcela.getNombre());
+                    Toast.makeText(context, "ERROR. No se ha podido eliminar la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Mensaje que capture y muestre el error (no recomendable para el usuario final)
+                System.out.println( error.toString());
+                Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(parcela);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
+                return headers;
+            }
+        };
+        // Creamos una instancia
+        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
+        requestQueue.add(stringRequest);
+
+    }
+
+
 }

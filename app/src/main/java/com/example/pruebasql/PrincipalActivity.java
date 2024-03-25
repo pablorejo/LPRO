@@ -77,5 +77,6 @@ public class PrincipalActivity extends BarraSuperior {
         Notification notification = getNotification(this, "¡Es hora de tu evento!");
         int notificationId = 1; // Identificador único para cada notificación
         scheduleNotification(this, notification, notificationId, date);
+
     }
 }

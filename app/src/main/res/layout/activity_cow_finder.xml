@@ -24,4 +24,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="1" />
+
+    <EditText
+        android:id="@+id/editTextNombreParcela"
+        android:layout_width="353dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="29dp"
+        android:layout_marginTop="107dp"
+        android:background="#80FFFFFF"
+        android:gravity="center"
+        android:hint="Nombre"
+        android:minHeight="48dp"
+        android:text="Nombre parcela"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnAñadirParcela"
+        android:layout_width="123dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="261dp"
+        android:layout_marginTop="632dp"
+        android:text="Añadir parcela"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

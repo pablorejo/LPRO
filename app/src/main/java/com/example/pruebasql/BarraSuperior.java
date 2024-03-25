@@ -17,6 +17,8 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 
+import com.example.pruebasql.bbdd.Usuario;
+
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.time.LocalDate;
@@ -28,6 +30,7 @@ import java.util.GregorianCalendar;
 public class BarraSuperior extends AppCompatActivity {
 
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    protected Usuario usuario = DataManager.getInstance().getUsuario();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
