@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Parto;
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONObject;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -13,6 +14,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Usuario {
@@ -21,6 +23,8 @@ public class Usuario {
     private String correo;
     private int id;
     private String session_id;
+
+    private ArrayList<Parcela> parcelas;
 
     private ArrayList<Vaca> vacas;
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -43,6 +47,10 @@ public class Usuario {
 
     public ArrayList<Vaca> getVacas() {
         return vacas;
+    }
+
+    public void addVaca(Vaca vaca) {
+        this.vacas.add(vaca);
     }
 
     public void setId(int id) {
@@ -82,5 +90,25 @@ public class Usuario {
             }
         }
         return hijos;
+    }
+
+    public ArrayList<Parcela> getParcelas(){
+        if (this.parcelas == null){
+            this.parcelas = new ArrayList<Parcela>();
+        }
+        return this.parcelas;
+    }
+    public void setParcelas(ArrayList<Parcela> parcelas){ this.parcelas = parcelas;}
+
+    public Parcela addParcela(Parcela parcela) {
+        if (parcelas == null){
+            parcelas = new ArrayList<Parcela>();
+        }
+        this.parcelas.add(parcela);
+        return parcela;
+    }
+
+    public Parcela getUltimaParcela(){
+        return this.parcelas.get(this.parcelas.size()-1);
     }
 }

@@ -3,21 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="128dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal">
 
 
-    <TextView
-        android:id="@+id/idTextViewDateListItem"
+    <LinearLayout
+        android:id="@+id/linearLayoutListDate"
         android:layout_width="wrap_content"
-        android:layout_height="128dp"
-        android:drawableRight="@drawable/cow_128x128"
-        android:drawablePadding="10dp"
-        android:gravity="center_vertical"
-        android:text="Nombre vaca"
-        android:textSize="30dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/idTextViewDateListItem"
+            android:layout_width="match_parent"
+            android:layout_height="128dp"
+            android:drawableRight="@drawable/cow_128x128"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:text="TipoDeFecha"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/textViewNotaListDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|top"
+            android:text="Nota"
+            android:textSize="35sp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

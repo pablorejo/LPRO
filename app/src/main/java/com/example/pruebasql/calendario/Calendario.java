@@ -51,12 +51,19 @@ public class Calendario extends BarraSuperior {
     private int colorEnfermedad = Color.RED;
     private int colorParto = Color.GREEN;
 
+    private int colorMedicina = Color.BLUE;
+
+
     private LinearLayout layout;
 
     private Usuario usuario;
 
     // Define un ActivityResultLauncher como una variable de instancia
     private ActivityResultLauncher<Intent> someActivityResultLauncher;
+
+    private int numeroPendiente;
+
+    private DatosDia datosDia;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,8 +71,21 @@ public class Calendario extends BarraSuperior {
         configureToolbar();
         usuario = DataManager.getInstance().getUsuario();
 
-        layout  = findViewById(R.id.linearLayoutCalendario);
+        // Inciamos el fragmento de datos día
+        datosDia =  new DatosDia();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragmentContainerViewDatosDia, datosDia)
+                .commit();
 
+        Intent intent2 = getIntent();
+        String numeroPendienteString = intent2.getStringExtra("numero_pendiente");
+
+        layout  = findViewById(R.id.linearLayoutCalendario);
+        if (numeroPendienteString == null){
+            numeroPendiente = 0;
+        }else{
+            numeroPendiente = Integer.valueOf(numeroPendienteString);
+        }
 
         // Inicializa el ActivityResultLauncher
         someActivityResultLauncher = registerForActivityResult(
@@ -105,22 +125,21 @@ public class Calendario extends BarraSuperior {
             @Override
             public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
                 // Convertir CalendarDay a LocalDate
-                try {
-                    if (localDate.equals(date.getDate())){
-                        hideEventDetailsFragment();
-                    }else{
-                        localDate = date.getDate();
-                        showEventDetailsFragment(localDate);
-                    }
-                }catch (Exception e){
+                if (localDate != null && localDate.equals(date.getDate())){
                     localDate = date.getDate();
+                    hideEventDetailsFragment();
+                }else{
+                    localDate = date.getDate();
+                    showEventDetailsFragment(localDate);
                 }
             }
         });
 
         for (Vaca vaca : usuario.getVacas()){
-            añadirEnfermedades(vaca.getEnfermedades());
-            añadirPartos(vaca.getPartos());
+            if (numeroPendiente == 0 || vaca.getNumeroPendiente() == numeroPendiente){
+                añadirEnfermedades(vaca.getEnfermedades());
+                añadirPartos(vaca.getPartos());
+            }
         }
     }
 
@@ -137,10 +156,22 @@ public class Calendario extends BarraSuperior {
         calendarView.addDecorator(new EventDecorator(colorEnfermedad, dates));
     }
 
+    private void añadirTomarMedicina(LocalDate fecha_tomar){
+        MaterialCalendarView calendarView = findViewById(R.id.calendarView);
+        HashSet<CalendarDay> dates = new HashSet<>();
+        addDate(dates,fecha_tomar);
+        calendarView.addDecorator(new EventDecorator(colorMedicina, dates));
+    }
+
 
     private void añadirEnfermedades(ArrayList<Enfermedad> enfermedades){
         for (Enfermedad enfermedad: enfermedades){
             añadirEnfermedad(enfermedad);
+
+            // Para añadir las fechas en las que tiene que tomar la medicina.
+            for (LocalDate fechaTomarMedicina: enfermedad.getFechasTomarMedicina()){
+                añadirTomarMedicina(fechaTomarMedicina);
+            }
         }
     }
 
@@ -164,27 +195,24 @@ public class Calendario extends BarraSuperior {
     }
 
     private void showEventDetailsFragment(LocalDate date) {
-        DatosDia fragment = (DatosDia) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerViewDatosDia);
-        if (fragment == null) {
-            fragment = new DatosDia();
+        if (datosDia == null) {
+            datosDia = new DatosDia();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragmentContainerViewDatosDia, fragment)
+                    .add(R.id.fragmentContainerViewDatosDia, datosDia)
                     .commit();
-        } else {
-            // Si el fragmento ya está adjunto, actualiza los detalles directamente
-            fragment.setEventDetails(date);
+        }else{
+            datosDia.setEventDetails(date,numeroPendiente);
         }
     }
 
     // Opcional: Método para ocultar el fragmento si es necesario
     private void hideEventDetailsFragment() {
-        DatosDia fragment = (DatosDia) getSupportFragmentManager()
-                .findFragmentById(R.id.fragmentContainerViewDatosDia);
-
-        if (fragment != null) {
+        if (datosDia != null) {
             getSupportFragmentManager().beginTransaction()
-                    .remove(fragment)
+                    .remove(datosDia)
                     .commit();
+        }else{
+            datosDia.clearDatos();
         }
     }
 }

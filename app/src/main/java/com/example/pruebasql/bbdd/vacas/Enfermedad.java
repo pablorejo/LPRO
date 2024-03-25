@@ -5,6 +5,7 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,4 +53,26 @@ public class Enfermedad {
     public int getNumero_pendiente() {return this.Numero_pendiente;}
 
     public String getEnfermedad() {return  this.Enfermedad;}
+
+    public int getPeriocidad_en_dias() {return  this.periocidad_en_dias;}
+
+    public ArrayList<LocalDate> getFechasTomarMedicina(){
+        ArrayList<LocalDate> fechasTomarMedicina = new ArrayList<LocalDate>();
+        LocalDate fecha_toma = this.getFechaInicio().plusDays(this.getPeriocidad_en_dias());
+        while (fecha_toma.isBefore(this.getFechaFin())){
+            fechasTomarMedicina.add(fecha_toma);
+            fecha_toma = fecha_toma.plusDays(this.getPeriocidad_en_dias());
+        }
+        return fechasTomarMedicina;
+    }
+
+    public String getMedicamento(){
+        return this.Medicamento;
+    }
+
+    public int getId_enfermedad_vaca() {return this.id_enfermedad_vaca;}
+
+    public String getNota() {
+        return nota;
+    }
 }

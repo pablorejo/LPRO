@@ -13,189 +13,209 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="84dp"
-        android:orientation="vertical"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-        <EditText
-            android:id="@+id/editTextNombreEnfermedad"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:gravity="center"
-            android:inputType="text"
-            android:text="Añadir enfermedad"
-            android:textSize="30sp"
-            tools:ignore="HardcodedText,LabelFor,VisualLintTextFieldSize" />
+            android:orientation="vertical">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingBottom="30dp">
-
-            <TextView
-                android:id="@+id/textviewNumeroPendiente"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Numero pendiente:"
-                android:textSize="30sp"
-                tools:ignore="HardcodedText" />
 
             <EditText
-                android:id="@+id/editTextNumeroPendiente"
-                android:layout_width="wrap_content"
+                android:id="@+id/editTextNombreEnfermedad"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints=""
-                android:ems="10"
-                android:inputType="number"
-                android:minHeight="48dp"
-                tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp">
-
-            <Button
-                android:id="@+id/btnFechaParto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Fecha inicio"
-                android:textSize="20sp"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/textFechaParto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="date"
-                android:minHeight="48dp"
-                android:paddingStart="20dp"
-                android:text="07/04/2024"
-                android:textSize="30sp"
-                tools:ignore="HardcodedText,RtlSymmetry,TextViewEdits,DuplicateSpeakableTextCheck" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp">
-
-            <Button
-                android:id="@+id/btnFechaFin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Hora de finalización"
-                android:textSize="20sp"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/textFechaFin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:inputType="date"
-                android:minHeight="48dp"
-                android:paddingStart="20dp"
-                android:text="07/04/2024"
-                android:textSize="30sp"
-                tools:ignore="HardcodedText,RtlSymmetry,TextViewEdits" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp">
-
-            <TextView
-                android:id="@+id/textviewMedicamento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Medicamento:"
-                android:textSize="30sp"
-                tools:ignore="HardcodedText" />
-
-            <EditText
-                android:id="@+id/editTextMedicamento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autofillHints=""
-                android:ems="10"
                 android:inputType="text"
-                android:minHeight="48dp"
-                tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                android:text="Añadir enfermedad"
+                android:textSize="30sp"
+                tools:ignore="HardcodedText,LabelFor,VisualLintTextFieldSize" />
 
-        </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingBottom="30dp">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingBottom="30dp">
+                <TextView
+                    android:id="@+id/textviewNumeroPendiente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Numero pendiente:"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
 
-            <TextView
-                android:id="@+id/textviewPeriocidad"
-                android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/editTextNumeroPendiente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:inputType="number"
+                    android:minHeight="48dp"
+                    tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
+
+                <Button
+                    android:id="@+id/btnFechaParto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Fecha inicio"
+                    android:textSize="20sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/textFechaParto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="date"
+                    android:minHeight="48dp"
+                    android:paddingStart="20dp"
+                    android:text="07/04/2024"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText,RtlSymmetry,TextViewEdits,DuplicateSpeakableTextCheck" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Periodo de toma:"
-                android:textSize="30sp"
-                tools:ignore="HardcodedText" />
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
+
+                <Button
+                    android:id="@+id/btnFechaFin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Hora de finalización"
+                    android:textSize="20sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/textFechaFin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inputType="date"
+                    android:minHeight="48dp"
+                    android:paddingStart="20dp"
+                    android:text="07/04/2024"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText,RtlSymmetry,TextViewEdits" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/textviewMedicamento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Medicamento:"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <EditText
+                    android:id="@+id/editTextMedicamento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:inputType="text"
+                    android:minHeight="48dp"
+                    tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingBottom="30dp">
+
+                <TextView
+                    android:id="@+id/textviewPeriocidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Periodo de toma:"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <EditText
+                    android:id="@+id/editTextPeriocidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:inputType="number"
+                    android:minHeight="48dp"
+                    tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            </TableRow>
 
             <EditText
-                android:id="@+id/editTextPeriocidad"
-                android:layout_width="wrap_content"
+                android:id="@+id/editTextNotaEnfermedad"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints=""
                 android:ems="10"
-                android:inputType="number"
-                android:minHeight="48dp"
-                tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                android:gravity="start|top"
+                android:hint="Notas"
+                android:inputType="textMultiLine"
+                android:maxHeight="350dp"
+                android:minHeight="250dp"
+                android:text="Nota"
+                android:textSize="25sp" />
 
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp">
-
-            <Button
-                android:id="@+id/btnCancelar"
-                android:layout_width="wrap_content"
+            <TableRow
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="Cancelar"
-                tools:ignore="HardcodedText" />
+                android:gravity="center"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
 
-            <Button
-                android:id="@+id/btnGuardar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="Guardar"
-                tools:ignore="ButtonStyle,HardcodedText" />
+                <Button
+                    android:id="@+id/btnCancelar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="Cancelar"
+                    tools:ignore="HardcodedText" />
 
-        </TableRow>
+                <Button
+                    android:id="@+id/btnGuardar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="Guardar"
+                    tools:ignore="ButtonStyle,HardcodedText" />
 
-    </LinearLayout>
+            </TableRow>
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,6 +19,7 @@ import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Parto;
+import com.example.pruebasql.bbdd.vacas.Vaca;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -29,19 +30,36 @@ import java.util.Date;
 
 public class AddParto extends BarraSuperior {
 
-    private EditText NumeroPendiente;
+    private EditText NumeroPendiente, editTextNotaParto;
     private Button btnFechaParto, btnGuardar, btnCancelar;
 
     private TextView fechaParto;
     private Server server;
     LocalDate date;
 
+    private Parto parto = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_parto);
         configureToolbar();
         String localDate = getIntent().getStringExtra("fecha");
+        String strId = getIntent().getStringExtra("id");
+
+        if (strId != null){
+            int id = Integer.valueOf(strId);
+            for (Vaca vaca: usuario.getVacas()){
+                for (Parto parto1: vaca.getPartos()){
+                    if (parto1.getId_vaca_parto() == id){
+                        parto = parto1;
+                        break;
+                    }
+                }
+                if (parto != null){
+                    break;
+                }
+            }
+        }
         Usuario usuario = DataManager.getInstance().getUsuario();
 
         server = new Server(this,usuario);
@@ -54,9 +72,20 @@ public class AddParto extends BarraSuperior {
         }
 
         NumeroPendiente = findViewById(R.id.editTextNumeroPendiente);
+        NumeroPendiente.setEnabled(false);
         btnFechaParto = findViewById(R.id.btnFechaParto);
         fechaParto = findViewById(R.id.textFechaParto);
         fechaParto.setText(localDate);
+        editTextNotaParto = findViewById(R.id.editTextNotaParto);
+
+        if (parto != null){
+            NumeroPendiente.setText(String.valueOf(parto.getNumeroPendiente()));
+            fechaParto.setText(parto.getFechaParto().toString());
+            editTextNotaParto.setText(parto.getNota());
+        }
+        fechaParto.setOnClickListener(v -> {
+            openDialog(fechaParto);
+        });
 
         btnGuardar = findViewById(R.id.btnGuardar);
         btnCancelar = findViewById(R.id.btnCancelar);
@@ -72,13 +101,12 @@ public class AddParto extends BarraSuperior {
                     0,
                     numeroPendiente,
                     LocalDate.parse(fechaParto.getText().toString(),formatter),
-                    null
+                    editTextNotaParto.getText().toString()
             );
             usuario.getVacaByNumeroPendiente(numeroPendiente).addParto(parto);
             server.addFechaParto(parto);
             setResult(RESULT_OK, null); // Establece RESULT_OK para indicar éxito
             finish();
-
         });
 
         btnCancelar.setOnClickListener(v -> {

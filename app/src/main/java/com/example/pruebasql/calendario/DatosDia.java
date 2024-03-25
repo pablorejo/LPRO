@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.pruebasql.DataManager;
+import com.example.pruebasql.PrincipalActivity;
 import com.example.pruebasql.R;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
@@ -25,6 +27,7 @@ import com.example.pruebasql.lista_vaca.CowItem;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
+import org.w3c.dom.Text;
 
 
 public class DatosDia extends Fragment {
@@ -36,6 +39,7 @@ public class DatosDia extends Fragment {
 
     private int colorEnfermedad = Color.RED;
     private int colorParto = Color.GREEN;
+    private int colorMedicina = Color.BLUE;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,30 +56,72 @@ public class DatosDia extends Fragment {
         return view;
     }
 
-    public void setEventDetails(LocalDate date) {
+    public void setEventDetails(LocalDate date, int numeroPendiente) {
+
         linearLayout.removeAllViews();
 
-
-
         for (Vaca vaca: usuario.getVacas()){
-            for (Enfermedad enfermedad: vaca.getEnfermedades()){
-                if (enfermedad.getFechaInicio().equals(date) || enfermedad.getFechaFin().equals(date)){
-                    addText(String.valueOf(enfermedad.getNumero_pendiente()) +" " + enfermedad.getEnfermedad(),colorEnfermedad);
+            if (numeroPendiente == 0 || vaca.getNumeroPendiente() == numeroPendiente){
+                for (Enfermedad enfermedad: vaca.getEnfermedades()){
+                    if (enfermedad.getFechaInicio().equals(date)){
+                        addText(String.valueOf(enfermedad.getNumero_pendiente()) +" Inicio" + enfermedad.getEnfermedad(),
+                                colorEnfermedad,
+                                AddEnfermedad.class,
+                                enfermedad.getId_enfermedad_vaca(),
+                                enfermedad.getNota());
+                    }
+                    else if (enfermedad.getFechaFin().equals(date)){
+                        addText(String.valueOf(enfermedad.getNumero_pendiente()) +" Fin" + enfermedad.getEnfermedad(),
+                                colorEnfermedad,
+                                AddEnfermedad.class,
+                                enfermedad.getId_enfermedad_vaca(),
+                                enfermedad.getNota());
+                    }
+
+                    for (LocalDate fechaTomarMedicina: enfermedad.getFechasTomarMedicina()){
+                        if (fechaTomarMedicina.equals(date)){
+                            addText(String.valueOf(enfermedad.getNumero_pendiente()) + " Tomar: " + enfermedad.getMedicamento() ,
+                                    colorMedicina,
+                                    AddEnfermedad.class,
+                                    enfermedad.getId_enfermedad_vaca(),
+                                    enfermedad.getNota());
+                        }
+                    }
                 }
-            }
-            for (Parto parto: vaca.getPartos()){
-                if (parto.getFechaParto().equals(date)){
-                    addText(String.valueOf(parto.getNumeroPendiente()),colorParto);
+                for (Parto parto: vaca.getPartos()){
+                    if (parto.getFechaParto().equals(date)){
+                        addText(String.valueOf(parto.getNumeroPendiente()),
+                                colorParto,AddParto.class, parto.getId_vaca_parto(),
+                                parto.getNota());
+                    }
                 }
             }
         }
     }
 
-    private void addText(String texto, int color){
-        View newLayout = LayoutInflater.from(getContext()).inflate(R.layout.list_cow, linearLayout, false);
-        TextView textViewNumeroPendiente = newLayout.findViewById(R.id.idTextViewCowItemList);
+    private void addText(String texto, int color, Class<?> clase, int id, String nota){
+        View newLayout = LayoutInflater.from(getContext()).inflate(R.layout.list_date, linearLayout, false);
+        LinearLayout linearLayout1 = newLayout.findViewById(R.id.linearLayoutListDate);
+        linearLayout1.setBackgroundColor(color);
+
+        TextView textViewNumeroPendiente = newLayout.findViewById(R.id.idTextViewDateListItem);
         textViewNumeroPendiente.setText(texto);
-        textViewNumeroPendiente.setBackgroundColor(color);
+
+        TextView textViewNota = newLayout.findViewById(R.id.textViewNotaListDate);
+        textViewNota.setText(nota);
+
         linearLayout.addView(newLayout);
+
+        linearLayout1.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), clase);
+            intent.putExtra("id",String.valueOf(id));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
+            startActivity(intent);
+        });
+
+    }
+
+    public void clearDatos(){
+        linearLayout.removeAllViews();
     }
 }

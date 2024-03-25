@@ -17,6 +17,8 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 
+import com.example.pruebasql.bbdd.Usuario;
+
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.time.LocalDate;
@@ -28,6 +30,7 @@ import java.util.GregorianCalendar;
 public class BarraSuperior extends AppCompatActivity {
 
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    protected Usuario usuario = DataManager.getInstance().getUsuario();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +61,14 @@ public class BarraSuperior extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                text.setText(String.valueOf(year)+"/"+String.valueOf(month)+"/"+String.valueOf(dayOfMonth));
+                text.setText(String.valueOf(year)+"-"+String.valueOf(month)+"-"+String.valueOf(dayOfMonth));
             }
         },calendario.get(Calendar.YEAR),calendario.get(Calendar.MONTH),calendario.get(Calendar.DAY_OF_MONTH));
 
         dialog.show();
     }
+
+
 
     public Notification getNotification(Context context, String content) {
         Notification.Builder builder = new Notification.Builder(context);

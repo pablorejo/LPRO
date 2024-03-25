@@ -1,8 +1,12 @@
 package com.example.pruebasql.bbdd.vacas;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -19,7 +23,8 @@ public class Vaca {
 
     private ArrayList<Leite> leiteHistorico;
 
-    private int idUsuarioMadre;
+    private ArrayList<Gps> datosGps;
+
     private int idNumeroPendienteMadre;
 
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -30,13 +35,11 @@ public class Vaca {
             int numeroPendiente,
             LocalDate fechaNacimiento,
             String nota,
-            int idUsuarioMadre,
             int idNumeroPendienteMadre)
     {
         this.Numero_pendiente = numeroPendiente;
         this.Fecha_nacimiento = fechaNacimiento;
         this.nota = nota;
-        this.idUsuarioMadre = idUsuarioMadre;
         this.idNumeroPendienteMadre = idNumeroPendienteMadre;
     }
 
@@ -93,10 +96,26 @@ public class Vaca {
         return this.leiteHistorico;
     }
 
-    public int getIdNumeroPendienteMadre(){ return this.idNumeroPendienteMadre; }
 
     public String getNota() {return this.nota;}
 
     public void setNota(String nota){ this.nota = nota;}
+
+    public List<LatLng> getCordenadasGps(){
+        List<LatLng> puntos = new ArrayList<LatLng>();
+        if (datosGps != null){
+            for (Gps gps: datosGps) {
+                LatLng cordenada = new LatLng(gps.getLatitud(),gps.getLongitud());
+                puntos.add(cordenada);
+            }
+        }
+        return puntos;
+    }
+
+    public int getIdNumeroPendienteMadre(){ return  this.idNumeroPendienteMadre;}
+
+    public void setIdNumeroPendienteMadre(int idNumeroPendienteMadre) {
+        this.idNumeroPendienteMadre = idNumeroPendienteMadre;
+    }
 }
 

@@ -31,7 +31,13 @@
                 android:layout_height="80dp"
                 android:ems="10"
                 android:hint="Buscar"
-                android:inputType="text" />
+                android:inputType="numberDecimal" />
+
+            <Button
+                android:id="@+id/btnAñadirVaca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Añadir vaca" />
 
             <LinearLayout
                 android:id="@+id/idLinearLayout"
