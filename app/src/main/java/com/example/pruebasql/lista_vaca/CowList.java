@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,11 +18,15 @@ import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.listeners.VacaResponseListener;
 import com.example.pruebasql.listeners.VacasResponseListener;
 
+import org.threeten.bp.LocalDate;
+
 import java.util.ArrayList;
 
 public class CowList extends BarraSuperior {
 
     LinearLayout linearLayout;
+
+    Button btnAñadirVaca;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +39,15 @@ public class CowList extends BarraSuperior {
         for (Vaca vaca: usuario.getVacas()){
             crearCowItem(vaca);
         }
+
+        btnAñadirVaca = findViewById(R.id.btnAñadirVaca);
+        btnAñadirVaca.setOnClickListener(v -> {
+            Vaca vaca = new Vaca(0, LocalDate.now(),"",0);
+            usuario.addVaca(vaca);
+            Intent intent = new Intent(getApplicationContext(), CowItem.class);
+            intent.putExtra("numero_pendiente", String.valueOf(vaca.getNumeroPendiente()));
+            startActivity(intent);
+        });
     }
 
 

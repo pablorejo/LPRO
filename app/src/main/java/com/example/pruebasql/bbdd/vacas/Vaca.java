@@ -25,7 +25,6 @@ public class Vaca {
 
     private ArrayList<Gps> datosGps;
 
-    private int idUsuarioMadre;
     private int idNumeroPendienteMadre;
 
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -36,13 +35,11 @@ public class Vaca {
             int numeroPendiente,
             LocalDate fechaNacimiento,
             String nota,
-            int idUsuarioMadre,
             int idNumeroPendienteMadre)
     {
         this.Numero_pendiente = numeroPendiente;
         this.Fecha_nacimiento = fechaNacimiento;
         this.nota = nota;
-        this.idUsuarioMadre = idUsuarioMadre;
         this.idNumeroPendienteMadre = idNumeroPendienteMadre;
     }
 
@@ -99,7 +96,6 @@ public class Vaca {
         return this.leiteHistorico;
     }
 
-    public int getIdNumeroPendienteMadre(){ return this.idNumeroPendienteMadre; }
 
     public String getNota() {return this.nota;}
 
@@ -114,6 +110,12 @@ public class Vaca {
             }
         }
         return puntos;
+    }
+
+    public int getIdNumeroPendienteMadre(){ return  this.idNumeroPendienteMadre;}
+
+    public void setIdNumeroPendienteMadre(int idNumeroPendienteMadre) {
+        this.idNumeroPendienteMadre = idNumeroPendienteMadre;
     }
 }
 

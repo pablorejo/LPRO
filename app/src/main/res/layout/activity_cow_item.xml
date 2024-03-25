@@ -47,7 +47,19 @@
             android:background="@android:color/transparent"
             android:gravity="center"
             android:minHeight="48dp"
-            android:text="Fecha de nacimiento"
+            android:hint="ejm: 12-5-2021"
+            android:textColor="@android:color/black"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/textViewNumeroPendienteMadre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:hint="Numero pendiente madre"
+            android:inputType="numberDecimal"
             android:textColor="@android:color/black"
             android:textSize="30sp" />
 

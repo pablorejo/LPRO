@@ -14,6 +14,8 @@ public class Parto {
     private int Numero_pendiente;
     private LocalDate fecha_parto;
 
+    private int idNumeroPendienteMadre;
+
     private String nota;
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -31,5 +33,13 @@ public class Parto {
     }
 
     public int getNumeroPendiente(){ return this.Numero_pendiente; }
+
+    public int getId_vaca_parto() {
+        return id_vaca_parto;
+    }
+
+    public String getNota() {
+        return nota;
+    }
 }
 

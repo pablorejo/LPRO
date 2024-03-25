@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import com.example.pruebasql.R;
 import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
+import com.example.pruebasql.bbdd.vacas.Vaca;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -28,13 +30,31 @@ public class AddEnfermedad extends BarraSuperior {
     private Button btnInicio, btnFin, btnGuardar, btnCancelar;
     private TextView textNombreEnfermedad, textFechaInicio, textFechaFin, textNumeroPendiente, textPeriocidad, textMedicamento;
 
+    private EditText editTextNotaEnfermedad;
     private Server server;
+
+    private Enfermedad enfermedad = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_enfermedad);
         configureToolbar();
         String localDate = getIntent().getStringExtra("fecha");
+        String strId = getIntent().getStringExtra("id");
+        if (strId != null){
+            int id = Integer.valueOf(strId);
+            for (Vaca vaca: usuario.getVacas()){
+                for (Enfermedad enfermedad1: vaca.getEnfermedades()){
+                    if (enfermedad1.getId_enfermedad_vaca() == id){
+                        enfermedad = enfermedad1;
+                        break;
+                    }
+                }
+                if (enfermedad != null){
+                    break;
+                }
+            }
+        }
 
         Usuario usuario = DataManager.getInstance().getUsuario();
 
@@ -60,6 +80,25 @@ public class AddEnfermedad extends BarraSuperior {
         textPeriocidad = findViewById(R.id.editTextPeriocidad);
         textMedicamento = findViewById(R.id.editTextMedicamento);
         textNombreEnfermedad = findViewById(R.id.editTextNombreEnfermedad);
+        editTextNotaEnfermedad = findViewById(R.id.editTextNotaEnfermedad);
+        if (enfermedad != null){
+            textFechaInicio.setText(enfermedad.getFechaInicio().toString());
+            textFechaFin.setText(enfermedad.getFechaFin().toString());
+            textNumeroPendiente.setText(String.valueOf(enfermedad.getNumero_pendiente()));
+            textPeriocidad.setText(String.valueOf(enfermedad.getPeriocidad_en_dias()));
+            textMedicamento.setText(enfermedad.getMedicamento());
+            textNombreEnfermedad.setText(enfermedad.getEnfermedad());
+            editTextNotaEnfermedad.setText(enfermedad.getNota());
+        }
+        textNumeroPendiente.setEnabled(false);
+
+        textFechaInicio.setOnClickListener(v -> {
+            openDialog(textFechaInicio);
+        });
+
+        textFechaFin.setOnClickListener(v -> {
+            openDialog(textFechaFin);
+        });
 
         textNombreEnfermedad.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -89,7 +128,7 @@ public class AddEnfermedad extends BarraSuperior {
                     LocalDate.parse(textFechaInicio.getText().toString(),formatter),
                     LocalDate.parse(textFechaFin.getText().toString(),formatter),
                     Integer.parseInt(textPeriocidad.getText().toString()),
-                    null
+                    editTextNotaEnfermedad.getText().toString()
             );
             usuario.getVacaByNumeroPendiente(numeroPendiente).addEnfermedad(enfermedad);
             server.addEnfermedad(enfermedad);

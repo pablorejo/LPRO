@@ -49,6 +49,10 @@ public class Usuario {
         return vacas;
     }
 
+    public void addVaca(Vaca vaca) {
+        this.vacas.add(vaca);
+    }
+
     public void setId(int id) {
         this.id = id;
     }

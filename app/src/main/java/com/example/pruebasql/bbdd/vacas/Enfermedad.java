@@ -69,4 +69,10 @@ public class Enfermedad {
     public String getMedicamento(){
         return this.Medicamento;
     }
+
+    public int getId_enfermedad_vaca() {return this.id_enfermedad_vaca;}
+
+    public String getNota() {
+        return nota;
+    }
 }
