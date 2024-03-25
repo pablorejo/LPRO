@@ -36,6 +36,7 @@ public class DatosDia extends Fragment {
 
     private int colorEnfermedad = Color.RED;
     private int colorParto = Color.GREEN;
+    private int colorMedicina = Color.BLUE;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,20 +53,30 @@ public class DatosDia extends Fragment {
         return view;
     }
 
-    public void setEventDetails(LocalDate date) {
+    public void setEventDetails(LocalDate date, int numeroPendiente) {
+
         linearLayout.removeAllViews();
 
-
-
         for (Vaca vaca: usuario.getVacas()){
-            for (Enfermedad enfermedad: vaca.getEnfermedades()){
-                if (enfermedad.getFechaInicio().equals(date) || enfermedad.getFechaFin().equals(date)){
-                    addText(String.valueOf(enfermedad.getNumero_pendiente()) +" " + enfermedad.getEnfermedad(),colorEnfermedad);
+            if (numeroPendiente == 0 || vaca.getNumeroPendiente() == numeroPendiente){
+                for (Enfermedad enfermedad: vaca.getEnfermedades()){
+                    if (enfermedad.getFechaInicio().equals(date)){
+                        addText(String.valueOf(enfermedad.getNumero_pendiente()) +" Inicio" + enfermedad.getEnfermedad(),colorEnfermedad);
+                    }
+                    else if (enfermedad.getFechaFin().equals(date)){
+                        addText(String.valueOf(enfermedad.getNumero_pendiente()) +" Fin" + enfermedad.getEnfermedad(),colorEnfermedad);
+                    }
+
+                    for (LocalDate fechaTomarMedicina: enfermedad.getFechasTomarMedicina()){
+                        if (fechaTomarMedicina.equals(date)){
+                            addText(String.valueOf(enfermedad.getNumero_pendiente()) + " Tomar: " + enfermedad.getMedicamento() ,colorMedicina);
+                        }
+                    }
                 }
-            }
-            for (Parto parto: vaca.getPartos()){
-                if (parto.getFechaParto().equals(date)){
-                    addText(String.valueOf(parto.getNumeroPendiente()),colorParto);
+                for (Parto parto: vaca.getPartos()){
+                    if (parto.getFechaParto().equals(date)){
+                        addText(String.valueOf(parto.getNumeroPendiente()),colorParto);
+                    }
                 }
             }
         }
@@ -77,5 +88,9 @@ public class DatosDia extends Fragment {
         textViewNumeroPendiente.setText(texto);
         textViewNumeroPendiente.setBackgroundColor(color);
         linearLayout.addView(newLayout);
+    }
+
+    public void clearDatos(){
+        linearLayout.removeAllViews();
     }
 }

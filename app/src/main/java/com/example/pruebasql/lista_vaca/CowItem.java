@@ -14,6 +14,7 @@ import com.example.pruebasql.R;
 import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.example.pruebasql.calendario.Calendario;
 
 import org.threeten.bp.LocalDate;
 
@@ -23,6 +24,8 @@ public class CowItem extends BarraSuperior {
     Button btnEdit;
 
     Boolean editando = false;
+
+    TextView txtCowLendar,txtCowFinder;
 
     Usuario usuario;
     Vaca vaca;
@@ -60,6 +63,16 @@ public class CowItem extends BarraSuperior {
             }
             editando = !editando;
         });
+
+        txtCowLendar = findViewById(R.id.CowLendar);
+        txtCowLendar.setOnClickListener(v -> {
+            Intent intentCalendario = new Intent(getApplicationContext(), Calendario.class);
+            intentCalendario.putExtra("numero_pendiente", numeroPendienteString);
+            startActivity(intentCalendario);
+        });
+
+        txtCowFinder = findViewById(R.id.CowFinder);
+
     }
 
     private void editarVaca(){
