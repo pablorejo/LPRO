@@ -53,7 +53,7 @@ import java.io.IOException;
 import org.threeten.bp.format.DateTimeFormatter;
 public class Server {
     private Usuario usuario;
-    private String dnsActivo = "vacayisus.ddns.net";
+    private String dnsActivo = "vaca.ddns.net";
 
     private String URL = "https://" + dnsActivo;
     private Context context; // Contexto para Volley

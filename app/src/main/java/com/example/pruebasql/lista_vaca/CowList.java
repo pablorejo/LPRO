@@ -3,8 +3,11 @@ package com.example.pruebasql.lista_vaca;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,9 +34,26 @@ public class CowList extends BarraSuperior {
         configureToolbar();
         Usuario usuario = DataManager.getInstance().getUsuario();
 
-        for (Vaca vaca: usuario.getVacas()){
-            crearCowItem(vaca);
-        }
+        EditText editText = findViewById(R.id.editTextText);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Filtra la lista de vacas según el texto ingresado en el EditText
+                String query = s.toString().toLowerCase();
+                filtrarVacas(query);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        // Mostrar todas las vacas inicialmente
+        mostrarTodasLasVacas(usuario.getVacas());
     }
 
 
@@ -50,5 +70,28 @@ public class CowList extends BarraSuperior {
             startActivity(intent);
         });
         linearLayout.addView(newLayout);
+    }
+    private void filtrarVacas(String query) {
+        ArrayList<Vaca> vacasFiltradas = new ArrayList<>();
+        Usuario usuario = DataManager.getInstance().getUsuario();
+
+        for (Vaca vaca : usuario.getVacas()) {
+            if (String.valueOf(vaca.getNumeroPendiente()).toLowerCase().contains(query)) {
+                vacasFiltradas.add(vaca);
+            }
+        }
+
+        // Actualizar la lista de vacas mostradas en la pantalla con los resultados del filtrado
+        mostrarTodasLasVacas(vacasFiltradas);
+    }
+
+    private void mostrarTodasLasVacas(ArrayList<Vaca> vacas) {
+        // Limpiar la lista actual de vacas mostradas en la pantalla
+        linearLayout.removeAllViews();
+
+        // Mostrar todas las vacas en la lista
+        for (Vaca vaca : vacas) {
+            crearCowItem(vaca);
+        }
     }
 }
