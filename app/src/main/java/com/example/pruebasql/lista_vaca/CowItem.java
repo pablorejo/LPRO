@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,6 +20,8 @@ import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.calendario.Calendario;
 
 import org.threeten.bp.LocalDate;
+
+import java.util.ArrayList;
 
 public class CowItem extends BarraSuperior {
 
@@ -102,6 +106,20 @@ public class CowItem extends BarraSuperior {
         }
 
         txtCowFinder = findViewById(R.id.CowFinder);
+
+        ArrayList<String> sugerencias = new ArrayList<>();
+        for (Vaca vaca : usuario.getVacas()) {
+            sugerencias.add(String.valueOf(vaca.getNumeroPendiente()));
+        }
+
+        // Crear el adaptador con las sugerencias
+        ArrayAdapter<String> adaptador = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, sugerencias);
+
+        // Obtener referencia al EditText desde el layout
+        AutoCompleteTextView editText = findViewById(R.id.textViewNumeroPendienteMadre);
+
+        // Establecer el adaptador para el EditText
+        editText.setAdapter(adaptador);
     }
 
     private void editarVaca(){
