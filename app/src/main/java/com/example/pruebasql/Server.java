@@ -48,6 +48,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import org.threeten.bp.format.DateTimeFormatter;
 public class Server {
@@ -57,28 +60,49 @@ public class Server {
     private String URL = "https://" + dnsActivo;
     private Context context; // Contexto para Volley
 
-    JsonDeserializer<LocalDate> deserializer = new JsonDeserializer<LocalDate>() {
+    String patternLocalDate = "yyyy-MM-dd";
+    JsonDeserializer<LocalDate> deserializerLocalDate = new JsonDeserializer<LocalDate>() {
         @Override
         public LocalDate deserialize(JsonElement json, Type typeOfT, com.google.gson.JsonDeserializationContext context) throws JsonParseException {
-            return LocalDate.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            return LocalDate.parse(json.getAsJsonPrimitive().getAsString(), DateTimeFormatter.ofPattern(patternLocalDate));
         }
     };
 
+    JsonSerializer<LocalDate> serializerLocalDate = new JsonSerializer<LocalDate>() {
+        @Override
+        public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(src.format(DateTimeFormatter.ofPattern(patternLocalDate)));
+        }
+    };
+
+
     String pattern = "yyyy-MM-dd HH:mm:ss"; // Define el patrón del formato de fecha
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+    JsonDeserializer<Date> deserializerDate = new JsonDeserializer<Date>() {
+        @Override
+        public Date deserialize(JsonElement json, Type typeOfT, com.google.gson.JsonDeserializationContext context) throws JsonParseException {
+            try {
+                return simpleDateFormat.parse(json.getAsJsonPrimitive().getAsString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null; // O manejar de otra forma
+            }
+        }
+    };
+
+    JsonSerializer<Date> serializerDate = new JsonSerializer<Date>() {
+        @Override
+        public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+            return src == null ? null : new JsonPrimitive(simpleDateFormat.format(src));
+        }
+    };
+
     Gson gson = new GsonBuilder()
             // Para que parsee bien los LocalDate.
-            .registerTypeAdapter(LocalDate.class, deserializer)
-
-            // Para que parsee bien los Date.
-            .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context) -> {
-                try {
-                    return simpleDateFormat.parse(json.getAsJsonPrimitive().getAsString());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return null; // O manejar de otra forma
-                }
-            })
+            .registerTypeAdapter(LocalDate.class, deserializerLocalDate)
+            .registerTypeAdapter(LocalDate.class, serializerLocalDate)
+            .registerTypeAdapter(Date.class, deserializerDate)
+            .registerTypeAdapter(Date.class, serializerDate)
             .create();
 
 
