@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.pruebasql.bbdd.Usuario;
+
 
 public class SingUpActivity extends AppCompatActivity {
 
@@ -18,7 +20,7 @@ public class SingUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sing_up);
 
-        server = new Server(this,null);
+        server = new Server(this,new Usuario("","","",0,""));
 
         edtUsuario=findViewById(R.id.edtUsuario);
         edtPassword=findViewById(R.id.edtPassword2);

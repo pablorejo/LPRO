@@ -16,6 +16,8 @@ public class Usuario {
     private int id;
     private String session_id;
 
+    private String usu_password;
+
     private ArrayList<Parcela> parcelas;
 
     private ArrayList<Vaca> vacas;
@@ -30,12 +32,31 @@ public class Usuario {
         this.session_id = sesion_id;
     }
 
+    public Usuario(String nombre, String apellidos, String correo,String password, int id, String sesion_id) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.correo = correo;
+        this.id = id;
+        this.session_id = sesion_id;
+        this.usu_password = password;
+    }
+
     public String getSesion_id() {
         return this.session_id;
     }
     public int getId() {
         return id;
     }
+
+    public void setSession_id(String session_id) {
+        this.session_id = session_id;
+    }
+
+    public void setid(int id) {
+        this.id = id;
+    }
+
+
 
     public ArrayList<Vaca> getVacas() {
         return vacas;

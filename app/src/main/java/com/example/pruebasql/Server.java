@@ -159,7 +159,7 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    public void crearUsuario(String usuario,String password, String nombre, String apellidos){
+    public void crearUsuario(String correo,String password, String nombre, String apellidos){
         String url = URL + "/usuarios";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -167,6 +167,19 @@ public class Server {
                 // Validamos que el response no esta vacío.
                 // Por tanto, usuario y password ingresados existen -> servicio php nos está devolviendo la fila encontrada
                 if(!response.isEmpty()){
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        int id = jsonObject.getInt("id");
+                        String sesion_id = jsonObject.getString("sesion_id");
+                        usuario.setid(id);
+                        usuario.setSession_id(sesion_id);
+                        DataManager.getInstance().setUsuario(usuario);
+
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
                     Intent intent = new Intent(context, PrincipalActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
                     context.startActivity(intent);
@@ -185,21 +198,25 @@ public class Server {
                 Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
             }
         }){
+
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Creamos una instancia con el nombre parametros
-                Map<String,String> parametros = new HashMap<String,String>();
-                // Ingresamos los datos a enviar al servicio PHP
-                parametros.put("usuario", usuario);
+            public byte[] getBody() throws AuthFailureError {
+                String json = "";
                 try {
-                    parametros.put("password", hashPassword(password));
+                    usuario = new Usuario(nombre,apellidos,correo,hashPassword(password),0,"");
+                    json = gson.toJson(usuario);
+
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
-                parametros.put("nombre", nombre);
-                parametros.put("apellidos", apellidos);
-                return parametros;
+                return json.getBytes(StandardCharsets.UTF_8);
             }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
         };
 
         // Creamos una instancia
