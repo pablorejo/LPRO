@@ -7,6 +7,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,9 +39,34 @@ public class CowList extends BarraSuperior {
         configureToolbar();
         Usuario usuario = DataManager.getInstance().getUsuario();
 
-        for (Vaca vaca: usuario.getVacas()){
-            crearCowItem(vaca);
-        }
+        EditText editText = findViewById(R.id.editTextText);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Filtra la lista de vacas según el texto ingresado en el EditText
+                String query = s.toString().toLowerCase();
+                filtrarVacas(query);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        // Mostrar todas las vacas inicialmente
+        mostrarTodasLasVacas(usuario.getVacas());
+        btnAñadirVaca = findViewById(R.id.btnAñadirVaca);
+        btnAñadirVaca.setOnClickListener(v -> {
+            Vaca vaca = new Vaca(0, LocalDate.now(),"",0);
+            usuario.addVaca(vaca);
+            Intent intent = new Intent(getApplicationContext(), CowItem.class);
+            intent.putExtra("numero_pendiente", String.valueOf(vaca.getNumeroPendiente()));
+            startActivity(intent);
+        });
     }
 
 
@@ -56,6 +83,7 @@ public class CowList extends BarraSuperior {
             startActivity(intent);
         });
         linearLayout.addView(newLayout);
+
     }
     private void filtrarVacas(String query) {
         ArrayList<Vaca> vacasFiltradas = new ArrayList<>();
