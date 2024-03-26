@@ -1,10 +1,8 @@
 package com.example.pruebasql.mapa;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -14,10 +12,9 @@ import android.os.Bundle;
 import com.example.pruebasql.BarraSuperior;
 import com.example.pruebasql.R;
 import com.example.pruebasql.Server;
-import com.example.pruebasql.bbdd.Parcela;
-import com.example.pruebasql.bbdd.Usuario;
+import com.example.pruebasql.bbdd.parcelas.Coordenada;
+import com.example.pruebasql.bbdd.parcelas.Parcela;
 
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,8 +22,6 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,30 +32,27 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
+public class CowFinder extends BarraSuperior implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
 
-    private GoogleMap mMap;
+    private GoogleMap gMap;
 
-    private Button btnañadirParcela;
+    private Button btnañadirParcela, btnEliminarParcela;
 
     private boolean añadirParcela = false;
 
     private EditText editTextNombreParcela;
 
-    private List<List<Marker>> markersMarkers = new ArrayList<List<Marker>>();
+    private List<Poligono> poligonos = new ArrayList<Poligono>();
+
+    private Server server;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,53 +67,15 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
+        server = new Server(this,usuario);
+
+        btnEliminarParcela = findViewById(R.id.btnEliminarParcela);
+        btnEliminarParcela.setVisibility(View.GONE);
+
 
         btnañadirParcela = findViewById(R.id.btnAñadirParcela);
         btnañadirParcela.setOnClickListener(v -> {
-            if (añadirParcela){ // Si añadir parcela está a true hay que guardar la parcela.
-                añadirParcela= false;
-                btnañadirParcela.setText("Añadir parcela");
-
-                // Añadimos la parcela al usuario, también hay que añadirla con el server.
-                Parcela parcela = usuario.getUltimaParcela();
-                parcela.setNombre(editTextNombreParcela.getText().toString());
-
-                // Cordenadas de la parcela
-                ArrayList<LatLng> coordenadas = new ArrayList<LatLng>();
-                for (Marker marker: getLastMarkers() ){
-                    coordenadas.add(marker.getPosition());
-                }
-                if (coordenadas.size()> 2){
-                    parcela.setCoordenadas(coordenadas);
-
-                    Server server = new Server(this,usuario);
-                    server.addParcela(parcela);
-                }else{
-                    Toast.makeText(this, "Puntos insuficientes, minimo 3", Toast.LENGTH_SHORT).show();
-                    usuario.getParcelas().remove(parcela);
-                    deleteLastMarkers();
-                }
-                redrawPolygon();
-
-                editTextNombreParcela.setEnabled(false);
-                editTextNombreParcela.setVisibility(View.GONE);
-                editTextNombreParcela.setText("Nombre parcela");
-
-            }else{
-                // Hacemos el edit del nombre visible
-                editTextNombreParcela.setEnabled(true);
-                editTextNombreParcela.setVisibility(View.VISIBLE);
-
-                añadirParcela = true;
-                List<LatLng> points = new ArrayList<LatLng>();
-                usuario.addParcela(new Parcela(points,"Nombre parcela"));
-
-                List<Marker> markers = new ArrayList<Marker>();
-                markersMarkers.add(markers);
-
-                btnañadirParcela.setText("Guardar");
-                redrawPolygon();
-            }
+            añadirParcela();
         });
 
         editTextNombreParcela = findViewById(R.id.editTextNombreParcela);
@@ -137,10 +91,65 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
         });
     }
 
+    private void añadirParcela(){
+        if (añadirParcela){ // Si añadir parcela está a true hay que guardar la parcela.
+            añadirParcela= false;
+
+            configurarBtnañadirParcela();
+
+            // Añadimos la parcela al usuario, también hay que añadirla con el server.
+            Parcela parcela = usuario.getUltimaParcela();
+            parcela.setNombre(editTextNombreParcela.getText().toString());
+
+            // Cordenadas de la parcela
+            List<Coordenada> coordenadas = getLastPoligono().getCoordenadas();
+
+            if (coordenadas.size()> 2){
+                parcela.setCoordenadas(coordenadas);
+                server.addParcela(parcela);
+            }else{
+                Toast.makeText(this, "Puntos insuficientes, minimo 3", Toast.LENGTH_SHORT).show();
+                usuario.getParcelas().remove(parcela);
+                deleteLastMarkers();
+            }
+            redrawPolygon();
+
+            // Comprobar si hay cambios en otras parcelas.
+            for (int k = 0; k<poligonos.size(); k++){
+                Poligono poligono = poligonos.get(k);
+                poligono.updateMarkers(añadirParcela);
+
+                if(poligono.modificado){
+                    server.updateParcela(poligono.parcela);
+                    poligono.modificado = false;
+                }
+            }
+
+            editTextNombreParcela.setEnabled(false);
+            editTextNombreParcela.setVisibility(View.GONE);
+            editTextNombreParcela.setText("Nombre parcela");
+
+        }else{
+            // Hacemos el edit del nombre visible
+            editTextNombreParcela.setEnabled(true);
+            editTextNombreParcela.setVisibility(View.VISIBLE);
+
+            añadirParcela = true;
+            List<Coordenada> coordenadas = new ArrayList<Coordenada>();
+            usuario.addParcela(new Parcela(coordenadas,"Nombre parcela"));
+
+            Poligono poligono = new Poligono(new ArrayList<Marker>(),gMap, new Parcela(new ArrayList<>(),""));
+            poligonos.add(poligono);
+
+            btnañadirParcela.setText("Guardar");
+            redrawPolygon();
+        }
+    }
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
+        gMap = googleMap;
         LatLng ubicacionCentro = new LatLng(43.31195130632422, -8.416801609724955);
+        googleMap.setOnMarkerClickListener(CowFinder.this);
 
         // Solicitar permisos de ubicacion en caso de que no los tenga ya la aplicación.
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -156,13 +165,22 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
 
-            mMap.setMyLocationEnabled(true); // Habilita el botón de ubicación
-            mMap.getUiSettings().setMyLocationButtonEnabled(true); // Muestra el botón de ubicación
+            gMap.setMyLocationEnabled(true); // Habilita el botón de ubicación
+            gMap.getUiSettings().setMyLocationButtonEnabled(true); // Muestra el botón de ubicación
             Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
+
             if (lastKnownLocation != null) {
                 double latitude = lastKnownLocation.getLatitude();
                 double longitude = lastKnownLocation.getLongitude();
                 ubicacionCentro = new LatLng(latitude, longitude);
+            }
+        }else{
+            List<LatLng> puntos = new ArrayList<>();
+            for (Poligono poligono: poligonos){
+                puntos.addAll(poligono.getPuntosLatLng());
+            }
+            if (poligonos.get(0) != null){
+                ubicacionCentro = poligonos.get(0).getPolygonCenterLatLng(puntos);
             }
         }
 
@@ -171,25 +189,24 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
         float nivelZoom = 17.0f; // Ajusta este valor para el nivel de zoom que necesitas
 
         // Centra el mapa en la ubicación deseada con el nivel de zoom especificado
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionCentro, nivelZoom));
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionCentro, nivelZoom));
 
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
                 if (añadirParcela){
-                    Marker marker = mMap.addMarker(new MarkerOptions()
+                    Marker marker = gMap.addMarker(new MarkerOptions()
                             .position(point)
                             .draggable(true)); // Permite que el marcador sea desplazable
                     if (marker != null) {
-                        getLastMarkers().add(marker);
+                        getLastPoligono().marcadores.add(marker);
                     }
                     redrawPolygon();
                 }
             }
         });
 
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+        gMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {}
 
@@ -205,9 +222,11 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
         redrawPolygon();
     }
 
+
+
     private void redrawPolygon() {
-        mMap.clear(); // Limpia el mapa para eliminar polígonos y marcadores anteriores
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        gMap.clear(); // Limpia el mapa para eliminar polígonos y marcadores anteriores
+        gMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
 
         // Creamos el mapa de calor con los datos gps de cada vaca
@@ -221,108 +240,82 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback{
                         .build();
 
                 // Añadir el overlay del mapa de calor al Google Map
-                TileOverlay overlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(provider));
+                TileOverlay overlay = gMap.addTileOverlay(new TileOverlayOptions().tileProvider(provider));
             }
         }
-
 
         int indiceParcela = 0;
-        for (List<Marker> markers : markersMarkers) {
-            List<LatLng> points = new ArrayList<LatLng>();
-            List<Marker> updatedMarkers = new ArrayList<>(); // Lista temporal para guardar los nuevos marcadores
-            for (Marker marker: markers){
-                points.add(marker.getPosition());
-
-                Marker newMarker = mMap.addMarker(new MarkerOptions().position(marker.getPosition()).draggable(true));
-                updatedMarkers.add(newMarker); // Guarda el nuevo marcador en la lista temporal
-                if (!añadirParcela){
-                    newMarker.setVisible(false);
-                }
-            }
-
-            markers.clear();
-            markers.addAll(updatedMarkers);
-
-            if (points.size() > 2) {
-                mMap.addPolygon(new PolygonOptions()
-                        .addAll(points)
-                        .strokeColor(Color.RED)
-                        .fillColor(Color.argb(0, 0, 0, 0)));
-
-                mMap.addMarker(new MarkerOptions()
-                        .position(getPolygonCenter(markers))
-                        .title(usuario.getParcelas().get(indiceParcela).getNombre())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-            }
+        // Dibujamos los poligonos que nos hacen falta.
+        for (Poligono poligono : poligonos) {
+            poligono.dibujar(añadirParcela,indiceParcela,usuario);
             indiceParcela ++;
         }
+
+        // Esto es para que al inicio se pongan los marcadores del usurio.
+        if (poligonos.isEmpty() ){
+            for (Parcela parcela: usuario.getParcelas()){
+                Poligono poligono = new Poligono(new ArrayList<Marker>(), gMap, parcela);
+                poligono.setMarcadoresByPoints(parcela.getPuntosLatLong(),añadirParcela);
+                poligono.dibujar(añadirParcela,indiceParcela,usuario);
+                poligonos.add(poligono);
+            }
+        }
     }
 
-    private LatLng getPolygonCenter(List<Marker> markers) {
-
-        List<LatLng> points = new ArrayList<LatLng>();
-        for (Marker marker: markers){
-            points.add(marker.getPosition());
-        }
-
-        double latitude = 0;
-        double longitude = 0;
-        int count = points.size();
-
-        for (LatLng point : points) {
-            latitude += point.latitude;
-            longitude += point.longitude;
-        }
-
-        return new LatLng(latitude / count, longitude / count);
-    }
-
-    private List<Marker> getLastMarkers(){
-
-
-        return this.markersMarkers.get(markersMarkers.size()-1);
+    private Poligono getLastPoligono(){
+        return this.poligonos.get(poligonos.size()-1);
     }
 
     private void deleteLastMarkers(){
-        markersMarkers.remove(getLastMarkers());
+        poligonos.remove(getLastPoligono());
     }
 
-    private List<List<LatLng>> getPoints(){
-        List<List<LatLng>> pointsPoints = new ArrayList<List<LatLng>>();
-        for (List<Marker> markers : markersMarkers){
-            List<LatLng> points = new ArrayList<LatLng>();
-            for (Marker marker: markers){
-                points.add(marker.getPosition());
+    private Poligono obtenerParcelaPorMarkerCentral(Marker marker){
+
+        for (Poligono poligono: poligonos){
+            if (poligono.isMarkerInsidePolygon(marker.getPosition(),poligono.getPuntosLatLng())){
+                return poligono;
             }
-            pointsPoints.add(points);
         }
-        return pointsPoints;
+        return null;
     }
 
-    private class Marcadores {
-        private List<Marker> marcadores;
-        private Parcela parcela;
 
-        public Marcadores(List<Marker> marcadores, Parcela parcela) {
-            this.marcadores = marcadores;
-            this.parcela = parcela;
-        }
 
-        // Getters y setters
-        public List<Marker> getMarcadores() {
-            return marcadores;
-        }
 
-        public void setMarcadores(List<Marker> marcadores) {
-            this.marcadores = marcadores;
-        }
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        marker.setTag(marker.getTitle());
+        // Esta funcion la usamos par obtener el marcador que a sido pulsado y mostrar si queremos eliminar la parcela o no
+        Poligono poligono = obtenerParcelaPorMarkerCentral(marker);
+        if (poligono != null){
+            btnEliminarParcela.setVisibility(View.VISIBLE);
+            btnEliminarParcela.setOnClickListener(v -> {
+                server.deleteParcela(poligono.parcela);
+                usuario.getParcelas().remove(poligono.parcela);
+                poligonos.remove(poligono);
+                configurarBtnañadirParcela();
+                redrawPolygon();
+            });
 
-        public Parcela getParcela() {
-            return parcela;
-        }
+            btnañadirParcela.setVisibility(View.VISIBLE);
+            btnañadirParcela.setText("Cancelar");
 
-        public void setParcela(Parcela parcela) {
-            this.parcela = parcela;
+            btnañadirParcela.setOnClickListener(v -> {
+                configurarBtnañadirParcela();
+            });
+
+            return true;
+        }else{
+            return false;
         }
+    }
+
+    private void configurarBtnañadirParcela(){
+        btnañadirParcela.setText("Añadir parcela");
+        btnEliminarParcela.setVisibility(View.GONE);
+        btnañadirParcela.setOnClickListener(v1 -> {
+            añadirParcela();
+        });
     }
 }

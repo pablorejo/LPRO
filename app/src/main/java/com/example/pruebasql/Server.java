@@ -2,7 +2,6 @@ package com.example.pruebasql;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,8 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.pruebasql.bbdd.Parcela;
+import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Leite;
@@ -27,7 +25,6 @@ import com.example.pruebasql.listeners.FechasPartoResponseListener;
 import com.example.pruebasql.listeners.VacaResponseListener;
 import com.example.pruebasql.listeners.VacasResponseListener;
 import com.example.pruebasql.listeners.VolumenLecheResponseListener;
-import com.google.android.gms.maps.model.Marker;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
@@ -40,7 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -52,10 +48,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import java.io.IOException;
+
 import org.threeten.bp.format.DateTimeFormatter;
 public class Server {
     private Usuario usuario;
@@ -113,7 +106,9 @@ public class Server {
                     } catch (Exception e) {
                         Toast.makeText(context, "Error al iniciar sesion", Toast.LENGTH_SHORT).show();
                     }
+                    imprimirMensajeRespuesta(response);
                 }else{
+                    Toast.makeText(context, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     Toast.makeText(context, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -151,6 +146,7 @@ public class Server {
                     Intent intent = new Intent(context, PrincipalActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
                     context.startActivity(intent);
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("Algo ha salido mal");
@@ -226,6 +222,7 @@ public class Server {
                 } catch (Exception e) {
                     listener.onError(e.toString());
                 }
+                imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -260,6 +257,7 @@ public class Server {
                 } catch (Exception e) {
                     listener.onError(e.toString());
                 }
+                imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -285,8 +283,7 @@ public class Server {
             public void onResponse(String response) {
                 // Validamos que el response no esta vacío.
                 if(!response.isEmpty()){
-                    System.out.println("Se ha añadido con EXITO una vaca nueva a la Base de Datos!");
-                    Toast.makeText(context, "Se ha añadido con EXITO una vaca nueva a la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido añadir la vaca a la Base de Datos!");
@@ -333,8 +330,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha modificado con EXITO la vaca en la Base de Datos!");
-                    Toast.makeText(context, "Se ha modificado con EXITO la vaca en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido modificar la vaca a la Base de Datos!");
@@ -379,8 +375,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha eliminado con EXITO la vaca en la Base de Datos!");
-                    Toast.makeText(context, "Se ha eliminado con EXITO la vaca en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido eliminar la vaca a la Base de Datos!");
@@ -435,6 +430,8 @@ public class Server {
                 } catch (Exception e) {
                     listener.onError(e.toString());
                 }
+                imprimirMensajeRespuesta(response);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -496,8 +493,7 @@ public class Server {
             public void onResponse(String response) {
                 Enfermedad enfermedad = gson.fromJson(response, Enfermedad.class);
                 usuario.addEnfermedad(enfermedad);
-                System.out.println("Se ha añadido con EXITO una enfermedad en la Base de Datos!");
-                Toast.makeText(context, "Se ha añadido con EXITO una enfermedad en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -555,8 +551,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha modificado con EXITO la vaca en la Base de Datos!");
-                    Toast.makeText(context, "Se ha modificado con EXITO la vaca en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido modificar la vaca a la Base de Datos!");
@@ -601,8 +596,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha eliminado con EXITO la enfermedad en la Base de Datos!");
-                    Toast.makeText(context, "Se ha eliminado con EXITO la enfermedad en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido eliminar la enfermedad a la Base de Datos!");
@@ -729,8 +723,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha modificado con EXITO la fecha de parto en la Base de Datos!");
-                    Toast.makeText(context, "Se ha modificado con EXITO la fecha de parto en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido modificar la fecha de parto a la Base de Datos!");
@@ -775,8 +768,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha eliminado con EXITO la fecha del parto en la Base de Datos!");
-                    Toast.makeText(context, "Se ha eliminado con EXITO la fecha del parto en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido eliminar la fecha del parto a la Base de Datos!");
@@ -851,8 +843,7 @@ public class Server {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println("Se ha añadido con EXITO los días de pasto en la Base de Datos!");
-                Toast.makeText(context, "Se ha añadido con EXITO los días de pasto en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -891,8 +882,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha modificado con EXITO los días de pasto en la Base de Datos!");
-                    Toast.makeText(context, "Se ha modificado con EXITO los días de pasto en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido modificar los días de pasto a la Base de Datos!");
@@ -937,8 +927,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha eliminado con EXITO los días de pasto seleccionado de la Base de Datos!");
-                    Toast.makeText(context, "Se ha eliminado con EXITO los días de pasto seleccionado la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido eliminar los días de pasto de la Base de Datos!");
@@ -1014,8 +1003,7 @@ public class Server {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println("Se ha añadido con EXITO el volumen de leche en la Base de Datos!");
-                Toast.makeText(context, "Se ha añadido con EXITO el volumen de leche en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1054,8 +1042,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha modificado con EXITO el volumen de leche en la Base de Datos!");
-                    Toast.makeText(context, "Se ha modificado con EXITO el volumen de leche en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido modificar el volumen de leche a la Base de Datos!");
@@ -1101,8 +1088,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha eliminado con EXITO el volumen de leche seleccionado de la Base de Datos!");
-                    Toast.makeText(context, "Se ha eliminado con EXITO el volumen de leche seleccionado la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido eliminar el volumen de leche seleccionado la Base de Datos!");
@@ -1148,8 +1134,7 @@ public class Server {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println("Se ha añadido con EXITO la nueva parcela: " + parcela.getNombre());
-                Toast.makeText(context, "Se ha añadido con EXITO la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
+                imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1188,8 +1173,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 if(!response.isEmpty()){
-                    System.out.println("Se ha modificado con EXITO la nueva parcela: " + parcela.getNombre());
-                    Toast.makeText(context, "Se ha modificado con EXITO la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
+                    imprimirMensajeRespuesta(response);
                 }else{
                     // Mensaje: "Contraseñas incorrectas"
                     System.out.println("ERROR. No se ha podido modificar la nueva parcela: " + parcela.getNombre());
@@ -1227,21 +1211,14 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    public void deleteVolumenLeche(Parcela parcela){
+    public void deleteParcela(Parcela parcela){
         // Configuración de la URL del servidor apache
-        String url = URL + "/parcelas";
+        String url = URL + "/parcelas/" + parcela.getId();
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                if(!response.isEmpty()){
-                    System.out.println("Se ha eliminado con EXITO la nueva parcela: " + parcela.getNombre());
-                    Toast.makeText(context, "Se ha eliminado con EXITO la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
-                }else{
-                    // Mensaje: "Contraseñas incorrectas"
-                    System.out.println("ERROR. No se ha podido eliminar la nueva parcela: " + parcela.getNombre());
-                    Toast.makeText(context, "ERROR. No se ha podido eliminar la nueva parcela: " + parcela.getNombre(), Toast.LENGTH_SHORT).show();
-                }
+                imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1251,16 +1228,7 @@ public class Server {
                 Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
             }
         }){
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                String json = gson.toJson(parcela);
-                return json.getBytes(StandardCharsets.UTF_8);
-            }
 
-            @Override
-            public String getBodyContentType() {
-                return "application/json; charset=utf-8";
-            }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -1274,5 +1242,15 @@ public class Server {
 
     }
 
-
+    private void imprimirMensajeRespuesta(String response){
+        try {
+            JSONObject obj = new JSONObject(response);
+            String mensaje = obj.getString("mensaje");
+            System.out.println(mensaje);
+            Toast.makeText(context, mensaje, Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            System.out.println("No hay mensaje de respuesta");
+            Toast.makeText(context, "No hay mensaje de respuesta", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

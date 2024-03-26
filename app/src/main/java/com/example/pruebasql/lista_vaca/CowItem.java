@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -67,6 +68,15 @@ public class CowItem extends BarraSuperior {
         if (!editando) {textViewNumeroPendienteMadre.setEnabled(false);}
 
         textViewNumeroPendienteMadre.setText(String.valueOf(vaca.getIdNumeroPendienteMadre()));
+        textViewNumeroPendienteMadre.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    textViewNumeroPendienteMadre.setText(""); // Esto borrará el texto cuando el EditText gane el foco
+                }
+            }
+        });
+
 
         btnEdit.setOnClickListener(v -> {
             if (editando){
@@ -99,6 +109,8 @@ public class CowItem extends BarraSuperior {
         editTextFechaNacimiento.setOnClickListener(v -> {
             openDialog(editTextFechaNacimiento);
         });
+        textViewNumeroPendienteMadre.setEnabled(true);
+
 
         editTextNota.setEnabled(true);
 
@@ -112,6 +124,7 @@ public class CowItem extends BarraSuperior {
         Server server = new Server(this,usuario);
         editTextFechaNacimiento.setEnabled(false);
         editTextFechaNacimiento.setOnClickListener(v -> {});
+        textViewNumeroPendienteMadre.setEnabled(false);
         editTextNota.setEnabled(false);
 
         txtCowLendar.setOnClickListener(v -> {
@@ -121,8 +134,14 @@ public class CowItem extends BarraSuperior {
         });
 
         vaca.setFechaNacimiento(LocalDate.parse(editTextFechaNacimiento.getText().toString(),formatter));
+
         vaca.setNota(editTextNota.getText().toString());
-        vaca.setIdNumeroPendienteMadre(Integer.parseInt(textViewNumeroPendienteMadre.getText().toString()));
+
+        String strNumeroPendienteMadre = textViewNumeroPendienteMadre.getText().toString();
+        if (strNumeroPendienteMadre != null && strNumeroPendienteMadre!= ""){
+            vaca.setIdNumeroPendienteMadre(Integer.parseInt(strNumeroPendienteMadre));
+        }
+
         server.updateVaca(vaca);
 
         btnEdit.setText("Editar");
