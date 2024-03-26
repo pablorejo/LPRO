@@ -89,7 +89,6 @@ public class CowList extends BarraSuperior {
             startActivity(intent);
         });
         linearLayout.addView(newLayout);
-
     }
     private void filtrarVacas(String query) {
         ArrayList<Vaca> vacasFiltradas = new ArrayList<>();

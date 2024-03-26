@@ -96,7 +96,11 @@ public class Poligono {
         for (Marker marker: marcadores){
             points.add(marker.getPosition());
 
-            Marker newMarker = gMap.addMarker(new MarkerOptions().position(marker.getPosition()).draggable(true));
+            Marker newMarker = gMap.addMarker(
+                    new MarkerOptions()
+                            .position(marker.getPosition())
+                            .draggable(true));
+
             updatedMarkers.add(newMarker); // Guarda el nuevo marcador en la lista temporal
             if (!añadirParcela){
                 newMarker.setVisible(false);
