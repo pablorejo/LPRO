@@ -7,6 +7,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,6 +38,24 @@ public class CowList extends BarraSuperior {
         linearLayout = findViewById(R.id.idLinearLayout);
         configureToolbar();
         Usuario usuario = DataManager.getInstance().getUsuario();
+
+        EditText editText = findViewById(R.id.editTextText);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Filtra la lista de vacas según el texto ingresado en el EditText
+                String query = s.toString().toLowerCase();
+                filtrarVacas(query);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
         for (Vaca vaca: usuario.getVacas()){
             crearCowItem(vaca);
