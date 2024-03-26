@@ -3,9 +3,10 @@ package com.example.pruebasql.lista_vaca;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,15 +40,6 @@ public class CowList extends BarraSuperior {
         for (Vaca vaca: usuario.getVacas()){
             crearCowItem(vaca);
         }
-
-        btnAñadirVaca = findViewById(R.id.btnAñadirVaca);
-        btnAñadirVaca.setOnClickListener(v -> {
-            Vaca vaca = new Vaca(0, LocalDate.now(),"",0);
-            usuario.addVaca(vaca);
-            Intent intent = new Intent(getApplicationContext(), CowItem.class);
-            intent.putExtra("numero_pendiente", String.valueOf(vaca.getNumeroPendiente()));
-            startActivity(intent);
-        });
     }
 
 
@@ -70,5 +62,28 @@ public class CowList extends BarraSuperior {
             startActivity(intent);
         });
         linearLayout.addView(newLayout);
+    }
+    private void filtrarVacas(String query) {
+        ArrayList<Vaca> vacasFiltradas = new ArrayList<>();
+        Usuario usuario = DataManager.getInstance().getUsuario();
+
+        for (Vaca vaca : usuario.getVacas()) {
+            if (String.valueOf(vaca.getNumeroPendiente()).toLowerCase().contains(query)) {
+                vacasFiltradas.add(vaca);
+            }
+        }
+
+        // Actualizar la lista de vacas mostradas en la pantalla con los resultados del filtrado
+        mostrarTodasLasVacas(vacasFiltradas);
+    }
+
+    private void mostrarTodasLasVacas(ArrayList<Vaca> vacas) {
+        // Limpiar la lista actual de vacas mostradas en la pantalla
+        linearLayout.removeAllViews();
+
+        // Mostrar todas las vacas en la lista
+        for (Vaca vaca : vacas) {
+            crearCowItem(vaca);
+        }
     }
 }
