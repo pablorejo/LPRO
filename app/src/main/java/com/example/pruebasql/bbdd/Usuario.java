@@ -1,21 +1,13 @@
 package com.example.pruebasql.bbdd;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Parto;
 import com.example.pruebasql.bbdd.vacas.Vaca;
-import com.google.android.gms.maps.model.Marker;
 
-import org.json.JSONObject;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 public class Usuario {
     private String nombre;
@@ -110,5 +102,14 @@ public class Usuario {
 
     public Parcela getUltimaParcela(){
         return this.parcelas.get(this.parcelas.size()-1);
+    }
+
+    public Parcela getParcelaById(int id){
+        for (Parcela parcela: parcelas){
+            if(parcela.getId() == id){
+                return parcela;
+            }
+        }
+        return null;
     }
 }

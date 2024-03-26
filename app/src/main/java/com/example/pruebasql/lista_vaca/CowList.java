@@ -53,12 +53,18 @@ public class CowList extends BarraSuperior {
 
     protected void crearCowItem(Vaca vaca){
         View newLayout = LayoutInflater.from(this).inflate(R.layout.list_cow, linearLayout, false);
+
         TextView textViewNumeroPendiente = newLayout.findViewById(R.id.idTextViewCowItemList);
 
         String numeroPendiente = String.valueOf(vaca.getNumeroPendiente());
         textViewNumeroPendiente.setText(numeroPendiente);
 
-        textViewNumeroPendiente.setOnClickListener(v -> {
+        TextView textViewNotaListCow =  newLayout.findViewById(R.id.textViewNotaListCow);
+        textViewNotaListCow.setText(vaca.getNota());
+
+        LinearLayout linearLayoutListCow = newLayout.findViewById(R.id.linearLayoutListCow);
+
+        linearLayoutListCow.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), CowItem.class);
             intent.putExtra("numero_pendiente", numeroPendiente);
             startActivity(intent);
