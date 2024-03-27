@@ -30,7 +30,7 @@ import java.util.Date;
 
 public class AddParto extends BarraSuperior {
 
-    private EditText NumeroPendiente, editTextNotaParto;
+    private EditText editTextNumeroPendiente, editTextNotaParto;
     private Button btnFechaParto, btnGuardar, btnCancelar;
 
     private TextView fechaParto;
@@ -38,13 +38,15 @@ public class AddParto extends BarraSuperior {
     LocalDate date;
 
     private Parto parto = null;
+
+    private boolean editandoParto;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_parto);
         configureToolbar();
         String localDate = getIntent().getStringExtra("fecha");
-        String strId = getIntent().getStringExtra("id");
+        String strId = getIntent().getStringExtra("id"); // Si el id llega a null significa que estamos creando un nuevo Parto
 
         if (strId != null){
             int id = Integer.valueOf(strId);
@@ -59,9 +61,12 @@ public class AddParto extends BarraSuperior {
                     break;
                 }
             }
+            editandoParto = false;
+        }else{
+            editandoParto = true;
         }
-        Usuario usuario = DataManager.getInstance().getUsuario();
 
+        Usuario usuario = DataManager.getInstance().getUsuario();
         server = new Server(this,usuario);
 
         if (localDate == null){
@@ -71,15 +76,14 @@ public class AddParto extends BarraSuperior {
             date = LocalDate.parse(localDate,formatter);
         }
 
-        NumeroPendiente = findViewById(R.id.editTextNumeroPendiente);
-        NumeroPendiente.setEnabled(false);
+        editTextNumeroPendiente = findViewById(R.id.editTextNumeroPendiente);
         btnFechaParto = findViewById(R.id.btnFechaParto);
         fechaParto = findViewById(R.id.textFechaParto);
         fechaParto.setText(localDate);
         editTextNotaParto = findViewById(R.id.editTextNotaParto);
 
         if (parto != null){
-            NumeroPendiente.setText(String.valueOf(parto.getNumeroPendiente()));
+            editTextNumeroPendiente.setText(String.valueOf(parto.getNumeroPendiente()));
             fechaParto.setText(parto.getFechaParto().toString());
             editTextNotaParto.setText(parto.getNota());
         }
@@ -96,7 +100,7 @@ public class AddParto extends BarraSuperior {
 
         btnGuardar.setOnClickListener(v -> {
 
-            int numeroPendiente = Integer.valueOf(NumeroPendiente.getText().toString());
+            int numeroPendiente = Integer.valueOf(editTextNumeroPendiente.getText().toString());
             Parto parto = new Parto(
                     0,
                     numeroPendiente,

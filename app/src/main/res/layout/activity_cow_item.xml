@@ -103,15 +103,30 @@
             android:textColor="@android:color/black"
             android:minHeight="250dp" />
 
-
-
-        <Button
-            android:id="@+id/buttonEditCowItem"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:drawableEnd="@android:drawable/ic_menu_edit"
-            android:text="Editar" />
+            android:gravity="top|center">
+
+            <Button
+                android:id="@+id/btnEliminarCowItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@android:drawable/ic_menu_edit"
+                android:layout_marginEnd="20dp"
+                android:gravity="start"
+                android:text="Eliminar" />
+
+            <Button
+                android:id="@+id/buttonEditCowItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@android:drawable/ic_menu_edit"
+                android:gravity="end"
+                android:text="Editar" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

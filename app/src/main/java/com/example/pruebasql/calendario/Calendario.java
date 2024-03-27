@@ -58,9 +58,6 @@ public class Calendario extends BarraSuperior {
 
     private Usuario usuario;
 
-    // Define un ActivityResultLauncher como una variable de instancia
-    private ActivityResultLauncher<Intent> someActivityResultLauncher;
-
     private int numeroPendiente;
 
     private DatosDia datosDia;
@@ -88,20 +85,6 @@ public class Calendario extends BarraSuperior {
         }
 
         // Inicializa el ActivityResultLauncher
-        someActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            limpiarCalendario();
-                            for (Vaca vaca : usuario.getVacas()){
-                                añadirEnfermedades(vaca.getEnfermedades());
-                                añadirPartos(vaca.getPartos());
-                            }
-                        }
-                    }
-                });
         calendarView = findViewById(R.id.calendarView);
 
         btnAddEnfermedad = findViewById(R.id.btnAddEnfermedad);
@@ -111,14 +94,14 @@ public class Calendario extends BarraSuperior {
             Intent intent = new Intent(getApplicationContext(), AddParto.class);
             intent.putExtra("fecha",localDate.toString());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
-            someActivityResultLauncher.launch(intent);
+            miActivityResultLauncher.launch(intent);
         });
 
         btnAddEnfermedad.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), AddEnfermedad.class);
             intent.putExtra("fecha",localDate.toString());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
-            someActivityResultLauncher.launch(intent);
+            miActivityResultLauncher.launch(intent);
         });
 
         calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
@@ -135,6 +118,17 @@ public class Calendario extends BarraSuperior {
             }
         });
 
+        updateCalendar();
+    }
+
+    @Override
+    protected void actualizar(Intent data) {
+        super.actualizar(data);
+        updateCalendar();
+    }
+
+    private void updateCalendar(){
+        calendarView.clearSelection();
         for (Vaca vaca : usuario.getVacas()){
             if (numeroPendiente == 0 || vaca.getNumeroPendiente() == numeroPendiente){
                 añadirEnfermedades(vaca.getEnfermedades());

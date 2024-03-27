@@ -1,7 +1,12 @@
 package com.example.pruebasql;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -32,10 +37,26 @@ public class BarraSuperior extends AppCompatActivity {
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     protected Usuario usuario = DataManager.getInstance().getUsuario();
 
+    protected  ActivityResultLauncher<Intent> miActivityResultLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barra_superior);
+        miActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            actualizar(data);
+                            // Maneja el resultado OK aquí
+                        }
+                    }
+                });
+    }
+
+    protected void actualizar(Intent data){
     }
 
     protected void configureToolbar() {
@@ -146,6 +167,4 @@ public class BarraSuperior extends AppCompatActivity {
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
-
-
 }

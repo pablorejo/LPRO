@@ -2,6 +2,7 @@ package com.example.pruebasql.lista_vaca;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 public class CowItem extends BarraSuperior {
 
     EditText editTextNumeroPendiente, editTextFechaNacimiento, editTextNota, textViewNumeroPendienteMadre;
-    Button btnEdit;
+    Button btnEdit, btnEliminarCowItem;
 
     Boolean editando = false;
 
@@ -34,21 +35,49 @@ public class CowItem extends BarraSuperior {
 
     Usuario usuario;
     Vaca vaca;
+    Server server;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cow_item);
         configureToolbar();
         usuario = DataManager.getInstance().getUsuario();
+        server = new Server(this,usuario);
 
         Intent intent = getIntent();
         String numeroPendienteString = intent.getStringExtra("numero_pendiente");
         if (numeroPendienteString.equals("0")){
             editando = true;
+
         }
         vaca = usuario.getVacaByNumeroPendiente(Integer.parseInt(numeroPendienteString));
 
+
+        btnEliminarCowItem = findViewById(R.id.btnEliminarCowItem);
+        btnEliminarCowItem.setVisibility(View.GONE);
+        btnEliminarCowItem.setOnClickListener(v -> {
+            server.deleteVaca(vaca.getNumeroPendiente());
+            usuario.getVacas().remove(vaca);
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("resultado", "Aquí van los datos");
+            setResult(Activity.RESULT_OK, returnIntent);
+            finish();
+        });
+
         btnEdit = findViewById(R.id.buttonEditCowItem);
+        btnEdit.setOnClickListener(v -> {
+            if (editando){
+                btnEliminarCowItem.setVisibility(View.GONE);
+                guardarVaca();
+            }else{
+                btnEliminarCowItem.setVisibility(View.VISIBLE);
+                editarVaca();
+            }
+            editando = !editando;
+        });
+        if (editando){
+            btnEdit.setText("Guardar");
+        }
 
         editTextNumeroPendiente = findViewById(R.id.numeroPendiente);
         editTextNumeroPendiente.setText(String.valueOf(vaca.getNumeroPendiente()));
@@ -82,17 +111,7 @@ public class CowItem extends BarraSuperior {
         });
 
 
-        btnEdit.setOnClickListener(v -> {
-            if (editando){
-                guardarVaca();
-            }else{
-                editarVaca();
-            }
-            editando = !editando;
-        });
-        if (editando){
-            btnEdit.setText("Guardar");
-        }
+
 
         txtCowLendar = findViewById(R.id.CowLendar);
 
@@ -139,7 +158,6 @@ public class CowItem extends BarraSuperior {
     }
 
     private void guardarVaca(){
-        Server server = new Server(this,usuario);
         editTextFechaNacimiento.setEnabled(false);
         editTextFechaNacimiento.setOnClickListener(v -> {});
         textViewNumeroPendienteMadre.setEnabled(false);
@@ -156,8 +174,10 @@ public class CowItem extends BarraSuperior {
         vaca.setNota(editTextNota.getText().toString());
 
         String strNumeroPendienteMadre = textViewNumeroPendienteMadre.getText().toString();
-        if (strNumeroPendienteMadre != null && strNumeroPendienteMadre!= ""){
+        if (strNumeroPendienteMadre != null && !strNumeroPendienteMadre.equals("")){
             vaca.setIdNumeroPendienteMadre(Integer.parseInt(strNumeroPendienteMadre));
+        }else{
+            vaca.setIdNumeroPendienteMadre(0);
         }
 
         server.updateVaca(vaca);

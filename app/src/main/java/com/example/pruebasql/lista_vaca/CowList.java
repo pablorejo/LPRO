@@ -1,6 +1,7 @@
 package com.example.pruebasql.lista_vaca;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.example.pruebasql.BarraSuperior;
 import com.example.pruebasql.DataManager;
@@ -30,6 +36,8 @@ public class CowList extends BarraSuperior {
     LinearLayout linearLayout;
 
     Button btnAñadirVaca;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +65,8 @@ public class CowList extends BarraSuperior {
             }
         });
 
+
+
         // Mostrar todas las vacas inicialmente
         mostrarTodasLasVacas(usuario.getVacas());
         btnAñadirVaca = findViewById(R.id.btnAñadirVaca);
@@ -65,10 +75,15 @@ public class CowList extends BarraSuperior {
             usuario.addVaca(vaca);
             Intent intent = new Intent(getApplicationContext(), CowItem.class);
             intent.putExtra("numero_pendiente", String.valueOf(vaca.getNumeroPendiente()));
-            startActivity(intent);
+            miActivityResultLauncher.launch(intent);
         });
     }
 
+    @Override
+    protected void actualizar(Intent data) {
+        super.actualizar(data);
+        mostrarTodasLasVacas(usuario.getVacas());
+    }
 
     protected void crearCowItem(Vaca vaca){
         View newLayout = LayoutInflater.from(this).inflate(R.layout.list_cow, linearLayout, false);
@@ -86,7 +101,7 @@ public class CowList extends BarraSuperior {
         linearLayoutListCow.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), CowItem.class);
             intent.putExtra("numero_pendiente", numeroPendiente);
-            startActivity(intent);
+            miActivityResultLauncher.launch(intent);
         });
         linearLayout.addView(newLayout);
     }

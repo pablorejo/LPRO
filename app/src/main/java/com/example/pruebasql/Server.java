@@ -410,7 +410,7 @@ public class Server {
 
     public void deleteVaca(int numeroPendiente){
         // Configuración de la URL del servidor apache
-        String url = URL + "/vacas";
+        String url = URL + "/vacas/" + numeroPendiente;
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
 
             @Override
@@ -431,15 +431,7 @@ public class Server {
                 Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
             }
         }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Creamos una instancia con el nombre parametros
-                HashMap<String, String> parametros = new HashMap<>();
-                // Ingresamos los datos a enviar al servicio PHP
-                String numeroPendienteString = String.valueOf(numeroPendiente);
-                parametros.put("numeroPendiente", numeroPendienteString);
-                return parametros;
-            }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
