@@ -26,7 +26,9 @@ import java.util.ArrayList;
 
 public class CowItem extends BarraSuperior {
 
-    EditText editTextNumeroPendiente, editTextFechaNacimiento, editTextNota, textViewNumeroPendienteMadre;
+    EditText editTextNumeroPendiente, editTextFechaNacimiento, editTextNota;
+
+    AutoCompleteTextView textViewNumeroPendienteMadre;
     Button btnEdit, btnEliminarCowItem;
 
     Boolean editando = false;
@@ -106,7 +108,10 @@ public class CowItem extends BarraSuperior {
                 }
             }
         });
-
+        // Obtener referencia al EditText desde el layout
+        AutoCompleteTextView textViewNumeroPendienteMadre = findViewById(R.id.textViewNumeroPendienteMadre);
+        // Establecer el adaptador para el EditText
+        textViewNumeroPendienteMadre.setAdapter(usuario.getAdapterVacas(this));
 
 
 
@@ -128,14 +133,7 @@ public class CowItem extends BarraSuperior {
             sugerencias.add(String.valueOf(vaca.getNumeroPendiente()));
         }
 
-        // Crear el adaptador con las sugerencias
-        ArrayAdapter<String> adaptador = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, sugerencias);
 
-        // Obtener referencia al EditText desde el layout
-        AutoCompleteTextView editText = findViewById(R.id.textViewNumeroPendienteMadre);
-
-        // Establecer el adaptador para el EditText
-        editText.setAdapter(adaptador);
     }
 
     private void editarVaca(){

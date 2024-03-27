@@ -36,7 +36,7 @@
                 android:textSize="30sp"
                 tools:ignore="HardcodedText" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/editTextNumeroPendiente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

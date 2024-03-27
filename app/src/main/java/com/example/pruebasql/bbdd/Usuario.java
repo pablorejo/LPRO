@@ -1,5 +1,8 @@
 package com.example.pruebasql.bbdd;
 
+import android.content.Context;
+import android.widget.ArrayAdapter;
+
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Parto;
@@ -56,7 +59,14 @@ public class Usuario {
         this.id = id;
     }
 
-
+    public ArrayAdapter<String> getAdapterVacas(Context context){
+        ArrayList<String> sugerencias = new ArrayList<>();
+        for (Vaca vaca : vacas) {
+            sugerencias.add(String.valueOf(vaca.getNumeroPendiente()));
+        }
+        ArrayAdapter<String> adaptador = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, sugerencias);
+        return adaptador;
+    }
 
     public ArrayList<Vaca> getVacas() {
         return vacas;

@@ -3,6 +3,7 @@ package com.example.pruebasql.calendario;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -30,7 +31,8 @@ public class AddEnfermedad extends BarraSuperior {
     private Button btnInicio, btnFin, btnGuardar, btnCancelar;
     private TextView textNombreEnfermedad, textFechaInicio, textFechaFin, textPeriocidad, textMedicamento;
 
-    private EditText editTextNotaEnfermedad, editTextNumeroPendienteEnfermedad;
+    private EditText editTextNotaEnfermedad;
+    private AutoCompleteTextView editTextNumeroPendienteEnfermedad;
     private Server server;
 
     private Enfermedad enfermedad = null;
@@ -78,6 +80,16 @@ public class AddEnfermedad extends BarraSuperior {
         textFechaFin.setText(localDate);
 
         editTextNumeroPendienteEnfermedad = findViewById(R.id.editTextNumeroPendienteEnfermedad);
+        editTextNumeroPendienteEnfermedad.setAdapter(usuario.getAdapterVacas(this));
+        editTextNumeroPendienteEnfermedad.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    editTextNumeroPendienteEnfermedad.setText(""); // Esto borrará el texto cuando el EditText gane el foco
+                }
+            }
+        });
+
         textPeriocidad = findViewById(R.id.editTextPeriocidad);
         textMedicamento = findViewById(R.id.editTextMedicamento);
         textNombreEnfermedad = findViewById(R.id.editTextNombreEnfermedad);

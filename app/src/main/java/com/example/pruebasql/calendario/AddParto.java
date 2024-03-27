@@ -6,6 +6,8 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -30,7 +32,8 @@ import java.util.Date;
 
 public class AddParto extends BarraSuperior {
 
-    private EditText editTextNumeroPendiente, editTextNotaParto;
+    private EditText editTextNotaParto;
+    private AutoCompleteTextView editTextNumeroPendiente;
     private Button btnFechaParto, btnGuardar, btnCancelar;
 
     private TextView fechaParto;
@@ -77,6 +80,16 @@ public class AddParto extends BarraSuperior {
         }
 
         editTextNumeroPendiente = findViewById(R.id.editTextNumeroPendiente);
+        editTextNumeroPendiente.setAdapter(usuario.getAdapterVacas(this));
+        editTextNumeroPendiente.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    editTextNumeroPendiente.setText(""); // Esto borrará el texto cuando el EditText gane el foco
+                }
+            }
+        });
+
         btnFechaParto = findViewById(R.id.btnFechaParto);
         fechaParto = findViewById(R.id.textFechaParto);
         fechaParto.setText(localDate);
