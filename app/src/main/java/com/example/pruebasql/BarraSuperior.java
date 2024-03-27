@@ -56,6 +56,13 @@ public class BarraSuperior extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public void finish() {
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK, returnIntent);
+        super.finish();
+    }
+
     protected void actualizar(Intent data){
     }
 

@@ -58,9 +58,6 @@ public class CowItem extends BarraSuperior {
         btnEliminarCowItem.setOnClickListener(v -> {
             server.deleteVaca(vaca.getNumeroPendiente());
             usuario.getVacas().remove(vaca);
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("resultado", "Aquí van los datos");
-            setResult(Activity.RESULT_OK, returnIntent);
             finish();
         });
 

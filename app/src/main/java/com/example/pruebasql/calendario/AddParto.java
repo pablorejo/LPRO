@@ -116,7 +116,6 @@ public class AddParto extends BarraSuperior {
         btnCancelar.setOnClickListener(v -> {
             Toast.makeText(this,"Crear parto cancelado" , Toast.LENGTH_LONG).show();
             finish();
-            setResult(RESULT_CANCELED, null);
         });
     }
 }

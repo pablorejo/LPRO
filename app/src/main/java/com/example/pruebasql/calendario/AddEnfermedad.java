@@ -28,9 +28,9 @@ import java.util.Locale;
 public class AddEnfermedad extends BarraSuperior {
 
     private Button btnInicio, btnFin, btnGuardar, btnCancelar;
-    private TextView textNombreEnfermedad, textFechaInicio, textFechaFin, textNumeroPendiente, textPeriocidad, textMedicamento;
+    private TextView textNombreEnfermedad, textFechaInicio, textFechaFin, textPeriocidad, textMedicamento;
 
-    private EditText editTextNotaEnfermedad;
+    private EditText editTextNotaEnfermedad, editTextNumeroPendienteEnfermedad;
     private Server server;
 
     private Enfermedad enfermedad = null;
@@ -41,6 +41,7 @@ public class AddEnfermedad extends BarraSuperior {
         configureToolbar();
         String localDate = getIntent().getStringExtra("fecha");
         String strId = getIntent().getStringExtra("id");
+
         if (strId != null){
             int id = Integer.valueOf(strId);
             for (Vaca vaca: usuario.getVacas()){
@@ -76,7 +77,7 @@ public class AddEnfermedad extends BarraSuperior {
         textFechaFin = findViewById(R.id.textFechaFin);
         textFechaFin.setText(localDate);
 
-        textNumeroPendiente = findViewById(R.id.editTextNumeroPendiente);
+        editTextNumeroPendienteEnfermedad = findViewById(R.id.editTextNumeroPendienteEnfermedad);
         textPeriocidad = findViewById(R.id.editTextPeriocidad);
         textMedicamento = findViewById(R.id.editTextMedicamento);
         textNombreEnfermedad = findViewById(R.id.editTextNombreEnfermedad);
@@ -84,13 +85,12 @@ public class AddEnfermedad extends BarraSuperior {
         if (enfermedad != null){
             textFechaInicio.setText(enfermedad.getFechaInicio().toString());
             textFechaFin.setText(enfermedad.getFechaFin().toString());
-            textNumeroPendiente.setText(String.valueOf(enfermedad.getNumero_pendiente()));
+            editTextNumeroPendienteEnfermedad.setText(String.valueOf(enfermedad.getNumero_pendiente()));
             textPeriocidad.setText(String.valueOf(enfermedad.getPeriocidad_en_dias()));
             textMedicamento.setText(enfermedad.getMedicamento());
             textNombreEnfermedad.setText(enfermedad.getEnfermedad());
             editTextNotaEnfermedad.setText(enfermedad.getNota());
         }
-        textNumeroPendiente.setEnabled(false);
 
         textFechaInicio.setOnClickListener(v -> {
             openDialog(textFechaInicio);
@@ -119,7 +119,7 @@ public class AddEnfermedad extends BarraSuperior {
 
         btnGuardar.setOnClickListener(v -> {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-            int numeroPendiente = Integer.parseInt(textNumeroPendiente.getText().toString());
+            int numeroPendiente = Integer.parseInt(editTextNumeroPendienteEnfermedad.getText().toString());
             Enfermedad enfermedad = new Enfermedad(
                     0,
                     numeroPendiente,
