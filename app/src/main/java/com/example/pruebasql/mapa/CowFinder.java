@@ -53,11 +53,19 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
     private List<Poligono> poligonos = new ArrayList<Poligono>();
 
     private Server server;
+
+    private Vaca vaca;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cow_finder);
         configureToolbar();
+
+        String numeroPendienteString = getIntent().getStringExtra("numero_pendiente");
+        if (numeroPendienteString != null && !numeroPendienteString.equals("")){
+            vaca = usuario.getVacaByNumeroPendiente(Integer.parseInt(numeroPendienteString));
+        }
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
@@ -222,27 +230,20 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
         redrawPolygon();
     }
 
-
-
     private void redrawPolygon() {
         gMap.clear(); // Limpia el mapa para eliminar polígonos y marcadores anteriores
         gMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
 
         // Creamos el mapa de calor con los datos gps de cada vaca
-        for (Vaca vaca: usuario.getVacas() ){
-            List<LatLng> locations = vaca.getCordenadasGps();
-            // Verificar que la lista no esté vacía
-            if (!locations.isEmpty()) {
-                // Crear el proveedor del mapa de calor con los datos
-                HeatmapTileProvider provider = new HeatmapTileProvider.Builder()
-                        .data(locations)
-                        .build();
-
-                // Añadir el overlay del mapa de calor al Google Map
-                TileOverlay overlay = gMap.addTileOverlay(new TileOverlayOptions().tileProvider(provider));
+        if (vaca == null){
+            for (Vaca vaca1: usuario.getVacas() ){
+                addHeatPointsVaca(vaca1);
             }
+        }else{
+            addHeatPointsVaca(vaca);
         }
+
 
         int indiceParcela = 0;
         // Dibujamos los poligonos que nos hacen falta.
@@ -259,6 +260,23 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
                 poligono.dibujar(añadirParcela,indiceParcela,usuario);
                 poligonos.add(poligono);
             }
+        }
+    }
+
+    private void addHeatPointsVaca(Vaca vaca){
+        /*
+        * Añade los puntos al heatmap de las ubicaciones de una vaca
+        * */
+        List<LatLng> locations = vaca.getCordenadasGps();
+        // Verificar que la lista no esté vacía
+        if (!locations.isEmpty()) {
+            // Crear el proveedor del mapa de calor con los datos
+            HeatmapTileProvider provider = new HeatmapTileProvider.Builder()
+                    .data(locations)
+                    .build();
+
+            // Añadir el overlay del mapa de calor al Google Map
+            TileOverlay overlay = gMap.addTileOverlay(new TileOverlayOptions().tileProvider(provider));
         }
     }
 
@@ -279,9 +297,6 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
         }
         return null;
     }
-
-
-
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {

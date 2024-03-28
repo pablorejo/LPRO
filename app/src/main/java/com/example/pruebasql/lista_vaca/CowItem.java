@@ -19,6 +19,7 @@ import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.calendario.Calendario;
+import com.example.pruebasql.mapa.CowFinder;
 
 import org.threeten.bp.LocalDate;
 
@@ -113,10 +114,7 @@ public class CowItem extends BarraSuperior {
         // Establecer el adaptador para el EditText
         textViewNumeroPendienteMadre.setAdapter(usuario.getAdapterVacas(this));
 
-
-
         txtCowLendar = findViewById(R.id.CowLendar);
-
 
         if (!editando){
             txtCowLendar.setOnClickListener(v -> {
@@ -127,6 +125,15 @@ public class CowItem extends BarraSuperior {
         }
 
         txtCowFinder = findViewById(R.id.CowFinder);
+
+        if (!editando){
+            txtCowFinder.setOnClickListener(v -> {
+                Intent intentCalendario = new Intent(getApplicationContext(), CowFinder.class);
+                intentCalendario.putExtra("numero_pendiente", numeroPendienteString);
+                startActivity(intentCalendario);
+            });
+        }
+
 
         ArrayList<String> sugerencias = new ArrayList<>();
         for (Vaca vaca : usuario.getVacas()) {
