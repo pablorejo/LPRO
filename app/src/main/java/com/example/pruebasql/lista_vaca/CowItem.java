@@ -19,6 +19,7 @@ import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.calendario.Calendario;
+import com.example.pruebasql.calendario.DatosDia;
 import com.example.pruebasql.mapa.CowFinder;
 
 import org.threeten.bp.LocalDate;
@@ -39,6 +40,8 @@ public class CowItem extends BarraSuperior {
     Usuario usuario;
     Vaca vaca;
     Server server;
+
+    HijasVaca hijasVaca;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,9 +54,17 @@ public class CowItem extends BarraSuperior {
         String numeroPendienteString = intent.getStringExtra("numero_pendiente");
         if (numeroPendienteString.equals("0")){
             editando = true;
-
         }
-        vaca = usuario.getVacaByNumeroPendiente(Integer.parseInt(numeroPendienteString));
+        int numero_pendiente = Integer.parseInt(numeroPendienteString);
+
+        hijasVaca =  new HijasVaca(numero_pendiente);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragmentContainerViewHijasVaca, hijasVaca)
+                .commit();
+
+
+
+        vaca = usuario.getVacaByNumeroPendiente(numero_pendiente);
 
 
         btnEliminarCowItem = findViewById(R.id.btnEliminarCowItem);
@@ -139,8 +150,6 @@ public class CowItem extends BarraSuperior {
         for (Vaca vaca : usuario.getVacas()) {
             sugerencias.add(String.valueOf(vaca.getNumeroPendiente()));
         }
-
-
     }
 
     private void editarVaca(){

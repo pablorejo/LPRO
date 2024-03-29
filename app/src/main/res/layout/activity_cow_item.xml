@@ -13,120 +13,134 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="72dp"
-        android:orientation="vertical"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/numeroPendiente"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:minHeight="48dp"
-            android:text="1001"
-            android:textColor="@android:color/black"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/textViewFechaDeNacimiento"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Fecha de nacimiento"
-            android:textSize="30sp" />
-
-        <EditText
-            android:id="@+id/textViewFechaDeNacimientoEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:minHeight="48dp"
-            android:hint="ejm: 12-5-2021"
-            android:textColor="@android:color/black"
-            android:textSize="30sp" />
-
-        <AutoCompleteTextView
-            android:id="@+id/textViewNumeroPendienteMadre"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:minHeight="48dp"
-            android:hint="Numero pendiente madre"
-            android:inputType="numberDecimal"
-            android:textColor="@android:color/black"
-            android:textSize="30sp" />
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="30dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/numeroPendiente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:text="1001"
+                android:textColor="@android:color/black"
+                android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/CowLendar"
-                android:layout_width="wrap_content"
+                android:id="@+id/textViewFechaDeNacimiento"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableBottom="@drawable/calendar_128"
                 android:gravity="center"
-                android:text="CowLendar"
-                android:textSize="25sp" />
+                android:text="Fecha de nacimiento"
+                android:textSize="30sp" />
 
-            <TextView
-                android:id="@+id/CowFinder"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/textViewFechaDeNacimientoEdit"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:background="@android:color/transparent"
                 android:gravity="center"
-                android:text="CowFinder"
-                android:textSize="25sp"
-                app:drawableBottomCompat="@drawable/gps_128x128" />
+                android:hint="ejm: 12-5-2021"
+                android:minHeight="48dp"
+                android:textColor="@android:color/black"
+                android:textSize="30sp" />
+
+            <AutoCompleteTextView
+                android:id="@+id/textViewNumeroPendienteMadre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:hint="Numero pendiente madre"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/black"
+                android:textSize="30sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="30dp">
+
+                <TextView
+                    android:id="@+id/CowLendar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableBottom="@drawable/calendar_128"
+                    android:gravity="center"
+                    android:text="CowLendar"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/CowFinder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="CowFinder"
+                    android:textSize="25sp"
+                    app:drawableBottomCompat="@drawable/gps_128x128" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/editTextTextNotaVaca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Notas"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:background="@android:color/transparent"
+                android:textColor="@android:color/black"
+                android:minHeight="250dp" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerViewHijasVaca"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|center">
+
+                <Button
+                    android:id="@+id/btnEliminarCowItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@android:drawable/ic_menu_edit"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="start"
+                    android:text="Eliminar" />
+
+                <Button
+                    android:id="@+id/buttonEditCowItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@android:drawable/ic_menu_edit"
+                    android:gravity="end"
+                    android:text="Editar" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
-
-        <EditText
-            android:id="@+id/editTextTextNotaVaca"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Notas"
-            android:gravity="top|start"
-            android:inputType="textMultiLine"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/black"
-            android:minHeight="250dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top|center">
-
-            <Button
-                android:id="@+id/btnEliminarCowItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@android:drawable/ic_menu_edit"
-                android:layout_marginEnd="20dp"
-                android:gravity="start"
-                android:text="Eliminar" />
-
-            <Button
-                android:id="@+id/buttonEditCowItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@android:drawable/ic_menu_edit"
-                android:gravity="end"
-                android:text="Editar" />
-
-        </LinearLayout>
-
-
-    </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

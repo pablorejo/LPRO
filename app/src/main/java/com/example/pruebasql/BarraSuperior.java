@@ -83,7 +83,6 @@ public class BarraSuperior extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     public void openDialog(TextView text){
         Calendar calendario = Calendar.getInstance();
         DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -95,8 +94,6 @@ public class BarraSuperior extends AppCompatActivity {
 
         dialog.show();
     }
-
-
 
     public Notification getNotification(Context context, String content) {
         Notification.Builder builder = new Notification.Builder(context);
