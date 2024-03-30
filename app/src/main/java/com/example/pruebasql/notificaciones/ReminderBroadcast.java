@@ -1,4 +1,4 @@
-package com.example.pruebasql;
+package com.example.pruebasql.notificaciones;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -14,6 +14,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
+
+import com.example.pruebasql.R;
 
 public class ReminderBroadcast extends BroadcastReceiver {
     @Override

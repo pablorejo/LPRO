@@ -1,36 +1,24 @@
 package com.example.pruebasql;
 
 
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.pruebasql.automatizacion.Automatizacion;
-import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.calendario.Calendario;
 import com.example.pruebasql.mapa.CowFinder;
 import com.example.pruebasql.lista_vaca.CowList;
+import com.example.pruebasql.notificaciones.Notificacion;
 
-import java.util.Calendar;
-import java.util.Locale;
 import android.Manifest;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.threeten.bp.LocalDate;
 
 public class PrincipalActivity extends BarraSuperior {

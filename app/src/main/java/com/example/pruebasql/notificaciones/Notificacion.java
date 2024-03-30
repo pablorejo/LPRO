@@ -1,4 +1,4 @@
-package com.example.pruebasql;
+package com.example.pruebasql.notificaciones;
 
 
 import org.threeten.bp.LocalDate;
@@ -7,10 +7,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Notificacion {
-    Date date;
-    String titulo;
-    String texto;
-    int idNotificacion;
+    public Date date;
+    public String titulo;
+    public String texto;
+    public int idNotificacion;
 
     public Notificacion(Date date, String titulo, String texto, int idNotificacion) {
         this.date = date;

@@ -9,14 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -24,21 +18,18 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.example.pruebasql.bbdd.Usuario;
+import com.example.pruebasql.notificaciones.Notificacion;
+import com.example.pruebasql.notificaciones.ReminderBroadcast;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+
 public class BarraSuperior extends AppCompatActivity {
 
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
