@@ -1,6 +1,7 @@
 package com.example.pruebasql;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,13 +18,26 @@ import android.Manifest;
 public class ReminderBroadcast extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            String tituloNotificacion = intent.getStringExtra("tituloNotificacion");
+            String textoNotificacion = intent.getStringExtra("textoNotificacion");
+            int idNotificacion = intent.getIntExtra("idNotificacion",1);
 
-        // Actualización para API 33+
-        Notification notification = intent.getParcelableExtra("notification", Notification.class);
-        int id = intent.getIntExtra("notification-id", 0);
-        if (notificationManager != null) {
-            notificationManager.notify(id, notification);
+            String channelId = context.getString(R.string.channel_id);
+            CharSequence channelName = context.getString(R.string.channel_name);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                    .setSmallIcon(R.drawable.icono)
+                    .setContentTitle(tituloNotificacion)
+                    .setContentText(textoNotificacion)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            notificationManager.notify(idNotificacion, builder.build());
         }
     }
 }

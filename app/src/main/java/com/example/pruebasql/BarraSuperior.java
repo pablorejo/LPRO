@@ -6,24 +6,30 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.pruebasql.bbdd.Usuario;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +46,11 @@ public class BarraSuperior extends AppCompatActivity {
     private String pattern = "yyyy-MM-dd HH:mm:ss"; // Define el patrón del formato de fecha
     protected SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
     protected  ActivityResultLauncher<Intent> miActivityResultLauncher;
+
+    protected static final int POST_NOTIFICATIONS_REQUEST_CODE = 1; // Definir un valor constante para el requestCode
+
+    private boolean permisoNotificaciones = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,80 +109,70 @@ public class BarraSuperior extends AppCompatActivity {
         dialog.show();
     }
 
-    public Notification getNotification(Context context, String content) {
-        Notification.Builder builder = new Notification.Builder(context);
-        builder.setContentTitle("Notificación Programada");
-        builder.setContentText(content);
-        builder.setSmallIcon(R.drawable.user_icon);
-        return builder.build();
-    }
+    // Notificaciones //////////////////////////////////////
 
-    public void scheduleNotification(Context context, Notification notification, int notificationId, LocalDate localDate) {
-        Intent intent = new Intent(context, ReminderBroadcast.class);
-        intent.putExtra("notification-id", notificationId);
-        intent.putExtra("notification", notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    /**
+     * Esta funcion crea una notificacion programada para una fecha en concreto.
+     * @param notificacion: clase notificicacion que contiene el titulo el texto la fecha y el id de la notificacion
+     */
+    public void crearNotificacion(Notificacion notificacion){
 
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        if (permisoNotificaciones){
+            // Paso 4
+            Intent intent = new Intent(this, ReminderBroadcast.class);
+            intent.putExtra("tituloNotificacion",notificacion.titulo);
+            intent.putExtra("textoNotificacion",notificacion.texto);
+            intent.putExtra("idNotificacion",notificacion.idNotificacion);
 
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        // Convertir LocalDate a ZonedDateTime asumiendo medianoche y la zona horaria del sistema
-        ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
+            // Establece el momento exacto para la notificación
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(notificacion.date);
 
-        // Convertir ZonedDateTime a Date
-        Date date = Date.from(zonedDateTime.toInstant());
-
-        // Obtener una instancia de Calendar y establecer el tiempo con el objeto Date
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        // Verificación: imprimir el resultado
-        System.out.println(calendar.getTime());
-        Calendar calendar1 = Calendar.getInstance();
-        calendar1.add(Calendar.SECOND, 2);
-
-        if (alarmManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                // Para Android 12 y versiones superiores, verifica si la aplicación puede programar alarmas exactas
                 if (alarmManager.canScheduleExactAlarms()) {
-                    try {
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar1.getTimeInMillis(), pendingIntent);
-                    } catch (SecurityException e) {
-                        showPermissionExplanationAndGuide();
-                        // Manejar la excepción, por ejemplo, guiando al usuario para que habilite el permiso en la configuración
-                    }
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
                 } else {
-                    showPermissionExplanationAndGuide();
-                    // La aplicación no tiene permiso, guía al usuario para habilitar el permiso en la configuración del sistema
-                }
-            } else {
-                // Para versiones anteriores de Android, programa la alarma directamente
-                try {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar1.getTimeInMillis(), pendingIntent);
-                } catch (SecurityException e) {
-                    // Manejar la excepción si es necesario
+                    System.out.println("No tienes permisos para las notificaciones");
                 }
             }
+        }else{
+            requestPermissions(new String[] {Manifest.permission.POST_NOTIFICATIONS}, POST_NOTIFICATIONS_REQUEST_CODE);
         }
-
     }
 
-    // Suponiendo que esto está dentro de una actividad o un contexto donde puedas mostrar un diálogo o lanzar una actividad
-    private void showPermissionExplanationAndGuide() {
-        new AlertDialog.Builder(this)
-                .setTitle("Permiso necesario")
-                .setMessage("Nuestra aplicación necesita el permiso para programar alarmas exactas para funcionar correctamente. Por favor, permite este permiso en la configuración del sistema.")
-                .setPositiveButton("Abrir configuración", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Intent para abrir la pantalla de configuración específica para el permiso exacto de alarma
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                            Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                            startActivity(intent);
-                        }
-                    }
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
+    /**
+     * Esta funcion nos sirve para cancelar una notificacion.
+     * @param notificacion
+     */
+    public void cancelarNotificacion(Notificacion notificacion){
+
+        // Paso 4
+        Intent intent = new Intent(this, ReminderBroadcast.class);
+        intent.putExtra("tituloNotificacion",notificacion.titulo);
+        intent.putExtra("textoNotificacion",notificacion.texto);
+        intent.putExtra("idNotificacion",notificacion.idNotificacion);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == POST_NOTIFICATIONS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso concedido, puedes enviar la notificación
+                permisoNotificaciones = true;
+            } else {
+                // Permiso no concedido, maneja esta situación
+            }
+        }
+    }
+
 }

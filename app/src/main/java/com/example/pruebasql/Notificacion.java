@@ -1,0 +1,33 @@
+package com.example.pruebasql;
+
+
+import org.threeten.bp.LocalDate;
+
+import java.util.Calendar;
+import java.util.Date;
+
+public class Notificacion {
+    Date date;
+    String titulo;
+    String texto;
+    int idNotificacion;
+
+    public Notificacion(Date date, String titulo, String texto, int idNotificacion) {
+        this.date = date;
+        this.titulo = titulo;
+        this.texto = texto;
+        this.idNotificacion = idNotificacion;
+    }
+
+    public Notificacion(LocalDate localDate, String titulo, String texto, int idNotificacion) {
+
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(localDate.getYear(),localDate.getMonthValue(),localDate.getDayOfMonth(),3,30,0);
+
+        this.date = calendar.getTime();
+        this.titulo = titulo;
+        this.texto = texto;
+        this.idNotificacion = idNotificacion;
+    }
+}

@@ -3,24 +3,44 @@ package com.example.pruebasql;
 
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.pruebasql.automatizacion.Automatizacion;
 import com.example.pruebasql.bbdd.Usuario;
+import com.example.pruebasql.bbdd.vacas.Enfermedad;
+import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.calendario.Calendario;
 import com.example.pruebasql.mapa.CowFinder;
 import com.example.pruebasql.lista_vaca.CowList;
 
-import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Locale;
+import android.Manifest;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.threeten.bp.LocalDate;
 
 public class PrincipalActivity extends BarraSuperior {
-    private Usuario usuario;
     TextView btnCowList, btnCowFinder, btnContact, btnAutonomization, btnCalendario;
+
+    private NotificationManager notificationManager;
+
+    private int notificationId = 1;
+
+    private NotificationCompat.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,29 +74,28 @@ public class PrincipalActivity extends BarraSuperior {
         btnCalendario.setOnClickListener(view -> {
             iniciarActividad(Calendario.class);
         });
-        // Obtener una instancia de AlarmManager del sistema
-        AlarmManager alarmManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
 
-        /*
-        if (alarmManager != null) {
-            // Verificar si la aplicación tiene permiso para programar alarmas exactas
-            boolean hasPermission = alarmManager.canScheduleExactAlarms();
+        // Comprobamos que nos dejan hacer notificaciones, esto se hace una vez que se inicia sesion.
+        if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)) {
+            requestPermissions(new String[] {Manifest.permission.POST_NOTIFICATIONS}, POST_NOTIFICATIONS_REQUEST_CODE);
+        }
 
-            if (hasPermission) {
-                Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                startActivity(intent);
-            } else {
-                // La aplicación no tiene permiso, manejar esta situación adecuadamente
-                // Por ejemplo, puedes pedir al usuario que vaya a la configuración del sistema y otorgue el permiso.
+
+        int id_notificacion = 1;
+        for (Vaca vaca: usuario.getVacas()){
+            for (Enfermedad enfermedad: vaca.getEnfermedades()){
+                for (LocalDate tomarMedicina: enfermedad.getFechasTomarMedicina()){
+
+                    Notificacion notificacion = new Notificacion(
+                            tomarMedicina,
+                            "Tomar medicina",
+                            "La vaca " + vaca.getNumeroPendiente() + "tiene que tomar " + enfermedad.getMedicamento(),
+                            id_notificacion);
+                    
+                    crearNotificacion(notificacion);
+                    id_notificacion = id_notificacion + 1;
+                }
             }
-        }*/
-
-
-        LocalDate date = LocalDate.now();
-
-        Notification notification = getNotification(this, "¡Es hora de tu evento!");
-        int notificationId = 1; // Identificador único para cada notificación
-        scheduleNotification(this, notification, notificationId, date);
-
+        }
     }
 }
