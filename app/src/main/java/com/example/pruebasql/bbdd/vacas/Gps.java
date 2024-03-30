@@ -1,5 +1,7 @@
 package com.example.pruebasql.bbdd.vacas;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Date;
 
 public class Gps {
@@ -53,6 +55,10 @@ public class Gps {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public LatLng getLatLng(){
+        return new LatLng(latitud,longitud);
     }
 }
 

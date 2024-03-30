@@ -3,6 +3,10 @@ package com.example.pruebasql.mapa;
 import androidx.annotation.NonNull;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -16,8 +20,14 @@ import com.example.pruebasql.bbdd.parcelas.Coordenada;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -37,14 +47,19 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import io.reactivex.schedulers.Timed;
 
 public class CowFinder extends BarraSuperior implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
 
     private GoogleMap gMap;
 
-    private Button btnañadirParcela, btnEliminarParcela;
+    private Button btnañadirParcela, btnEliminarParcela, btnFiltrarNumeroPendienteMapa,btnFechaInicioFiltroMapa,btnFechaFinFiltroMapa;
 
     private boolean añadirParcela = false;
 
@@ -55,6 +70,10 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
     private Server server;
 
     private Vaca vaca;
+    private boolean[] elementosSeleccionados;
+    private String[] numeros;
+
+    private Date fechaInicio, fechaFin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +115,46 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
                     editTextNombreParcela.setText(""); // Esto borrará el texto cuando el EditText gane el foco
                 }
             }
+        });
+
+        btnFiltrarNumeroPendienteMapa = findViewById(R.id.btnFiltrarNumeroPendienteMapa);
+
+        numeros = usuario.getNumerosPendiente().toArray(new String[0]);
+        elementosSeleccionados = new boolean[numeros.length];
+        btnFiltrarNumeroPendienteMapa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder dialogoBuilder = new AlertDialog.Builder(CowFinder.this);
+                dialogoBuilder.setTitle("Selecciona números");
+                dialogoBuilder.setMultiChoiceItems(numeros, elementosSeleccionados, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
+                        // Actualiza el estado del elemento seleccionado
+                        elementosSeleccionados[i] = isChecked;
+                    }
+                });
+
+                dialogoBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        redrawPolygon();
+                    }
+                });
+
+                dialogoBuilder.setNegativeButton("Cancelar", null);
+
+                AlertDialog dialogo = dialogoBuilder.create();
+                dialogo.show();
+
+            }
+        });
+        btnFechaInicioFiltroMapa = findViewById(R.id.btnFechaInicioFiltroMapa);
+        btnFechaInicioFiltroMapa.setOnClickListener(v -> {
+            openDialogFecha(false);
+        });
+        btnFechaFinFiltroMapa = findViewById(R.id.btnFechaFinFiltroMapa);
+        btnFechaFinFiltroMapa.setOnClickListener(v -> {
+            openDialogFecha(true);
         });
     }
 
@@ -157,7 +216,8 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
     public void onMapReady(@NonNull GoogleMap googleMap) {
         gMap = googleMap;
         LatLng ubicacionCentro = new LatLng(43.31195130632422, -8.416801609724955);
-        googleMap.setOnMarkerClickListener(CowFinder.this);
+        gMap.setOnMarkerClickListener(CowFinder.this);
+
 
         // Solicitar permisos de ubicacion en caso de que no los tenga ya la aplicación.
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -227,23 +287,32 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
                 redrawPolygon();
             }
         });
+
         redrawPolygon();
     }
 
     private void redrawPolygon() {
         gMap.clear(); // Limpia el mapa para eliminar polígonos y marcadores anteriores
         gMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        gMap.getUiSettings().setScrollGesturesEnabled(true);
 
 
         // Creamos el mapa de calor con los datos gps de cada vaca
-        if (vaca == null){
-            for (Vaca vaca1: usuario.getVacas() ){
-                addHeatPointsVaca(vaca1);
-            }
-        }else{
+        if (vaca != null){
             addHeatPointsVaca(vaca);
+        } else{
+            ArrayList<String> numerosSeleccionados = new ArrayList<>();
+            for (int j = 0; j < elementosSeleccionados.length; j++) {
+                if (elementosSeleccionados[j]) {
+                    numerosSeleccionados.add(numeros[j]);
+                }
+            }
+            if (numerosSeleccionados.size() != 0){
+                addHeatPointsVaca(numerosSeleccionados);
+            }else{
+                addHeatPointsVaca(usuario.getNumerosPendiente());
+            }
         }
-
 
         int indiceParcela = 0;
         // Dibujamos los poligonos que nos hacen falta.
@@ -263,11 +332,19 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
         }
     }
 
+    private void addHeatPointsVaca(ArrayList<String> numerosPendienteVaca){
+        for (String numeroPendiente: numerosPendienteVaca){
+            Vaca vaca1 = usuario.getVacaByNumeroPendiente(Integer.valueOf(numeroPendiente));
+            addHeatPointsVaca(vaca1);
+        }
+    }
+
+    /**
+     * Añade los puntos al heatmap de las ubicaciones de una vaca en concreto
+     * @param vaca: Clase vaca
+     */
     private void addHeatPointsVaca(Vaca vaca){
-        /*
-        * Añade los puntos al heatmap de las ubicaciones de una vaca
-        * */
-        List<LatLng> locations = vaca.getCordenadasGps();
+        List<LatLng> locations = vaca.getDatosGpsByFechaInicioYFechaFin(fechaInicio,fechaFin);
         // Verificar que la lista no esté vacía
         if (!locations.isEmpty()) {
             // Crear el proveedor del mapa de calor con los datos
@@ -332,5 +409,60 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
         btnañadirParcela.setOnClickListener(v1 -> {
             añadirParcela();
         });
+    }
+
+
+    /**
+     * Lo que hace la función es mostrar un widget para especificar el día y la hora y lo guarda en las variables privadas de fechaFin y fechaInicio
+     * @param boolFechaFin: Si está a true guarda la fecha fin si está a false guarda la fecha inicio.
+     */
+    public void openDialogFecha(boolean boolFechaFin){
+        final Calendar calendario = Calendar.getInstance();
+        if (boolFechaFin && fechaFin!= null){
+            calendario.setTime(fechaFin);
+        }else if(fechaInicio!= null){
+            calendario.setTime(fechaInicio);
+        }
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        calendario.set(Calendar.YEAR, year);
+                        calendario.set(Calendar.MONTH, monthOfYear);
+                        calendario.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                        // Ahora que tienes la fecha, abre el TimePickerDialog
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                                CowFinder.this,
+                                new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                        calendario.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                        calendario.set(Calendar.MINUTE, minute);
+
+                                        // Aquí tienes la fecha y la hora en el objeto calendario
+                                        if (boolFechaFin){
+                                            fechaFin = calendario.getTime();
+                                        }else{
+                                            fechaInicio = calendario.getTime();
+                                        }
+                                        // Ahora puedes actualizar el mapa o lo que necesites hacer con la fecha y hora
+                                        redrawPolygon();
+                                    }
+                                },
+                                calendario.get(Calendar.HOUR_OF_DAY),
+                                calendario.get(Calendar.MINUTE),
+                                true // Modo 24 horas
+                        );
+                        timePickerDialog.show();
+                    }
+                },
+                calendario.get(Calendar.YEAR),
+                calendario.get(Calendar.MONTH),
+                calendario.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
     }
 }

@@ -59,12 +59,15 @@ public class Usuario {
         this.id = id;
     }
 
-    public ArrayAdapter<String> getAdapterVacas(Context context){
-        ArrayList<String> sugerencias = new ArrayList<>();
-        for (Vaca vaca : vacas) {
-            sugerencias.add(String.valueOf(vaca.getNumeroPendiente()));
+    public ArrayList<String> getNumerosPendiente(){
+        ArrayList<String> numerosPendiente = new ArrayList<>();
+        for (Vaca vaca: vacas){
+            numerosPendiente.add(String.valueOf(String.valueOf(vaca.getNumeroPendiente())));
         }
-        ArrayAdapter<String> adaptador = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, sugerencias);
+        return numerosPendiente;
+    }
+    public ArrayAdapter<String> getAdapterVacas(Context context){
+        ArrayAdapter<String> adaptador = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, getNumerosPendiente());
         return adaptador;
     }
 
@@ -143,4 +146,6 @@ public class Usuario {
         }
         return null;
     }
+
+
 }

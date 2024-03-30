@@ -19,20 +19,55 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="128dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_datos_dia" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:background="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnFiltrarNumeroPendienteMapa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Numero pendiente" />
+
+            <Button
+                android:id="@+id/btnFechaInicioFiltroMapa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Fecha inicio" />
+
+            <Button
+                android:id="@+id/btnFechaFinFiltroMapa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Fecha fin" />
+        </LinearLayout>
+    </ScrollView>
 
     <EditText
         android:id="@+id/editTextNombreParcela"
         android:layout_width="353dp"
         android:layout_height="52dp"
         android:layout_marginStart="29dp"
-        android:layout_marginTop="107dp"
+        android:layout_marginTop="128dp"
         android:background="#80FFFFFF"
         android:gravity="center"
         android:hint="Nombre"
@@ -47,12 +82,11 @@
         android:layout_width="407dp"
         android:layout_height="104dp"
         android:layout_marginTop="516dp"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/map">
-
 
 
         <Button
@@ -66,8 +100,7 @@
             android:id="@+id/btnAñadirParcela"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Añadir parcela"
-            />
+            android:text="Añadir parcela" />
 
     </LinearLayout>
 

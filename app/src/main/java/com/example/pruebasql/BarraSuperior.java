@@ -26,6 +26,7 @@ import com.example.pruebasql.bbdd.Usuario;
 
 import org.threeten.bp.format.DateTimeFormatter;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -36,24 +37,26 @@ public class BarraSuperior extends AppCompatActivity {
 
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     protected Usuario usuario = DataManager.getInstance().getUsuario();
-
+    private String pattern = "yyyy-MM-dd HH:mm:ss"; // Define el patrón del formato de fecha
+    protected SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
     protected  ActivityResultLauncher<Intent> miActivityResultLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barra_superior);
         miActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            Intent data = result.getData();
-                            actualizar(data);
-                            // Maneja el resultado OK aquí
-                        }
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        actualizar(data);
+                        // Maneja el resultado OK aquí
                     }
-                });
+                }
+            }
+        );
     }
 
     @Override

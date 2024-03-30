@@ -117,5 +117,27 @@ public class Vaca {
     public void setIdNumeroPendienteMadre(int idNumeroPendienteMadre) {
         this.idNumeroPendienteMadre = idNumeroPendienteMadre;
     }
+
+    public List<LatLng> getDatosGpsByFechaInicioYFechaFin(Date fechaInicio, Date fechaFin){
+        List<LatLng> datosGpsCoinciden = new ArrayList<>();
+        if (fechaInicio == null && fechaFin == null){
+            return getCordenadasGps();
+        }else{
+            for (Gps gps: datosGps){
+                if (fechaFin == null){
+                    if (!gps.getFecha().before(fechaInicio)){
+                        datosGpsCoinciden.add(gps.getLatLng());
+                    }
+                } else if (fechaInicio == null) {
+                    if (!gps.getFecha().after(fechaFin)){
+                        datosGpsCoinciden.add(gps.getLatLng());
+                    }
+                }else if(!gps.getFecha().before(fechaInicio) && !gps.getFecha().after(fechaFin)){
+                    datosGpsCoinciden.add(gps.getLatLng());
+                }
+            }
+            return datosGpsCoinciden;
+        }
+    }
 }
 
