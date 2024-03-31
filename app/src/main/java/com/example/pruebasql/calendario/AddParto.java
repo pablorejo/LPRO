@@ -22,6 +22,7 @@ import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Parto;
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.example.pruebasql.listeners.ServerCallback;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -34,7 +35,7 @@ public class AddParto extends BarraSuperior {
 
     private EditText editTextNotaParto;
     private AutoCompleteTextView editTextNumeroPendiente;
-    private Button btnFechaParto, btnGuardar, btnCancelar;
+    private Button btnFechaParto, btnGuardar, btnCancelar, btnEliminarAddParto;
 
     private TextView fechaParto;
     private Server server;
@@ -126,18 +127,38 @@ public class AddParto extends BarraSuperior {
                     editTextNotaParto.getText().toString()
             );
             if (nueva){// Hay que guardar el parto
-                usuario.getVacaByNumeroPendiente(numeroPendiente).addParto(parto);
-                server.addParto(parto);
+                server.addParto(parto, new ServerCallback() {
+                    @Override
+                    public void onResponse(Object response) {
+                        setResult(RESULT_OK, null); // Establece RESULT_OK para indicar éxito
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
             }else{// Hay que actualizarlo
                 usuario.updateParto(parto);
                 server.updateParto(parto);
+                finish();
             }
-            setResult(RESULT_OK, null); // Establece RESULT_OK para indicar éxito
-            finish();
         });
 
         btnCancelar.setOnClickListener(v -> {
             Toast.makeText(this,"Crear parto cancelado" , Toast.LENGTH_LONG).show();
+            finish();
+        });
+
+        btnEliminarAddParto = findViewById(R.id.btnEliminarAddParto);
+        if (nueva){ // Solo se debe mostrar si ya existe si estamos creando uno nuevo no hay que mostrar el boton eliminar
+            btnEliminarAddParto.setVisibility(View.GONE);
+        }
+
+        btnEliminarAddParto.setOnClickListener(v -> {
+            usuario.getVacaByNumeroPendiente(parto.getNumeroPendiente()).getPartos().remove(parto);
+            server.deleteParto(parto);
             finish();
         });
     }

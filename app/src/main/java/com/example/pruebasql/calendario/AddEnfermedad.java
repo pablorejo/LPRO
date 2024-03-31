@@ -18,6 +18,7 @@ import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.example.pruebasql.listeners.ServerCallback;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -29,7 +30,7 @@ import java.util.Locale;
 
 public class AddEnfermedad extends BarraSuperior {
 
-    private Button btnInicio, btnFin, btnGuardar, btnCancelar;
+    private Button btnInicio, btnFin, btnGuardar, btnCancelar, btnEliminarAddEnfermedad;
     private TextView textNombreEnfermedad, textFechaInicio, textFechaFin, textPeriocidad, textMedicamento;
 
     private EditText editTextNotaEnfermedad;
@@ -157,18 +158,29 @@ public class AddEnfermedad extends BarraSuperior {
                             editTextNotaEnfermedad.getText().toString()
                     );
                     if (nueva){ // Guardamos la enfermedad
-                        usuario.getVacaByNumeroPendiente(numeroPendiente).addEnfermedad(enfermedad1);
-                        server.addEnfermedad(enfermedad1);
+                        server.addEnfermedad(enfermedad1, new ServerCallback() {
+                            @Override
+                            public void onResponse(Object o) {
+                                setResult(Activity.RESULT_OK);
+                                finish();
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                setResult(Activity.RESULT_CANCELED);
+                                finish();
+                            }
+                        });
                     }else{ // Actualizamos la enfermedad
                         usuario.updateEnfermedad(enfermedad1);
                         server.updateEnfermedad(enfermedad1);
+                        finish();
                     }
-                    setResult(Activity.RESULT_OK);
+
                 }else{
                     Toast.makeText(this, "La fecha fin no puede ser menor que la fecha de inicio", Toast.LENGTH_SHORT).show();
                     setResult(Activity.RESULT_CANCELED);
                 }
-                finish();
 
             }catch (Exception e){
                 Toast.makeText(this, "No se ha podido crear la enfermedad faltan datos", Toast.LENGTH_SHORT).show();
@@ -178,6 +190,16 @@ public class AddEnfermedad extends BarraSuperior {
         btnCancelar.setOnClickListener(v -> {
             Toast.makeText(this,"Crear enfermedad cancelado" , Toast.LENGTH_LONG).show();
             setResult(Activity.RESULT_OK);
+            finish();
+        });
+
+        btnEliminarAddEnfermedad = findViewById(R.id.btnEliminarAddEnfermedad);
+        if (nueva){
+            btnEliminarAddEnfermedad.setVisibility(View.GONE);
+        }
+        btnEliminarAddEnfermedad.setOnClickListener(v ->{
+            usuario.getVacaByNumeroPendiente(enfermedad.getNumero_pendiente()).getEnfermedades().remove(enfermedad);
+            server.deleteEnfermedad(enfermedad);
             finish();
         });
     }

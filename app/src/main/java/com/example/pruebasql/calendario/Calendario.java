@@ -122,13 +122,12 @@ public class Calendario extends BarraSuperior {
 
     @Override
     protected void actualizar(Intent data) {
-        super.actualizar(data);
         updateCalendar();
         showEventDetailsFragment(localDate);
     }
 
     private void updateCalendar(){
-        calendarView.clearSelection();
+        calendarView.removeDecorators();
         for (Vaca vaca : usuario.getVacas()){
             if (numeroPendiente == 0 || vaca.getNumeroPendiente() == numeroPendiente){
                 añadirEnfermedades(vaca.getEnfermedades());

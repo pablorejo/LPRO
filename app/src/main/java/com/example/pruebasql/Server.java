@@ -18,6 +18,7 @@ import com.example.pruebasql.bbdd.vacas.Leite;
 import com.example.pruebasql.bbdd.vacas.Parto;
 import com.example.pruebasql.bbdd.vacas.Pasto;
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.example.pruebasql.listeners.ServerCallback;
 import com.example.pruebasql.listeners.DiasPastoResponseListener;
 import com.example.pruebasql.listeners.EnfermedadResponseListener;
 import com.example.pruebasql.listeners.EnfermedadesResponseListener;
@@ -517,7 +518,7 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    public void addEnfermedad(Enfermedad enfermedad){
+    public void addEnfermedad(Enfermedad enfermedad, ServerCallback callback){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/vacas/enfermedades";
 
@@ -526,6 +527,7 @@ public class Server {
             public void onResponse(String response) {
                 Enfermedad enfermedad = gson.fromJson(response, Enfermedad.class);
                 usuario.addEnfermedad(enfermedad);
+                callback.onResponse(enfermedad);
                 imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
@@ -621,20 +623,14 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    public void deleteEnfermedad(String enfermedad){
+    public void deleteEnfermedad(Enfermedad enfermedad){
         // Configuración de la URL del servidor apache
-        String url = URL + "/vacas/enfermedades";
+        String url = URL + "/vacas/enfermedades/"+enfermedad.getId_enfermedad_vaca();
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                if(!response.isEmpty()){
-                    imprimirMensajeRespuesta(response);
-                }else{
-                    // Mensaje: "Contraseñas incorrectas"
-                    System.out.println("ERROR. No se ha podido eliminar la enfermedad a la Base de Datos!");
-                    Toast.makeText(context, "ERROR. No se ha podido eliminar la enfermedad a la Base de Datos!", Toast.LENGTH_SHORT).show();
-                }
+                imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -644,14 +640,6 @@ public class Server {
                 Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
             }
         }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Creamos una instancia con el nombre parametros
-                HashMap<String, String> parametros = new HashMap<>();
-                // Ingresamos los datos a enviar al servicio PHP
-                parametros.put("enfermedad", enfermedad);
-                return parametros;
-            }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -705,7 +693,7 @@ public class Server {
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
         requestQueue.add(stringRequest);
     }
-    public void addParto(Parto parto){
+    public void addParto(Parto parto, ServerCallback callback){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/vacas/fechas_parto";
 
@@ -717,6 +705,7 @@ public class Server {
                     usuario.addParto(parto);
                     System.out.println("Se ha añadido con EXITO una enfermedad en la Base de Datos!");
                     Toast.makeText(context, "Se ha añadido con EXITO una enfermedad en la Base de Datos!", Toast.LENGTH_SHORT).show();
+                    callback.onResponse(parto);
                 }
             }
         }, new Response.ErrorListener() {
@@ -793,9 +782,9 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    public void deleteParto(LocalDate fechaParto){
+    public void deleteParto(Parto parto){
         // Configuración de la URL del servidor apache
-        String url = URL + "/vacas/fechas_parto";
+        String url = URL + "/vacas/fechas_parto/" + parto.getId_vaca_parto();
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
 
             @Override
@@ -816,14 +805,7 @@ public class Server {
                 Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
             }
         }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Creamos una instancia con el nombre parametros
-                HashMap<String, String> parametros = new HashMap<>();
-                // Ingresamos los datos a enviar al servicio PHP
-                parametros.put("fechaParto", String.valueOf(fechaParto));
-                return parametros;
-            }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
