@@ -139,5 +139,27 @@ public class Vaca {
             return datosGpsCoinciden;
         }
     }
+
+    public void updateEnfermedad(Enfermedad enfermedad){
+        int k = 0;
+        for (Enfermedad enfermedad1: enfermedades){
+            if (enfermedad1.getId_enfermedad_vaca() == enfermedad.getId_enfermedad_vaca()){
+                enfermedades.set(k,enfermedad);
+                break;
+            }
+            k++;
+        }
+    }
+
+    public void updateParto(Parto parto){
+        int k = 0;
+        for (Parto parto1: partos){
+            if (parto1.getId_vaca_parto() == parto.getId_vaca_parto()){
+                partos.set(k,parto);
+                break;
+            }
+            k++;
+        }
+    }
 }
 

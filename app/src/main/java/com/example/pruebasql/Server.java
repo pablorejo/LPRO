@@ -705,7 +705,7 @@ public class Server {
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
         requestQueue.add(stringRequest);
     }
-    public void addFechaParto(Parto parto){
+    public void addParto(Parto parto){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/vacas/fechas_parto";
 
@@ -747,7 +747,7 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    public void updateFechaParto(Parto parto){
+    public void updateParto(Parto parto){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/vacas/fechas_parto";
 
@@ -793,7 +793,7 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    public void deleteFechaParto(LocalDate fechaParto){
+    public void deleteParto(LocalDate fechaParto){
         // Configuración de la URL del servidor apache
         String url = URL + "/vacas/fechas_parto";
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {

@@ -73,6 +73,7 @@ public class Calendario extends BarraSuperior {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragmentContainerViewDatosDia, datosDia)
                 .commit();
+        datosDia.setMiActivityResultLauncher(miActivityResultLauncher);
 
         Intent intent2 = getIntent();
         String numeroPendienteString = intent2.getStringExtra("numero_pendiente");
@@ -93,14 +94,12 @@ public class Calendario extends BarraSuperior {
         btnAddParto.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), AddParto.class);
             intent.putExtra("fecha",localDate.toString());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
             miActivityResultLauncher.launch(intent);
         });
 
         btnAddEnfermedad.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), AddEnfermedad.class);
             intent.putExtra("fecha",localDate.toString());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
             miActivityResultLauncher.launch(intent);
         });
 
@@ -125,6 +124,7 @@ public class Calendario extends BarraSuperior {
     protected void actualizar(Intent data) {
         super.actualizar(data);
         updateCalendar();
+        showEventDetailsFragment(localDate);
     }
 
     private void updateCalendar(){

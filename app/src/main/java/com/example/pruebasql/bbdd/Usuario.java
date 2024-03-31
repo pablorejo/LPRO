@@ -147,5 +147,20 @@ public class Usuario {
         return null;
     }
 
+    public void updateEnfermedad(Enfermedad enfermedad){
+        for (Vaca vaca: vacas){
+            if (vaca.getNumeroPendiente() == enfermedad.getNumero_pendiente()){
+                vaca.updateEnfermedad(enfermedad);
+            }
+        }
+    }
+
+    public void updateParto(Parto parto){
+        for (Vaca vaca: vacas){
+            if (vaca.getNumeroPendiente() == parto.getNumeroPendiente()){
+                vaca.updateParto(parto);
+            }
+        }
+    }
 
 }

@@ -42,7 +42,8 @@ public class AddParto extends BarraSuperior {
 
     private Parto parto = null;
 
-    private boolean editandoParto;
+    private boolean nueva = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +65,9 @@ public class AddParto extends BarraSuperior {
                     break;
                 }
             }
-            editandoParto = false;
+            nueva = false;
         }else{
-            editandoParto = true;
+            nueva = true;
         }
 
         Usuario usuario = DataManager.getInstance().getUsuario();
@@ -114,14 +115,23 @@ public class AddParto extends BarraSuperior {
         btnGuardar.setOnClickListener(v -> {
 
             int numeroPendiente = Integer.valueOf(editTextNumeroPendiente.getText().toString());
+            int id_vaca_parto = 0;
+            if (parto != null){
+                id_vaca_parto = parto.getId_vaca_parto();
+            }
             Parto parto = new Parto(
-                    0,
+                    id_vaca_parto,
                     numeroPendiente,
                     LocalDate.parse(fechaParto.getText().toString(),formatter),
                     editTextNotaParto.getText().toString()
             );
-            usuario.getVacaByNumeroPendiente(numeroPendiente).addParto(parto);
-            server.addFechaParto(parto);
+            if (nueva){// Hay que guardar el parto
+                usuario.getVacaByNumeroPendiente(numeroPendiente).addParto(parto);
+                server.addParto(parto);
+            }else{// Hay que actualizarlo
+                usuario.updateParto(parto);
+                server.updateParto(parto);
+            }
             setResult(RESULT_OK, null); // Establece RESULT_OK para indicar éxito
             finish();
         });

@@ -1,5 +1,6 @@
 package com.example.pruebasql.calendario;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -36,6 +37,8 @@ public class AddEnfermedad extends BarraSuperior {
     private Server server;
 
     private Enfermedad enfermedad = null;
+
+    private boolean nueva = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,9 @@ public class AddEnfermedad extends BarraSuperior {
                     break;
                 }
             }
+            nueva = false;
+        }else{
+            nueva = true;
         }
 
         Usuario usuario = DataManager.getInstance().getUsuario();
@@ -74,10 +80,10 @@ public class AddEnfermedad extends BarraSuperior {
         btnCancelar = findViewById(R.id.btnCancelar);
 
         textFechaInicio = findViewById(R.id.textFechaParto);
-        textFechaInicio.setText(localDate);
+        textFechaInicio.setText(localDate.toString());
 
         textFechaFin = findViewById(R.id.textFechaFin);
-        textFechaFin.setText(localDate);
+        textFechaFin.setText(localDate.toString());
 
         editTextNumeroPendienteEnfermedad = findViewById(R.id.editTextNumeroPendienteEnfermedad);
         editTextNumeroPendienteEnfermedad.setAdapter(usuario.getAdapterVacas(this));
@@ -130,25 +136,48 @@ public class AddEnfermedad extends BarraSuperior {
         });
 
         btnGuardar.setOnClickListener(v -> {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+
             int numeroPendiente = Integer.parseInt(editTextNumeroPendienteEnfermedad.getText().toString());
-            Enfermedad enfermedad = new Enfermedad(
-                    0,
-                    numeroPendiente,
-                    textMedicamento.getText().toString(),
-                    textNombreEnfermedad.getText().toString(),
-                    LocalDate.parse(textFechaInicio.getText().toString(),formatter),
-                    LocalDate.parse(textFechaFin.getText().toString(),formatter),
-                    Integer.parseInt(textPeriocidad.getText().toString()),
-                    editTextNotaEnfermedad.getText().toString()
-            );
-            usuario.getVacaByNumeroPendiente(numeroPendiente).addEnfermedad(enfermedad);
-            server.addEnfermedad(enfermedad);
-            finish();
+            int id_enfermedad_vaca = 0;
+            if (enfermedad != null){
+                id_enfermedad_vaca = enfermedad.getId_enfermedad_vaca();
+            }
+            try {
+                LocalDate fechaInicio = LocalDate.parse(textFechaInicio.getText().toString(),formatter);
+                LocalDate fechaFin = LocalDate.parse(textFechaFin.getText().toString(),formatter);
+                if (fechaFin.isAfter(fechaInicio)){
+                    Enfermedad enfermedad1 = new Enfermedad(
+                            id_enfermedad_vaca,
+                            numeroPendiente,
+                            textMedicamento.getText().toString(),
+                            textNombreEnfermedad.getText().toString(),
+                            fechaInicio,
+                            fechaInicio,
+                            Integer.parseInt(textPeriocidad.getText().toString()),
+                            editTextNotaEnfermedad.getText().toString()
+                    );
+                    if (nueva){ // Guardamos la enfermedad
+                        usuario.getVacaByNumeroPendiente(numeroPendiente).addEnfermedad(enfermedad1);
+                        server.addEnfermedad(enfermedad1);
+                    }else{ // Actualizamos la enfermedad
+                        usuario.updateEnfermedad(enfermedad1);
+                        server.updateEnfermedad(enfermedad1);
+                    }
+                    setResult(Activity.RESULT_OK);
+                }else{
+                    Toast.makeText(this, "La fecha fin no puede ser menor que la fecha de inicio", Toast.LENGTH_SHORT).show();
+                    setResult(Activity.RESULT_CANCELED);
+                }
+                finish();
+
+            }catch (Exception e){
+                Toast.makeText(this, "No se ha podido crear la enfermedad faltan datos", Toast.LENGTH_SHORT).show();
+            }
         });
 
         btnCancelar.setOnClickListener(v -> {
             Toast.makeText(this,"Crear enfermedad cancelado" , Toast.LENGTH_LONG).show();
+            setResult(Activity.RESULT_OK);
             finish();
         });
     }

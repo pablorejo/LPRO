@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.pruebasql.bbdd.Usuario;
@@ -55,6 +56,9 @@ public class BarraSuperior extends AppCompatActivity {
                         Intent data = result.getData();
                         actualizar(data);
                         // Maneja el resultado OK aquí
+                    }else{
+                        Intent data = result.getData();
+                        actualizar(data);
                     }
                 }
             }
@@ -93,7 +97,15 @@ public class BarraSuperior extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                text.setText(String.valueOf(year)+"-"+String.valueOf(month)+"-"+String.valueOf(dayOfMonth));
+                String strMonth =String.valueOf(month+1);
+                if (month <= 9){
+                    strMonth = "0" + strMonth;
+                }
+                String strDay = String.valueOf(dayOfMonth);
+                if (dayOfMonth <= 9){
+                    strDay = "0" + strDay;
+                }
+                text.setText(String.valueOf(year)+"-"+strMonth+"-"+strDay);
             }
         },calendario.get(Calendar.YEAR),calendario.get(Calendar.MONTH),calendario.get(Calendar.DAY_OF_MONTH));
 

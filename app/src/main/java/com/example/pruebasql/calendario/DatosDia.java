@@ -1,11 +1,16 @@
 package com.example.pruebasql.calendario;
 
+import android.app.Activity;
 import android.app.sdksandbox.LoadSdkException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -40,6 +45,8 @@ public class DatosDia extends Fragment {
     private int colorEnfermedad = Color.RED;
     private int colorParto = Color.GREEN;
     private int colorMedicina = Color.BLUE;
+
+    private ActivityResultLauncher<Intent> miActivityResultLauncher;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +61,10 @@ public class DatosDia extends Fragment {
         linearLayout = view.findViewById(R.id.linearLayoutDatosDia); // Asegúrate de reemplazar tuLinearLayoutId con el ID real de tu LinearLayout en el layout del fragmento
 
         return view;
+    }
+
+    public void setMiActivityResultLauncher(ActivityResultLauncher<Intent> launcher) {
+        this.miActivityResultLauncher = launcher;
     }
 
     public void setEventDetails(LocalDate date, int numeroPendiente) {
@@ -115,10 +126,10 @@ public class DatosDia extends Fragment {
         linearLayout1.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), clase);
             intent.putExtra("id",String.valueOf(id));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
-            startActivity(intent);
+            // Importante NOOO poner esta bandera sino no funciona el miActivityResultLauncher.
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necesario cuando se inicia una actividad fuera de un contexto de actividad
+            miActivityResultLauncher.launch(intent);
         });
-
     }
 
     public void clearDatos(){

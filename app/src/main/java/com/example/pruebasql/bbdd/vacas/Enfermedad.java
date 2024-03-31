@@ -30,13 +30,16 @@ public class Enfermedad {
             LocalDate fecha_fin,
             int periodicidadEnDias,
             String nota
-            ){
+            ) throws Exception {
         this.id_enfermedad_vaca = id_enfermedad_vaca;
         this.Numero_pendiente = Numero_pendiente;
         this.Medicamento = Medicamento;
         this.Enfermedad = Enfermedad;
         this.fecha_inicio = fecha_inicio;
         this.fecha_fin = fecha_fin;
+        if (fecha_fin.isBefore(fecha_inicio) || fecha_fin.isEqual(fecha_inicio)){
+            throw new Exception("La fecha de fin no puede ser menor ni igual que la fecha de inicio");
+        }
         this.periocidad_en_dias = periodicidadEnDias;
         this.nota = nota;
     }
