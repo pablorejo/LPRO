@@ -11,6 +11,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.pruebasql.bbdd.Mail;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
@@ -56,7 +58,7 @@ import com.google.gson.JsonSerializer;
 import org.threeten.bp.format.DateTimeFormatter;
 public class Server {
     private Usuario usuario;
-    private String dnsActivo = "vaca.ddns.net";
+    private String dnsActivo = "vacayisus.ddns.net";
 
     private String URL = "https://" + dnsActivo;
     private Context context; // Contexto para Volley
@@ -1267,5 +1269,32 @@ public class Server {
             System.out.println("No hay mensaje de respuesta");
             Toast.makeText(context, "No hay mensaje de respuesta", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /// Contactar
+    public void sendMail(Mail mail){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/contacto";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                System.out.println("Se ha enviado con EXITO el Mail");
+                Toast.makeText(context, "La información se ha enviado correctamente. MUCHAS GRACIAS POR AYUDARNOS A MEJORAR!! :)", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("ERROR. No se ha podido enviar el Mail");
+                Toast.makeText(context, "ERROR. No se ha podido enviar el Mail", Toast.LENGTH_SHORT).show();            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return mail.getJson();
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
     }
 }
