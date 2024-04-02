@@ -153,7 +153,7 @@ public class AddEnfermedad extends BarraSuperior {
                             textMedicamento.getText().toString(),
                             textNombreEnfermedad.getText().toString(),
                             fechaInicio,
-                            fechaInicio,
+                            fechaFin,
                             Integer.parseInt(textPeriocidad.getText().toString()),
                             editTextNotaEnfermedad.getText().toString()
                     );
