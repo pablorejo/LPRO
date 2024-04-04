@@ -1297,4 +1297,34 @@ public class Server {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
     }
+
+    public void call(int numeroPendiente){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/llamada";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                System.out.println("Se ha efectuado la llamada con EXITO.");
+                Toast.makeText(context, "Se ha efectuado la llamada con EXITO.", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("ERROR. No se ha podido efectuar la llamada.");
+                Toast.makeText(context, "ERROR. No se ha podido efectuar la llamada.", Toast.LENGTH_SHORT).show();            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                // Creamos una instancia con el nombre parametros
+                HashMap<String, String> parametros = new HashMap<>();
+                // Ingresamos los datos a enviar al servicio PHP
+                parametros.put("numeroPendiente", String.valueOf(numeroPendiente));
+                return parametros;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+
+    }
 }

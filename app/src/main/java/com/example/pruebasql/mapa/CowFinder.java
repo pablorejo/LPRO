@@ -6,6 +6,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.parcelas.Coordenada;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -59,7 +61,7 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
 
     private GoogleMap gMap;
 
-    private Button btnañadirParcela, btnEliminarParcela, btnFiltrarNumeroPendienteMapa,btnFechaInicioFiltroMapa,btnFechaFinFiltroMapa;
+    private Button btnañadirParcela, btnEliminarParcela, btnFiltrarNumeroPendienteMapa,btnFechaInicioFiltroMapa,btnFechaFinFiltroMapa, btnLlamada;
 
     private boolean añadirParcela = false;
 
@@ -74,6 +76,7 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
     private String[] numeros;
 
     private Date fechaInicio, fechaFin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +84,7 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
         configureToolbar();
 
         String numeroPendienteString = getIntent().getStringExtra("numero_pendiente");
+        System.out.println("El valor del numero pendiente: " + numeroPendienteString);
         if (numeroPendienteString != null && !numeroPendienteString.equals("")){
             vaca = usuario.getVacaByNumeroPendiente(Integer.parseInt(numeroPendienteString));
         }
@@ -156,6 +160,13 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
         btnFechaFinFiltroMapa.setOnClickListener(v -> {
             openDialogFecha(true);
         });
+
+        btnLlamada = findViewById(R.id.btnLlamada);
+        btnLlamada.setOnClickListener(v -> {
+            //server.call(numeroPendiente);
+            server.call(34);
+        });
+
     }
 
     private void añadirParcela(){
