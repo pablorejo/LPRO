@@ -31,6 +31,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class BarraSuperior extends AppCompatActivity {
 
@@ -137,7 +138,9 @@ public class BarraSuperior extends AppCompatActivity {
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)) {
             permisoNotificaciones = true;
         }
-        if (permisoNotificaciones){
+        Date currentDate = new Date();  // Fecha actual
+
+        if (permisoNotificaciones && notificacion.date.after(currentDate)){
             // Paso 4
             Intent intent = new Intent(this, ReminderBroadcast.class);
             intent.putExtra("tituloNotificacion",notificacion.titulo);
@@ -146,6 +149,7 @@ public class BarraSuperior extends AppCompatActivity {
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
 
             // Establece el momento exacto para la notificación
             Calendar calendar = Calendar.getInstance();
