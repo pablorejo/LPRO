@@ -12,11 +12,13 @@ public class Parcela {
 
     private int id_parcela;
     private String nombre_parcela;
-    private List<Coordenada> coordenadas;
+    private List<CoordenadaParcela> coordenadas;
+
+    public Sector sector;
 
     // Calcula el área del polígono en metros cuadrados
 
-    public Parcela(List<Coordenada> coordenadas,String nombre_parcela) {
+    public Parcela(List<CoordenadaParcela> coordenadas,String nombre_parcela) {
         this.coordenadas = coordenadas;
         this.nombre_parcela = nombre_parcela;
     }
@@ -25,12 +27,12 @@ public class Parcela {
     public void setNombre(String nombre) { this.nombre_parcela = nombre;}
 
     // Getter para las coordenadas
-    public List<Coordenada> getCoordenadas() {
+    public List<CoordenadaParcela> getCoordenadas() {
         return coordenadas;
     }
 
     // Setter para las coordenadas
-    public void setCoordenadas(List<Coordenada> coordenadas) {
+    public void setCoordenadas(List<CoordenadaParcela> coordenadas) {
         this.coordenadas = coordenadas;
         // Cada vez que se actualizan las coordenadas, recalcula el área
     }
@@ -60,8 +62,14 @@ public class Parcela {
         }
     }
 
+    public void setPuntosLatLongSector(List<LatLng> puntos){
+        for (int k = 0; k < sector.coordenadasSector.size(); k++){
+            sector.coordenadasSector.get(k).setPosition(puntos.get(k));
+        }
+    }
+
     // Método para añadir una coordenada a la lista
-    public void addCoordenada(Coordenada coordenada) {
+    public void addCoordenada(CoordenadaParcela coordenada) {
         this.coordenadas.add(coordenada);
         // No es necesario recalcular el área aquí, ya que se calcula en tiempo real en getArea()
     }

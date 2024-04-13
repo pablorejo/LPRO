@@ -1,6 +1,7 @@
 package com.example.pruebasql.lista_vaca;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 public class CowItem extends BarraSuperior {
 
     EditText editTextNumeroPendiente, editTextFechaNacimiento, editTextNota;
+    TextView textViewVelocidadMediaDia,textViewDistanciaRecorridaDía;
 
     AutoCompleteTextView textViewNumeroPendienteMadre;
     Button btnEdit, btnEliminarCowItem;
@@ -62,10 +64,7 @@ public class CowItem extends BarraSuperior {
                 .add(R.id.fragmentContainerViewHijasVaca, hijasVaca)
                 .commit();
 
-
-
         vaca = usuario.getVacaByNumeroPendiente(numero_pendiente);
-
 
         btnEliminarCowItem = findViewById(R.id.btnEliminarCowItem);
         btnEliminarCowItem.setVisibility(View.GONE);
@@ -149,6 +148,21 @@ public class CowItem extends BarraSuperior {
         ArrayList<String> sugerencias = new ArrayList<>();
         for (Vaca vaca : usuario.getVacas()) {
             sugerencias.add(String.valueOf(vaca.getNumeroPendiente()));
+        }
+
+
+        textViewVelocidadMediaDia = findViewById(R.id.textViewVelocidadMediaDia);
+        textViewDistanciaRecorridaDía = findViewById(R.id.textViewDistanciaRecorridaDía);
+        if (vaca != null && vaca.velocidadMediaDia!= null){
+            textViewVelocidadMediaDia.setText(getString(R.string.velocidadMedia) + " " +  vaca.velocidadMediaDia.toString());
+        }else{
+            textViewVelocidadMediaDia.setText(getString(R.string.velocidadMedia) + " " +  getString(R.string.noData));
+        }
+        if (vaca != null && vaca.distanciaRecorridaDía!= null){
+
+            textViewDistanciaRecorridaDía.setText(getString(R.string.distaciaMedia) + " " +  vaca.distanciaRecorridaDía.toString());
+        }else{
+            textViewDistanciaRecorridaDía.setText(getString(R.string.distaciaMedia) + " " +  getString(R.string.noData));
         }
     }
 

@@ -13,8 +13,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.pruebasql.bbdd.Mail;
+import com.example.pruebasql.bbdd.parcelas.CoordenadasSector;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.example.pruebasql.bbdd.Usuario;
+import com.example.pruebasql.bbdd.parcelas.Sector;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Leite;
 import com.example.pruebasql.bbdd.vacas.Parto;
@@ -28,6 +30,7 @@ import com.example.pruebasql.listeners.FechasPartoResponseListener;
 import com.example.pruebasql.listeners.VacaResponseListener;
 import com.example.pruebasql.listeners.VacasResponseListener;
 import com.example.pruebasql.listeners.VolumenLecheResponseListener;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
@@ -58,7 +61,7 @@ import com.google.gson.JsonSerializer;
 import org.threeten.bp.format.DateTimeFormatter;
 public class Server {
     private Usuario usuario;
-    private String dnsActivo = "vacayisus.ddns.net";
+    private String dnsActivo = "vaca.ddns.net";
 
     private String URL = "https://" + dnsActivo;
     private Context context; // Contexto para Volley
@@ -1259,6 +1262,168 @@ public class Server {
 
     }
 
+
+    /// Sectores ///////////////////////////////////////////////////
+    public void addSector(Sector sector){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/sectores";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                imprimirMensajeRespuesta(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("ERROR. No se ha podido añadir la parcela");
+                Toast.makeText(context, "ERROR. No se ha podido añadir la parcela", Toast.LENGTH_SHORT).show();}
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(sector);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
+                return headers;
+            }
+        };
+
+        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
+        requestQueue.add(stringRequest);
+    }
+
+    public void updateSector(Sector sector){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/parcelas";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                if(!response.isEmpty()){
+                    imprimirMensajeRespuesta(response);
+                }else{
+                    // Mensaje: "Contraseñas incorrectas"
+                    System.out.println("ERROR. No se ha podido modificar sector: " + sector.id_sector);
+                    Toast.makeText(context, "ERROR. No se ha podido modificar sector: " + sector.id_sector, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Mensaje que capture y muestre el error (no recomendable para el usuario final)
+                System.out.println( error.toString());
+                Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
+            }
+        }){
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(sector);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
+                return headers;
+            }
+        };
+        // Creamos una instancia
+        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
+        requestQueue.add(stringRequest);
+    }
+
+    public void deleteSector(Sector sector){
+        // Configuración de la URL del servidor apache
+        String url = URL + "/parcelas/" + sector.id_sector;
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                imprimirMensajeRespuesta(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Mensaje que capture y muestre el error (no recomendable para el usuario final)
+                System.out.println( error.toString());
+                Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
+            }
+        }){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
+                return headers;
+            }
+        };
+        // Creamos una instancia
+        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
+        requestQueue.add(stringRequest);
+    }
+
+    public void recomendarSector(Sector sector,ServerCallback serverCallback){
+        // configurar la url para que devuelva las enfermedades
+        String url = this.URL + "/sectores/recomendar";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (!response.isEmpty()){
+                    // Especificar el tipo correcto utilizando TypeToken
+                    Type listaTipo = new TypeToken<ArrayList<CoordenadasSector>>(){}.getType();
+                    ArrayList<CoordenadasSector> sector1 = gson.fromJson(response, listaTipo);
+                    serverCallback.onResponse(sector1);
+                    imprimirMensajeRespuesta(response);
+                }else {
+                    imprimirMensajeRespuesta(response);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("ERROR. No se ha podido añadir la parcela");
+                Toast.makeText(context, "ERROR. No se ha podido añadir la parcela", Toast.LENGTH_SHORT).show();}
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String json = gson.toJson(sector);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
+                return headers;
+            }
+        };
+
+        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
+        requestQueue.add(stringRequest);
+    }
+
+    // Funcion para imprimir mensajes del servidor ////////////////////////////////77
     private void imprimirMensajeRespuesta(String response){
         try {
             JSONObject obj = new JSONObject(response);
@@ -1271,7 +1436,8 @@ public class Server {
         }
     }
 
-    /// Contactar
+
+    /// Contactar /////////////////////////////////////////////////////////////////
     public void sendMail(Mail mail){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/contacto";
@@ -1327,4 +1493,6 @@ public class Server {
         requestQueue.add(stringRequest);
 
     }
+
+
 }

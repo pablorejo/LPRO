@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.parcelas.Coordenada;
+import com.example.pruebasql.bbdd.parcelas.CoordenadaParcela;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -16,19 +17,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Poligono {
-    List<Marker> marcadores;
-    PolygonOptions polygonOptions;
-    Parcela parcela;
-    GoogleMap gMap;
+    public List<Marker> marcadores;
 
-    boolean modificado = false;
+    public List<Marker> marcadoresSector;
+    public PolygonOptions polygonOptions;
+    public Parcela parcela;
+    public GoogleMap gMap;
 
-    public Poligono(List<Marker> marcadores, GoogleMap gMap, Parcela parcela){
+    public PolygonOptions polygonOptionsSector;
+
+    public boolean modificado = false;
+
+    public Poligono(List<Marker> marcadores, GoogleMap gMap, Parcela parcela, List<Marker> marcadoresSector){
         this.marcadores = marcadores;
+        this.marcadoresSector = marcadoresSector;
         this.polygonOptions = new PolygonOptions()
                 .addAll(getPuntosLatLng())
                 .strokeColor(Color.RED)
                 .fillColor(Color.argb(0, 0, 0, 0));
+
+        if (parcela.sector != null){
+            this.polygonOptionsSector = new PolygonOptions()
+                    .addAll(parcela.sector.getLatLong())
+                    .strokeColor(Color.BLUE)
+                    .fillColor(Color.argb(1, 0, 0, 0));
+        }
         this.gMap = gMap;
         this.parcela = parcela;
     }
@@ -38,7 +51,15 @@ public class Poligono {
         for (Marker marker: marcadores){
             puntos.add(marker.getPosition());
         }
-        return  puntos;
+        return puntos;
+    }
+
+    public List<LatLng> getPuntosLatLngSector(){
+        List<LatLng> puntos = new ArrayList<>();
+        for (Marker marker: marcadoresSector){
+            puntos.add(marker.getPosition());
+        }
+        return puntos;
     }
 
     public void setMarcadoresByPoints(List<LatLng> points, boolean añadirParcela){
@@ -49,11 +70,39 @@ public class Poligono {
                             .draggable(true));
             if (!añadirParcela){
                 newMarker.setVisible(false);
+
             }
             marcadores.add(newMarker);
         }
     }
 
+    public void setMarcadoresSectorByPoints(List<LatLng> points, boolean añadirSector) {
+        marcadoresSector = new ArrayList<Marker>();
+        for (LatLng point : points) {
+            Marker newMarker = gMap.addMarker(
+                    new MarkerOptions()
+                            .position(point)
+                            .draggable(true));
+            if (!añadirSector) {
+                newMarker.setVisible(false);
+            }
+            marcadoresSector.add(newMarker);
+        }
+        setPolygonOptionsSector();
+    }
+
+    public void setPolygonOptionsSector(){
+        this.polygonOptionsSector = new PolygonOptions()
+            .addAll(getPuntosLatLngSector())
+            .strokeColor(Color.BLUE)
+            .fillColor(Color.argb(1, 0, 0, 0));
+    }
+
+    /**
+     * Obtiene el punto central e base a una lista de puntos
+     * @param points: lista de puntos
+     * @return Devuelve un LatLng donde esta el centro
+     */
     public LatLng getPolygonCenterLatLng(List<LatLng> points){
 
         double latitude = 0;
@@ -82,15 +131,15 @@ public class Poligono {
         return new LatLng(latitude / count, longitude / count);
     }
 
-    public List<Coordenada> getCoordenadas(){
-        List<Coordenada> coordenadas = new ArrayList<>();
+    public List<CoordenadaParcela> getCoordenadas(){
+        List<CoordenadaParcela> coordenadas = new ArrayList<>();
         for (Marker marker: marcadores){
-            coordenadas.add(new Coordenada(marker.getPosition()));
+            coordenadas.add(new CoordenadaParcela(marker.getPosition()));
         }
         return  coordenadas;
     }
 
-    public void updateMarkers(Boolean añadirParcela){
+    public void updateMarkers(Boolean añadirParcela, boolean añadirSector){
         List<LatLng> points = new ArrayList<LatLng>();
         List<Marker> updatedMarkers = new ArrayList<>(); // Lista temporal para guardar los nuevos marcadores
         for (Marker marker: marcadores){
@@ -99,11 +148,12 @@ public class Poligono {
             Marker newMarker = gMap.addMarker(
                     new MarkerOptions()
                             .position(marker.getPosition())
-                            .draggable(true));
+                            .draggable(true)
+                            .visible(false));
 
             updatedMarkers.add(newMarker); // Guarda el nuevo marcador en la lista temporal
-            if (!añadirParcela){
-                newMarker.setVisible(false);
+            if (añadirParcela && !añadirSector){
+                newMarker.setVisible(true);
             }
         }
 
@@ -113,6 +163,35 @@ public class Poligono {
         marcadores.addAll(updatedMarkers);
         if (añadirParcela){
             parcela.setPuntosLatLong(points);
+        }
+
+
+        ///////////////////////////////////////////////////////////////
+        ////////////////// Seccion marcadores sector //////////////////
+        ///////////////////////////////////////////////////////////////
+        points = new ArrayList<LatLng>();
+        updatedMarkers = new ArrayList<>(); // Lista temporal para guardar los nuevos marcadores
+        for (Marker marker: marcadoresSector){
+            points.add(marker.getPosition());
+
+            Marker newMarker = gMap.addMarker(
+                    new MarkerOptions()
+                            .position(marker.getPosition())
+                            .draggable(true)
+                            .visible(false));
+
+            updatedMarkers.add(newMarker); // Guarda el nuevo marcador en la lista temporal
+            if (añadirSector){
+                newMarker.setVisible(true);
+            }
+        }
+
+        if (!marcadoresSector.equals(updatedMarkers)) {modificado = true; }
+
+        marcadoresSector.clear();
+        marcadoresSector.addAll(updatedMarkers);
+        if (añadirSector){
+            parcela.setPuntosLatLongSector(points);
         }
     }
 
@@ -124,14 +203,18 @@ public class Poligono {
         return this.polygonOptions;
     }
 
-    public void dibujar(boolean añadirParcela, int indiceParcela, Usuario usuario){
-        updateMarkers(añadirParcela);
+    public void dibujar(boolean añadirParcela, int indiceParcela, Usuario usuario, boolean añadirSector){
+        updateMarkers(añadirParcela,añadirSector);
         if (getPuntosLatLng().size() > 2) {
+            setPolygonOptionsSector();
             gMap.addPolygon(getPolygonOptions());
             gMap.addMarker(new MarkerOptions()
                     .position(getPolygonCenterLatLng(getPuntosLatLng()))
                     .title(usuario.getParcelas().get(indiceParcela).getNombre())
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            if (polygonOptionsSector != null && polygonOptionsSector.getPoints().size() > 2){
+                gMap.addPolygon(polygonOptionsSector);
+            }
         }
     }
 

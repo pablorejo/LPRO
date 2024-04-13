@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -42,15 +43,22 @@ public class DatosDia extends Fragment {
     private LinearLayout linearLayout; // Asegúrate de inicializar esto correctamente en onCreateView o onViewCreated
     private Usuario usuario;
 
-    private int colorEnfermedad = Color.RED;
-    private int colorParto = Color.GREEN;
-    private int colorMedicina = Color.BLUE;
+    protected int colorEnfermedad;
+    protected int colorParto;
+    protected int colorMedicina;
 
     private ActivityResultLauncher<Intent> miActivityResultLauncher;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         usuario = DataManager.getInstance().getUsuario();
+        setColors();
+    }
+
+    private void setColors(){
+        colorEnfermedad = ContextCompat.getColor(getContext(),R.color.red);
+        colorParto = ContextCompat.getColor(getContext(),R.color.green);
+        colorMedicina = ContextCompat.getColor(getContext(),R.color.blue);
     }
 
     @Override

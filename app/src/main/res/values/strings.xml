@@ -10,5 +10,7 @@
     <string name="a_adir_parto">Añadir parto</string>
     <string name="channel_id">notificacion</string>
     <string name="channel_name">notificacion</string>
-
+    <string name="noData">Sin datos</string>
+    <string name="distaciaMedia">Distancia media recorrida: </string>
+    <string name="velocidadMedia">Velocidad media: </string>
 </resources>

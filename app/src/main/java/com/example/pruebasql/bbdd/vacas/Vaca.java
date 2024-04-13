@@ -27,6 +27,12 @@ public class Vaca {
 
     private int idNumeroPendienteMadre;
 
+    public Double distanciaMediaMadre;
+    public ArrayList<Double> distanciasMediasHijas;
+    public Double distanciaMediaRebaño;
+    public Double velocidadMediaDia;
+    public Double distanciaRecorridaDía;
+
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     // Constructor con parámetros

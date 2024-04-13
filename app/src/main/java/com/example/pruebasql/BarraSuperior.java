@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
@@ -34,7 +35,8 @@ import java.util.Calendar;
 public class BarraSuperior extends AppCompatActivity {
 
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    protected Usuario usuario = DataManager.getInstance().getUsuario();
+    protected Usuario usuario;
+    protected Server server;
     private String pattern = "yyyy-MM-dd HH:mm:ss"; // Define el patrón del formato de fecha
     protected SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
     protected  ActivityResultLauncher<Intent> miActivityResultLauncher;
@@ -43,10 +45,16 @@ public class BarraSuperior extends AppCompatActivity {
 
     private boolean permisoNotificaciones = false;
 
+    protected int colorEnfermedad;
+    protected int colorParto;
+    protected int colorMedicina;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barra_superior);
+        usuario = DataManager.getInstance().getUsuario();
+        server = new Server(this,usuario);
         miActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -63,6 +71,13 @@ public class BarraSuperior extends AppCompatActivity {
                 }
             }
         );
+        this.setColors();
+    }
+
+    private void setColors(){
+        colorEnfermedad = ContextCompat.getColor(this,R.color.red);
+        colorParto = ContextCompat.getColor(this,R.color.green);
+        colorMedicina = ContextCompat.getColor(this,R.color.blue);
     }
 
     @Override
@@ -119,7 +134,9 @@ public class BarraSuperior extends AppCompatActivity {
      * @param notificacion: clase notificicacion que contiene el titulo el texto la fecha y el id de la notificacion
      */
     public void crearNotificacion(Notificacion notificacion){
-
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)) {
+            permisoNotificaciones = true;
+        }
         if (permisoNotificaciones){
             // Paso 4
             Intent intent = new Intent(this, ReminderBroadcast.class);

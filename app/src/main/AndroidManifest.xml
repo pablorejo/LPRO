@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
         tools:targetApi="tiramisu" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
@@ -21,6 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PruebaSQL"
         tools:targetApi="31">
+        <activity
+            android:name=".mapa.parcelas.ParcelaActivity"
+            android:exported="false" />
         <activity
             android:name=".calendario.AddParto"
             android:exported="false" />
@@ -82,8 +86,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".notificaciones.ReminderBroadcast"/>
-
+        <receiver android:name=".notificaciones.ReminderBroadcast" />
     </application>
 
 </manifest>

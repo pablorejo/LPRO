@@ -28,6 +28,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -48,18 +49,11 @@ public class Calendario extends BarraSuperior {
     LocalDate localDate;
 
     View view;
-    private int colorEnfermedad = Color.RED;
-    private int colorParto = Color.GREEN;
-
-    private int colorMedicina = Color.BLUE;
 
 
     private LinearLayout layout;
-
     private Usuario usuario;
-
     private int numeroPendiente;
-
     private DatosDia datosDia;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +61,8 @@ public class Calendario extends BarraSuperior {
         setContentView(R.layout.activity_calendario);
         configureToolbar();
         usuario = DataManager.getInstance().getUsuario();
+
+
 
         // Inciamos el fragmento de datos día
         datosDia =  new DatosDia();

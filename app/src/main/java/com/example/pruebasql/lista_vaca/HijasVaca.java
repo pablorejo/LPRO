@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -25,7 +26,7 @@ import com.example.pruebasql.bbdd.vacas.Vaca;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link HijasVaca#newInstance} factory method to
+ * Use the  factory method to
  * create an instance of this fragment.
  */
 public class HijasVaca extends Fragment {
@@ -36,8 +37,8 @@ public class HijasVaca extends Fragment {
 
     private int numeroPendiente;
 
-    private int colorMadre = Color.GREEN;
-    private int colorHijas = Color.BLUE;
+    private int colorMadre;
+    private int colorHijas;
 
     private ActivityResultLauncher<Intent> miActivityResultLauncher;
     public HijasVaca(int numeroPendiente) {
@@ -59,6 +60,8 @@ public class HijasVaca extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        colorMadre = ContextCompat.getColor(getContext(),R.color.green);
+        colorHijas = ContextCompat.getColor(getContext(),R.color.blue);
     }
 
     @Override

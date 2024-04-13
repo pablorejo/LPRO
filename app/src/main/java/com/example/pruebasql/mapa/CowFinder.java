@@ -6,10 +6,9 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -17,18 +16,13 @@ import android.os.Bundle;
 import com.example.pruebasql.BarraSuperior;
 import com.example.pruebasql.R;
 import com.example.pruebasql.Server;
-import com.example.pruebasql.bbdd.parcelas.Coordenada;
+import com.example.pruebasql.bbdd.parcelas.CoordenadaParcela;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -36,32 +30,28 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.example.pruebasql.mapa.parcelas.ParcelaActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import io.reactivex.schedulers.Timed;
-
 public class CowFinder extends BarraSuperior implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
 
     private GoogleMap gMap;
 
-    private Button btnañadirParcela, btnEliminarParcela, btnFiltrarNumeroPendienteMapa,btnFechaInicioFiltroMapa,btnFechaFinFiltroMapa, btnLlamada;
+    private Button btnañadirParcela, btnEliminarParcela, btnFiltrarNumeroPendienteMapa,btnFechaInicioFiltroMapa,btnFechaFinFiltroMapa, btnLlamada, btnEditarCowFinder;
 
     private boolean añadirParcela = false;
 
@@ -167,6 +157,9 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
             server.call(34);
         });
 
+        btnEditarCowFinder = findViewById(R.id.btnEditarCowFinder);
+        btnEditarCowFinder.setVisibility(View.GONE);
+
     }
 
     private void añadirParcela(){
@@ -180,7 +173,7 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
             parcela.setNombre(editTextNombreParcela.getText().toString());
 
             // Cordenadas de la parcela
-            List<Coordenada> coordenadas = getLastPoligono().getCoordenadas();
+            List<CoordenadaParcela> coordenadas = getLastPoligono().getCoordenadas();
 
             if (coordenadas.size()> 2){
                 parcela.setCoordenadas(coordenadas);
@@ -195,7 +188,7 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
             // Comprobar si hay cambios en otras parcelas.
             for (int k = 0; k<poligonos.size(); k++){
                 Poligono poligono = poligonos.get(k);
-                poligono.updateMarkers(añadirParcela);
+                poligono.updateMarkers(añadirParcela,false);
 
                 if(poligono.modificado){
                     server.updateParcela(poligono.parcela);
@@ -213,10 +206,10 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
             editTextNombreParcela.setVisibility(View.VISIBLE);
 
             añadirParcela = true;
-            List<Coordenada> coordenadas = new ArrayList<Coordenada>();
+            List<CoordenadaParcela> coordenadas = new ArrayList<CoordenadaParcela>();
             usuario.addParcela(new Parcela(coordenadas,"Nombre parcela"));
 
-            Poligono poligono = new Poligono(new ArrayList<Marker>(),gMap, new Parcela(new ArrayList<>(),""));
+            Poligono poligono = new Poligono(new ArrayList<Marker>(),gMap, new Parcela(new ArrayList<>(),""),new ArrayList<Marker>());
             poligonos.add(poligono);
 
             btnañadirParcela.setText("Guardar");
@@ -328,16 +321,16 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
         int indiceParcela = 0;
         // Dibujamos los poligonos que nos hacen falta.
         for (Poligono poligono : poligonos) {
-            poligono.dibujar(añadirParcela,indiceParcela,usuario);
+            poligono.dibujar(añadirParcela,indiceParcela,usuario,false);
             indiceParcela ++;
         }
 
         // Esto es para que al inicio se pongan los marcadores del usurio.
         if (poligonos.isEmpty() ){
             for (Parcela parcela: usuario.getParcelas()){
-                Poligono poligono = new Poligono(new ArrayList<Marker>(), gMap, parcela);
+                Poligono poligono = new Poligono(new ArrayList<Marker>(), gMap, parcela,new ArrayList<Marker>());
                 poligono.setMarcadoresByPoints(parcela.getPuntosLatLong(),añadirParcela);
-                poligono.dibujar(añadirParcela,indiceParcela,usuario);
+                poligono.dibujar(añadirParcela,indiceParcela,usuario,false);
                 poligonos.add(poligono);
             }
         }
@@ -408,6 +401,13 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
                 configurarBtnañadirParcela();
             });
 
+            btnEditarCowFinder.setVisibility(View.VISIBLE);
+            btnEditarCowFinder.setOnClickListener(v ->{
+                Intent intent = new Intent(getApplicationContext(), ParcelaActivity.class);
+                intent.putExtra("id_fecha",poligono.parcela.getId());
+                miActivityResultLauncher.launch(intent);
+            });
+
             return true;
         }else{
             return false;
@@ -420,6 +420,7 @@ public class CowFinder extends BarraSuperior implements OnMapReadyCallback, Goog
         btnañadirParcela.setOnClickListener(v1 -> {
             añadirParcela();
         });
+        btnEditarCowFinder.setVisibility(View.GONE);
     }
 
 

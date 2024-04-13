@@ -107,7 +107,14 @@
             android:id="@+id/btnAñadirParcela"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
             android:text="Añadir parcela" />
+
+        <Button
+            android:id="@+id/btnEditarCowFinder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar" />
 
     </LinearLayout>
 
