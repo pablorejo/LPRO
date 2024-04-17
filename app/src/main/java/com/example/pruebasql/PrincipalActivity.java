@@ -4,8 +4,10 @@ package com.example.pruebasql;
 import android.app.NotificationManager;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
@@ -13,9 +15,12 @@ import com.example.pruebasql.automatizacion.Automatizacion;
 import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.calendario.Calendario;
-import com.example.pruebasql.mapa.CowFinder;
+import com.example.pruebasql.mapa.Mapa;
 import com.example.pruebasql.lista_vaca.CowList;
 import com.example.pruebasql.notificaciones.Notificacion;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.Manifest;
 
@@ -48,7 +53,7 @@ public class PrincipalActivity extends BarraSuperior {
         });
 
         btnCowFinder.setOnClickListener(view -> {
-            iniciarActividad(CowFinder.class);
+            iniciarActividad(Mapa.class);
         });
 
         btnContact.setOnClickListener(view -> {
@@ -85,5 +90,16 @@ public class PrincipalActivity extends BarraSuperior {
                 }
             }
         }
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if(task.isComplete()){
+                    String token = task.getResult();
+                    Log.d("MyFirebaseMessagingService", "Token: " + token);
+                }
+            }
+        });
     }
 }

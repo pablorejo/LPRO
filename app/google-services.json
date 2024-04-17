@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "820455623713",
+    "project_id": "muundogando-e25f3",
+    "storage_bucket": "muundogando-e25f3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820455623713:android:7394cf85a692552bbde760",
+        "android_client_info": {
+          "package_name": "com.example.pruebasql"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJK1U5wR1_WclKDOnKFFYNe_W2omWPl7Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

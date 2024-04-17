@@ -1,11 +1,19 @@
 package com.example.pruebasql.mapa.parcelas;
 
 import android.Manifest;
+import android.app.AlertDialog;
+
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,24 +22,30 @@ import androidx.core.content.ContextCompat;
 
 import com.example.pruebasql.BarraSuperior;
 import com.example.pruebasql.R;
-import com.example.pruebasql.bbdd.parcelas.Coordenada;
+import com.example.pruebasql.bbdd.parcelas.CoordenadaDensidad;
 import com.example.pruebasql.bbdd.parcelas.CoordenadasSector;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.example.pruebasql.bbdd.parcelas.Sector;
+import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.listeners.ServerCallback;
-import com.example.pruebasql.mapa.CowFinder;
 import com.example.pruebasql.mapa.Poligono;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.common.reflect.TypeToken;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
-import org.checkerframework.checker.units.qual.C;
-
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
@@ -43,6 +57,8 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
 
     private Button btnEditarParcela,btnAñadirSectorParcela;
 
+    private Button btnFiltrarNumeroPendienteMapa,btnFechaInicioFiltroMapa,btnFechaFinFiltroMapa, btnLlamada;
+
     private boolean editarParcela = false;
 
     private boolean añadirSector = false;
@@ -51,12 +67,30 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
 
     private Poligono poligono;
 
+    private boolean[] elementosSeleccionados;
+    private String[] numeros;
+
+    private Date fechaInicio, fechaFin;
+
+    private Vaca vaca;
+
+    private boolean changes = true;
+
+    private boolean ponerMapaCalorBol = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parcela);
         configureToolbar();
+
+        String numeroPendienteString = getIntent().getStringExtra("numero_pendiente");
+        System.out.println("El valor del numero pendiente: " + numeroPendienteString);
+        if (numeroPendienteString != null && !numeroPendienteString.equals("")){
+            vaca = usuario.getVacaByNumeroPendiente(Integer.parseInt(numeroPendienteString));
+        }
+
 
         int idParcela = getIntent().getIntExtra("id_fecha",0);
         for (Parcela parcela1: usuario.getParcelas()){
@@ -69,8 +103,6 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
             }
         }
 
-
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
@@ -80,8 +112,8 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
         editTextNombreParcela.setText(parcela.getNombre());
         editTextNombreParcela.setEnabled(false);
 
-        EditTextDiasParcela = findViewById(R.id.EditTextDiasParcela);
-        EditTextDiasParcela.setEnabled(false);
+        //EditTextDiasParcela = findViewById(R.id.EditTextDiasParcela);
+        //EditTextDiasParcela.setEnabled(false);
 
         btnEditarParcela = findViewById(R.id.btnEditarParcela);
         btnAñadirSectorParcela = findViewById(R.id.btnAñadirSectorParcela);
@@ -89,6 +121,61 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
 
         btnEditarParcela.setOnClickListener(v -> {
             funtionEditarParcela();
+        });
+
+        btnFiltrarNumeroPendienteMapa = findViewById(R.id.btnFiltrarNumeroPendienteMapa);
+
+        numeros = usuario.getNumerosPendiente().toArray(new String[0]);
+        elementosSeleccionados = new boolean[numeros.length];
+        btnFiltrarNumeroPendienteMapa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder dialogoBuilder = new AlertDialog.Builder(ParcelaActivity.this);
+                dialogoBuilder.setTitle("Selecciona números");
+                dialogoBuilder.setMultiChoiceItems(numeros, elementosSeleccionados, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
+                        // Actualiza el estado del elemento seleccionado
+                        elementosSeleccionados[i] = isChecked;
+                    }
+                });
+
+                dialogoBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        changes = true;
+                        redrawPolygon();
+                    }
+                });
+
+                dialogoBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        changes = false;
+                    }
+                });
+
+                AlertDialog dialogo = dialogoBuilder.create();
+                dialogo.show();
+
+            }
+        });
+        btnFechaInicioFiltroMapa = findViewById(R.id.btnFechaInicioFiltroMapa);
+        btnFechaInicioFiltroMapa.setOnClickListener(v -> {
+            changes = true;
+            openDialogFecha(false);
+        });
+        btnFechaFinFiltroMapa = findViewById(R.id.btnFechaFinFiltroMapa);
+        btnFechaFinFiltroMapa.setOnClickListener(v -> {
+            changes = true;
+            openDialogFecha(true);
+        });
+
+        btnLlamada = findViewById(R.id.btnLlamada);
+        btnLlamada.setOnClickListener(v -> {
+            //server.call(numeroPendiente);
+            server.call(34);
         });
     }
 
@@ -143,7 +230,6 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
         if (añadirSector){ // Si añadir parcela está a true hay que guardar la parcela.
             añadirSector= false;
 
-            funtionConfBtnAñadirSector();
             if (existeSector){
                 server.updateSector(parcela.sector);
             }else{
@@ -153,13 +239,13 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
             funtionConfBtnAñadirSector();
 
         }else{
-            btnAñadirSectorParcela.setText("Guardar sector");
-
             añadirSector = true;
             ArrayList<CoordenadasSector> coordenadas = new ArrayList<CoordenadasSector>();
             parcela.sector = new Sector(parcela.getId(),usuario.getId());
             parcela.sector.coordenadasSector = coordenadas;
             redrawPolygon();
+            funtionConfBtnAñadirSector();
+
         }
     }
 
@@ -167,34 +253,37 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
         server.recomendarSector(parcela.sector, new ServerCallback() {
             @Override
             public void onResponse(Object response) {
-                ArrayList<CoordenadasSector> coordenadasRecomendadas = (ArrayList<CoordenadasSector>) response;
+                ArrayList<LatLng> puntosRecomendados = (ArrayList<LatLng>) response;
                 poligono.marcadoresSector.clear();
 
-                ArrayList<LatLng> puntosRecomendados = new ArrayList<>();
-                for (CoordenadasSector coordenadaSector: coordenadasRecomendadas){
-                    puntosRecomendados.add(new LatLng(coordenadaSector.latitude,coordenadaSector.longitude));
-                }
+                ponerMapaCalorBol = false;
                 poligono.setMarcadoresSectorByPoints(puntosRecomendados ,añadirSector);
                 redrawPolygon();
                 ArrayList<CoordenadasSector> coordenadasSectorsAnterior = (ArrayList<CoordenadasSector>) parcela.sector.coordenadasSector.clone();
 
                 btnAñadirSectorParcela.setText("Guardar");
                 btnAñadirSectorParcela.setOnClickListener(v -> {
+                    ponerMapaCalorBol = true;
+                    ArrayList<CoordenadasSector> coordenadasRecomendadas = new ArrayList<>();
+                    for (LatLng latLng : puntosRecomendados){
+                        coordenadasRecomendadas.add(new CoordenadasSector(latLng));
+                    }
+
                     parcela.sector.coordenadasSector = coordenadasRecomendadas;
 
                     server.updateSector(parcela.sector);
-                    funtionConfBtnAñadirSector();
                     redrawPolygon();
 
                     btnEditarParcela.setText("Editar parcela");
                     btnEditarParcela.setOnClickListener(v1 -> {
                         funtionEditarParcela();
                     });
+                    funtionConfBtnAñadirSector();
                 });
 
                 btnEditarParcela.setText("Cancelar");
                 btnEditarParcela.setOnClickListener(v -> {
-
+                    ponerMapaCalorBol = true;
                     btnEditarParcela.setText("Editar parcela");
                     btnEditarParcela.setOnClickListener(v1 -> {
                         funtionEditarParcela();
@@ -202,11 +291,12 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
                     funtionConfBtnAñadirSector();
                     poligono.setMarcadoresSectorByPoints(parcela.sector.getLatLong() ,añadirSector);
                     redrawPolygon();
+
                 });
             }
 
             @Override
-            public void onError(Exception e) {
+            public void onError(String e) {
 
             }
         });
@@ -283,13 +373,140 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
         });
     }
 
+    private void addHeatPointsVaca(ArrayList<String> numerosPendienteVaca){
+        for (String numeroPendiente: numerosPendienteVaca){
+            Vaca vaca1 = usuario.getVacaByNumeroPendiente(Integer.valueOf(numeroPendiente));
+            addHeatPointsVaca(vaca1);
+        }
+    }
+
+    /**
+     * Añade los puntos al heatmap de las ubicaciones de una vaca en concreto
+     * @param vaca: Clase vaca
+     */
+    private void addHeatPointsVaca(Vaca vaca){
+        List<LatLng> locations = vaca.getDatosGpsByFechaInicioYFechaFin(fechaInicio,fechaFin);
+        // Verificar que la lista no esté vacía
+        if (!locations.isEmpty()) {
+            // Crear el proveedor del mapa de calor con los datos
+            HeatmapTileProvider provider = new HeatmapTileProvider.Builder()
+                    .data(locations)
+                    .build();
+
+            // Añadir el overlay del mapa de calor al Google Map
+            TileOverlay overlay = gMap.addTileOverlay(new TileOverlayOptions().tileProvider(provider));
+        }
+    }
+
+    private void addHeatPointsCoordenadasDensidad(ArrayList<LatLng> coordenadaDensidads){
+        // Verificar que la lista no esté vacía
+        if (!coordenadaDensidads.isEmpty()) {
+            // Crear el proveedor del mapa de calor con los datos
+            HeatmapTileProvider provider = new HeatmapTileProvider.Builder()
+                    .data(coordenadaDensidads)
+                    .build();
+
+            // Añadir el overlay del mapa de calor al Google Map
+            TileOverlay overlay = gMap.addTileOverlay(new TileOverlayOptions().tileProvider(provider));
+        }
+    }
+
+    private void ponerMapaCalor(){
+        server.getGPS(fechaInicio, fechaFin, numeros, parcela.getId(), new ServerCallback() {
+            @Override
+            public void onResponse(Object response) {
+                ArrayList<LatLng> coordenadas = (ArrayList<LatLng>) response;
+                addHeatPointsCoordenadasDensidad(coordenadas);
+                changes = false;
+            }
+
+            @Override
+            public void onError(String e) {
+
+            }
+        });
+    }
+
     public void redrawPolygon(){
+        if (changes && ponerMapaCalorBol){
+            ponerMapaCalor();
+        }
         // Pimpiamos el mapa
         gMap.clear(); // Limpia el mapa para eliminar polígonos y marcadores anteriores
         gMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         gMap.getUiSettings().setScrollGesturesEnabled(true);
 
+        if (vaca != null){
+            addHeatPointsVaca(vaca);
+        } else{
+            ArrayList<String> numerosSeleccionados = new ArrayList<>();
+            for (int j = 0; j < elementosSeleccionados.length; j++) {
+                if (elementosSeleccionados[j]) {
+                    numerosSeleccionados.add(numeros[j]);
+                }
+            }
+            if (numerosSeleccionados.size() != 0){
+                addHeatPointsVaca(numerosSeleccionados);
+            }else{
+                addHeatPointsVaca(usuario.getNumerosPendiente());
+            }
+        }
+
 
         poligono.dibujar(editarParcela,0,usuario,añadirSector);
+    }
+
+    /**
+     * Lo que hace la función es mostrar un widget para especificar el día y la hora y lo guarda en las variables privadas de fechaFin y fechaInicio
+     * @param boolFechaFin: Si está a true guarda la fecha fin si está a false guarda la fecha inicio.
+     */
+    public void openDialogFecha(boolean boolFechaFin){
+        final Calendar calendario = Calendar.getInstance();
+        if (boolFechaFin && fechaFin!= null){
+            calendario.setTime(fechaFin);
+        }else if(fechaInicio!= null){
+            calendario.setTime(fechaInicio);
+        }
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        calendario.set(Calendar.YEAR, year);
+                        calendario.set(Calendar.MONTH, monthOfYear);
+                        calendario.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                        // Ahora que tienes la fecha, abre el TimePickerDialog
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                                ParcelaActivity.this,
+                                new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                        calendario.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                        calendario.set(Calendar.MINUTE, minute);
+
+                                        // Aquí tienes la fecha y la hora en el objeto calendario
+                                        if (boolFechaFin){
+                                            fechaFin = calendario.getTime();
+                                        }else{
+                                            fechaInicio = calendario.getTime();
+                                        }
+                                        // Ahora puedes actualizar el mapa o lo que necesites hacer con la fecha y hora
+                                        redrawPolygon();
+                                    }
+                                },
+                                calendario.get(Calendar.HOUR_OF_DAY),
+                                calendario.get(Calendar.MINUTE),
+                                true // Modo 24 horas
+                        );
+                        timePickerDialog.show();
+                    }
+                },
+                calendario.get(Calendar.YEAR),
+                calendario.get(Calendar.MONTH),
+                calendario.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
     }
 }

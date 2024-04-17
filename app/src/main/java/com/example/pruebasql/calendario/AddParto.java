@@ -1,15 +1,9 @@
 package com.example.pruebasql.calendario;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,17 +13,11 @@ import com.example.pruebasql.DataManager;
 import com.example.pruebasql.R;
 import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
-import com.example.pruebasql.bbdd.vacas.Enfermedad;
 import com.example.pruebasql.bbdd.vacas.Parto;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.listeners.ServerCallback;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.format.DateTimeFormatter;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class AddParto extends BarraSuperior {
 
@@ -135,7 +123,7 @@ public class AddParto extends BarraSuperior {
                     }
 
                     @Override
-                    public void onError(Exception e) {
+                    public void onError(String e) {
 
                     }
                 });

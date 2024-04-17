@@ -47,7 +47,7 @@
                     android:drawableTop="@drawable/gps_128x128"
                     android:gravity="center"
                     android:paddingRight="20dp"
-                    android:text="CowFinder"
+                    android:text="Mapa"
                     android:textSize="30dp" />
 
 
@@ -57,7 +57,7 @@
                     android:layout_height="match_parent"
                     android:drawableTop="@drawable/cow_128x128"
                     android:gravity="center"
-                    android:text="CowList"
+                    android:text="Vacas"
                     android:textSize="30dp" />
 
             </TableRow>
@@ -75,7 +75,7 @@
                     android:drawableTop="@drawable/automatizacion_128x128"
                     android:gravity="bottom|center"
                     android:paddingRight="20dp"
-                    android:text="Programacion"
+                    android:text="Automatización"
                     android:textSize="30dp" />
 
                 <TextView

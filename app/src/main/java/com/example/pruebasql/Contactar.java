@@ -9,10 +9,6 @@ import android.widget.Toast;
 import com.example.pruebasql.bbdd.Mail;
 import com.example.pruebasql.bbdd.Usuario;
 
-
-
-
-
 public class Contactar extends BarraSuperior {
     Server server;
     EditText textoEnviar;

@@ -1,12 +1,10 @@
 package com.example.pruebasql.calendario;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,12 +19,6 @@ import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.listeners.ServerCallback;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.format.DateTimeFormatter;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class AddEnfermedad extends BarraSuperior {
 
@@ -166,7 +158,7 @@ public class AddEnfermedad extends BarraSuperior {
                             }
 
                             @Override
-                            public void onError(Exception e) {
+                            public void onError(String e) {
                                 setResult(Activity.RESULT_CANCELED);
                                 finish();
                             }

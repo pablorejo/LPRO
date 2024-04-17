@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -13,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.pruebasql.bbdd.Mail;
+import com.example.pruebasql.bbdd.parcelas.CoordenadaDensidad;
 import com.example.pruebasql.bbdd.parcelas.CoordenadasSector;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.example.pruebasql.bbdd.Usuario;
@@ -30,6 +32,7 @@ import com.example.pruebasql.listeners.FechasPartoResponseListener;
 import com.example.pruebasql.listeners.VacaResponseListener;
 import com.example.pruebasql.listeners.VacasResponseListener;
 import com.example.pruebasql.listeners.VolumenLecheResponseListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -61,10 +64,12 @@ import com.google.gson.JsonSerializer;
 import org.threeten.bp.format.DateTimeFormatter;
 public class Server {
     private Usuario usuario;
-    private String dnsActivo = "vaca.ddns.net";
+    private String dnsActivo = "vacayisus.ddns.net";
 
     private String URL = "https://" + dnsActivo;
     private Context context; // Contexto para Volley
+
+    private static String tipoSalida = "application/json; charset=utf-8";
 
     String patternLocalDate = "yyyy-MM-dd";
     JsonDeserializer<LocalDate> deserializerLocalDate = new JsonDeserializer<LocalDate>() {
@@ -115,6 +120,13 @@ public class Server {
     public Server(Context context, Usuario usuario){
         this.context = context;
         this.usuario = usuario;
+    }
+
+    ////////////// UTILIDADES ///////////////////////
+    public Map<String, String> configurarCookie() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
+        return headers;
     }
 
     // FUNCIONES PARA USUARIOS:
@@ -220,7 +232,7 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
 
         };
@@ -255,7 +267,6 @@ public class Server {
     public void getVacas(VacasResponseListener listener){
         String url = URL + "/vacas";
         ArrayList<Vaca> listaVacas = new ArrayList<>();
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -279,15 +290,12 @@ public class Server {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
         requestQueue.add(stringRequest);
-
     }
 
     public void getVaca(int id_vaca, VacaResponseListener listener){
@@ -314,9 +322,7 @@ public class Server {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
@@ -358,9 +364,7 @@ public class Server {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -400,13 +404,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -440,9 +442,7 @@ public class Server {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -567,13 +567,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -614,13 +612,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -647,9 +643,7 @@ public class Server {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -689,9 +683,7 @@ public class Server {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -727,13 +719,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -773,13 +763,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -813,9 +801,7 @@ public class Server {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -847,9 +833,7 @@ public class Server {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -879,13 +863,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -925,13 +907,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -973,9 +953,7 @@ public class Server {
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -1007,9 +985,7 @@ public class Server {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -1039,13 +1015,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -1086,13 +1060,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -1131,13 +1103,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -1170,13 +1140,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -1217,13 +1185,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -1251,9 +1217,7 @@ public class Server {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -1287,13 +1251,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
@@ -1303,7 +1265,7 @@ public class Server {
 
     public void updateSector(Sector sector){
         // configurar la url para que devuelva las enfermedades
-        String url = this.URL + "/parcelas";
+        String url = this.URL + "/sectores";
 
         StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
 
@@ -1334,13 +1296,11 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -1368,9 +1328,7 @@ public class Server {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
         // Creamos una instancia
@@ -1387,8 +1345,8 @@ public class Server {
             public void onResponse(String response) {
                 if (!response.isEmpty()){
                     // Especificar el tipo correcto utilizando TypeToken
-                    Type listaTipo = new TypeToken<ArrayList<CoordenadasSector>>(){}.getType();
-                    ArrayList<CoordenadasSector> sector1 = gson.fromJson(response, listaTipo);
+                    Type listaTipo = new TypeToken<ArrayList<LatLng>>(){}.getType();
+                    ArrayList<LatLng> sector1 = gson.fromJson(response, listaTipo);
                     serverCallback.onResponse(sector1);
                     imprimirMensajeRespuesta(response);
                 }else {
@@ -1398,8 +1356,8 @@ public class Server {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("ERROR. No se ha podido añadir la parcela");
-                Toast.makeText(context, "ERROR. No se ha podido añadir la parcela", Toast.LENGTH_SHORT).show();}
+                System.out.println("ERROR. Error al intentar recomendar sector");
+                Toast.makeText(context, "ERROR. Error al intentar recomendar sector", Toast.LENGTH_SHORT).show();}
         }){
             @Override
             public byte[] getBody() throws AuthFailureError {
@@ -1409,16 +1367,22 @@ public class Server {
 
             @Override
             public String getBodyContentType() {
-                return "application/json; charset=utf-8";
+                return tipoSalida;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id() + "; Path=/");
-                return headers;
+                return configurarCookie();
             }
         };
 
+        // Configurar el RetryPolicy personalizado
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,  // Tiempo de espera inicial en milisegundos (10 segundos)
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, // Número de reintentos
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT // Multiplicador de backoff
+        ));
+
+        // Añadir la solicitud a la cola
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
         requestQueue.add(stringRequest);
     }
@@ -1493,6 +1457,75 @@ public class Server {
         requestQueue.add(stringRequest);
 
     }
+
+    /***
+     * Esta funcion obtiene los datos gps filtrados y reducidos
+     * Aunque se llame get esta usa el metodo post para mandar los filtros
+     * @param inicio
+     * @param fin
+     * @param listener
+     */
+    public void getGPS(Date inicio, Date fin, String[] numerosVacas, int id_parcela,ServerCallback listener){
+        String url = URL + "/gps";
+        ArrayList<Vaca> listaVacas = new ArrayList<>();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Type listaTipo = new TypeToken<ArrayList<LatLng>>(){}.getType();
+                    ArrayList<LatLng> coordenadas = gson.fromJson(response, listaTipo);
+                    listener.onResponse(coordenadas);
+
+                } catch (Exception e) {
+                    listener.onError(e.toString());
+                }
+                imprimirMensajeRespuesta(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.onError(error.toString());
+            }
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                Filtro filtro = new Filtro(inicio,fin,numerosVacas,id_parcela);
+                String json = gson.toJson(filtro);
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return tipoSalida;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return configurarCookie();
+            }
+        };
+
+        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
+        requestQueue.add(stringRequest);
+
+    }
+
+    private class Filtro{
+        Date inicio;
+        Date fin;
+        String[] numerosVacas;
+
+        int id_parcela;
+
+        public Filtro(Date inicio, Date fin, String[] numerosVacas,int id_parcela) {
+            this.inicio = inicio;
+            this.fin = fin;
+            this.numerosVacas = numerosVacas;
+            this.id_parcela = id_parcela;
+        }
+    }
+
 
 
 }

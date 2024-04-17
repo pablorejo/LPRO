@@ -1,13 +1,8 @@
 package com.example.pruebasql.lista_vaca;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,8 +15,7 @@ import com.example.pruebasql.Server;
 import com.example.pruebasql.bbdd.Usuario;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.calendario.Calendario;
-import com.example.pruebasql.calendario.DatosDia;
-import com.example.pruebasql.mapa.CowFinder;
+import com.example.pruebasql.mapa.Mapa;
 
 import org.threeten.bp.LocalDate;
 
@@ -138,7 +132,7 @@ public class CowItem extends BarraSuperior {
 
         if (!editando){
             txtCowFinder.setOnClickListener(v -> {
-                Intent intentCalendario = new Intent(getApplicationContext(), CowFinder.class);
+                Intent intentCalendario = new Intent(getApplicationContext(), Mapa.class);
                 intentCalendario.putExtra("numero_pendiente", numeroPendienteString);
                 startActivity(intentCalendario);
             });
