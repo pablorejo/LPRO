@@ -157,11 +157,7 @@ public class AddEnfermedad extends BarraSuperior {
                                 finish();
                             }
 
-                            @Override
-                            public void onError(String e) {
-                                setResult(Activity.RESULT_CANCELED);
-                                finish();
-                            }
+
                         });
                     }else{ // Actualizamos la enfermedad
                         usuario.updateEnfermedad(enfermedad1);

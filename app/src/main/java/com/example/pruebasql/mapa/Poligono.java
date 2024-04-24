@@ -103,7 +103,7 @@ public class Poligono {
      * @param points: lista de puntos
      * @return Devuelve un LatLng donde esta el centro
      */
-    public LatLng getPolygonCenterLatLng(List<LatLng> points){
+    public static LatLng getPolygonCenterLatLng(List<LatLng> points){
 
         double latitude = 0;
         double longitude = 0;
@@ -204,6 +204,7 @@ public class Poligono {
     }
 
     public void dibujar(boolean añadirParcela, int indiceParcela, Usuario usuario, boolean añadirSector){
+        gMap.clear();
         updateMarkers(añadirParcela,añadirSector);
         if (getPuntosLatLng().size() > 2) {
             setPolygonOptionsSector();

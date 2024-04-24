@@ -121,11 +121,6 @@ public class AddParto extends BarraSuperior {
                         setResult(RESULT_OK, null); // Establece RESULT_OK para indicar éxito
                         finish();
                     }
-
-                    @Override
-                    public void onError(String e) {
-
-                    }
                 });
             }else{// Hay que actualizarlo
                 usuario.updateParto(parto);

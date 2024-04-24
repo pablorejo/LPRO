@@ -7,6 +7,7 @@ public class Coordenada{
     public double latitude;
     public double longitude;
 
+
     public Coordenada(LatLng punto){
         this.setPosition(punto);
     }

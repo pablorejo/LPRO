@@ -65,8 +65,9 @@ import org.threeten.bp.format.DateTimeFormatter;
 public class Server {
     private Usuario usuario;
     private String dnsActivo = "vacayisus.ddns.net";
+    //private String dnsActivo = "172.20.10.9";
+    private String URL = "http://" + dnsActivo;
 
-    private String URL = "https://" + dnsActivo;
     private Context context; // Contexto para Volley
 
     private static String tipoSalida = "application/json; charset=utf-8";
@@ -173,6 +174,7 @@ public class Server {
             }
         };
 
+        setTimeOut(stringRequest,4000);
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
         requestQueue.add(stringRequest);
     }
@@ -264,71 +266,6 @@ public class Server {
     /************ FUNCIONES PARA USUARIOS: *******/
 
     /*********** FUNCIONES PARA VACAS: **********/
-    public void getVacas(VacasResponseListener listener){
-        String url = URL + "/vacas";
-        ArrayList<Vaca> listaVacas = new ArrayList<>();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        Vaca vaca = gson.fromJson(response, Vaca.class);
-                        listaVacas.add(vaca);
-                    }
-                    listener.onResponse(listaVacas);
-                } catch (Exception e) {
-                    listener.onError(e.toString());
-                }
-                imprimirMensajeRespuesta(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                listener.onError(error.toString());
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
-    public void getVaca(int id_vaca, VacaResponseListener listener){
-        // Configuración de la URI:
-        String url = URL + "/vacas/" + id_vaca;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-
-                    Vaca vaca = gson.fromJson(response, Vaca.class);
-                    listener.onResponse(vaca);
-                } catch (Exception e) {
-                    listener.onError(e.toString());
-                }
-                imprimirMensajeRespuesta(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                listener.onError(error.toString());
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
     public void createVaca(Vaca vaca){
         String url = URL + "/vacas";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -451,78 +388,6 @@ public class Server {
     }
 
     /*********** FUNCIONES PARA ENFERMEDADES: ******/
-    public void getEnfermedades(int id_vaca, EnfermedadesResponseListener listener){
-        // configurar la url para que devuelva las enfermedades
-        String url = this.URL + "/vacas/" +String.valueOf(id_vaca)+ "/enfermedades";
-        ArrayList<Enfermedad> enfermedades = new ArrayList<>();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        Enfermedad enfermedad = gson.fromJson(response,Enfermedad.class);
-                        enfermedades.add(enfermedad);
-                    }
-                    listener.onResponse(enfermedades);
-                } catch (Exception e) {
-                    listener.onError(e.toString());
-                }
-                imprimirMensajeRespuesta(response);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                listener.onError(error.toString());
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id());
-                return headers;
-            }
-        };
-
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
-    public void getEnfermedad(int id_vaca, EnfermedadResponseListener listener){
-        // configurar la url para que devuelva las enfermedades
-        String url = URL + "/vacas/" + id_vaca + "/enfermedades";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    Enfermedad enfermedad = gson.fromJson(response,Enfermedad.class);
-                    listener.onResponse(enfermedad);
-
-                } catch (Exception e) {
-                    listener.onError(e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                listener.onError(error.toString());
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Cookie", "PHPSESSID=" + usuario.getSesion_id());
-                return headers;
-            }
-        };
-
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
     public void addEnfermedad(Enfermedad enfermedad, ServerCallback callback){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/vacas/enfermedades";
@@ -653,43 +518,6 @@ public class Server {
 
 
     /************ FUNCIONES PARA PARTOS: *************/
-    public void getFechasParto(int id_vaca, FechasPartoResponseListener listener){
-        // configurar la url para que devuelva las fechas de los partos de una vaca
-        String url = this.URL + "/vacas/" + id_vaca + "/fechas_parto";
-        ArrayList<Parto> partos = new ArrayList<>();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-
-                    JSONArray jsonArray = new JSONArray(response);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        // Suponiendo que tienes un constructor adecuado en tu clase Vaca
-                        Parto parto = gson.fromJson(response,Parto.class);
-                        partos.add(parto);
-                    }
-                    listener.onResponse(partos);
-                } catch (Exception e) {
-                    listener.onError(e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                listener.onError(error.toString());
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
     public void addParto(Parto parto, ServerCallback callback){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/vacas/fechas_parto";
@@ -809,315 +637,12 @@ public class Server {
         requestQueue.add(stringRequest);
     }
 
-    /************ FUNCIONES PARA PASTO: ********/
-    public void getDiasPasto(int id_vaca, DiasPastoResponseListener listener){
-        // configurar la url para que devuelva las fechas de los partos de una vaca
-        String url = this.URL + "/vacas/" + id_vaca + "/dias_pasto";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    Pasto pasto = gson.fromJson(response,Pasto.class);
-                    listener.onResponse(pasto);
 
-                } catch (Exception e) {
-                    listener.onError(e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                listener.onError(error.toString());
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
 
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-    public void addDiasPasto(Pasto pasto){
-        // configurar la url para que devuelva las enfermedades
-        String url = this.URL + "/vacas/dias_pasto";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                imprimirMensajeRespuesta(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("ERROR. No se ha podido añadir los días de pasto a la Base de Datos!");
-                Toast.makeText(context, "ERROR. No se ha podido añadir los días de pasto a la Base de Datos!", Toast.LENGTH_SHORT).show();}
-        }){
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                String json = gson.toJson(pasto);
-                return json.getBytes(StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return tipoSalida;
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
-    public void updateDiasPasto(Pasto pasto){
-        // configurar la url para que devuelva las enfermedades
-        String url = this.URL + "/vacas/dias_pasto";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                if(!response.isEmpty()){
-                    imprimirMensajeRespuesta(response);
-                }else{
-                    // Mensaje: "Contraseñas incorrectas"
-                    System.out.println("ERROR. No se ha podido modificar los días de pasto a la Base de Datos!");
-                    Toast.makeText(context, "ERROR. No se ha podido modificar los días de pasto en la Base de Datos!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Mensaje que capture y muestre el error (no recomendable para el usuario final)
-                System.out.println( error.toString());
-                Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                String json = gson.toJson(pasto);
-                return json.getBytes(StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return tipoSalida;
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-        // Creamos una instancia
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
-    public void deleteDiasPasto(int idVaca, LocalDate fechaPasto){
-        // Configuración de la URL del servidor apache
-        String url = URL + "/vacas/dias_pasto";
-        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                if(!response.isEmpty()){
-                    imprimirMensajeRespuesta(response);
-                }else{
-                    // Mensaje: "Contraseñas incorrectas"
-                    System.out.println("ERROR. No se ha podido eliminar los días de pasto de la Base de Datos!");
-                    Toast.makeText(context, "ERROR. No se ha podido eliminar los días de pasto de la Base de Datos!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Mensaje que capture y muestre el error (no recomendable para el usuario final)
-                System.out.println( error.toString());
-                Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Creamos una instancia con el nombre parametros
-                HashMap<String, String> parametros = new HashMap<>();
-                // Ingresamos los datos a enviar al servicio PHP
-                parametros.put("idVaca", String.valueOf(idVaca));
-                parametros.put("fechaPasto", String.valueOf(fechaPasto));
-                return parametros;
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-        // Creamos una instancia
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
-    /************ FUNCIONES PARA VOLUMEN DE LECHE: ********/
-    public void getVolumenLeche(int id_vaca, VolumenLecheResponseListener listener){
-        // configurar la url para que devuelva las fechas de los partos de una vaca
-        String url = this.URL + "/vacas/" + id_vaca + "/volumen_leche";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    Leite leite = gson.fromJson(response, Leite.class);
-                    listener.onResponse(leite);
-
-                } catch (Exception e) {
-                    listener.onError(e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                listener.onError(error.toString());
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-    public void addVolumenLeche(Leite leite){
-        // configurar la url para que devuelva las enfermedades
-        String url = this.URL + "/vacas/volumen_leche";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                imprimirMensajeRespuesta(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("ERROR. No se ha podido añadir el volumen de leche a la Base de Datos!");
-                Toast.makeText(context, "ERROR. No se ha podido añadir el volumen de leche a la Base de Datos!", Toast.LENGTH_SHORT).show();}
-        }){
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                String json = gson.toJson(leite);
-                return json.getBytes(StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return tipoSalida;
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
-    public void updateVolumenLeche(Leite leite){
-        // configurar la url para que devuelva las enfermedades
-        String url = this.URL + "/vacas/volumen_leche";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                if(!response.isEmpty()){
-                    imprimirMensajeRespuesta(response);
-                }else{
-                    // Mensaje: "Contraseñas incorrectas"
-                    System.out.println("ERROR. No se ha podido modificar el volumen de leche a la Base de Datos!");
-                    Toast.makeText(context, "ERROR. No se ha podido modificar el volumen de leche en la Base de Datos!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Mensaje que capture y muestre el error (no recomendable para el usuario final)
-                System.out.println( error.toString());
-                Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
-            }
-        }){
-
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                String json = gson.toJson(leite);
-                return json.getBytes(StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return tipoSalida;
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-        // Creamos una instancia
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
-
-    public void deleteVolumenLeche(Leite leite){
-        // Configuración de la URL del servidor apache
-        String url = URL + "/vacas/volumen_leche";
-        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                if(!response.isEmpty()){
-                    imprimirMensajeRespuesta(response);
-                }else{
-                    // Mensaje: "Contraseñas incorrectas"
-                    System.out.println("ERROR. No se ha podido eliminar el volumen de leche seleccionado la Base de Datos!");
-                    Toast.makeText(context, "ERROR. No se ha podido eliminar el volumen de leche seleccionado la Base de Datos!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Mensaje que capture y muestre el error (no recomendable para el usuario final)
-                System.out.println( error.toString());
-                Toast.makeText(context,error.toString() , Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                String json = gson.toJson(leite);
-                return json.getBytes(StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return tipoSalida;
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return configurarCookie();
-            }
-        };
-        // Creamos una instancia
-        RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
-        requestQueue.add(stringRequest);
-    }
 
     /************ FUNCIONES PARA PARCELAS: ********/
-
-    public void addParcela(Parcela parcela){
+    public void addParcela(Parcela parcela,ServerCallback callback){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/parcelas";
 
@@ -1125,6 +650,7 @@ public class Server {
             @Override
             public void onResponse(String response) {
                 imprimirMensajeRespuesta(response);
+                callback.onResponse(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1227,14 +753,19 @@ public class Server {
     }
 
 
-    /// Sectores ///////////////////////////////////////////////////
-    public void addSector(Sector sector){
+    /************ FUNCIONES PARA Sectores: ********/
+    public void addSector(Sector sector,ServerCallback callback){
         // configurar la url para que devuelva las enfermedades
         String url = this.URL + "/sectores";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                try {
+                    Sector sector1 = gson.fromJson(response, Sector.class);
+                    callback.onResponse(sector1);
+                }catch (Exception e){}
+
                 imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
@@ -1268,16 +799,10 @@ public class Server {
         String url = this.URL + "/sectores";
 
         StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
-
             @Override
             public void onResponse(String response) {
-                if(!response.isEmpty()){
-                    imprimirMensajeRespuesta(response);
-                }else{
-                    // Mensaje: "Contraseñas incorrectas"
-                    System.out.println("ERROR. No se ha podido modificar sector: " + sector.id_sector);
-                    Toast.makeText(context, "ERROR. No se ha podido modificar sector: " + sector.id_sector, Toast.LENGTH_SHORT).show();
-                }
+                imprimirMensajeRespuesta(response);
+                Sector sector1 = gson.fromJson(response, Sector.class);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1343,21 +868,26 @@ public class Server {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (!response.isEmpty()){
-                    // Especificar el tipo correcto utilizando TypeToken
-                    Type listaTipo = new TypeToken<ArrayList<LatLng>>(){}.getType();
-                    ArrayList<LatLng> sector1 = gson.fromJson(response, listaTipo);
-                    serverCallback.onResponse(sector1);
-                    imprimirMensajeRespuesta(response);
-                }else {
+                try{
+                    if (!response.isEmpty()){
+                        // Especificar el tipo correcto utilizando TypeToken
+                        Type listaTipo = new TypeToken<ArrayList<LatLng>>(){}.getType();
+                        ArrayList<LatLng> sector1 = gson.fromJson(response, listaTipo);
+                        serverCallback.onResponse(sector1);
+                    }
+                }
+                catch (Exception e){
+
+                }
+                finally {
                     imprimirMensajeRespuesta(response);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("ERROR. Error al intentar recomendar sector");
-                Toast.makeText(context, "ERROR. Error al intentar recomendar sector", Toast.LENGTH_SHORT).show();}
+
+            }
         }){
             @Override
             public byte[] getBody() throws AuthFailureError {
@@ -1375,13 +905,7 @@ public class Server {
             }
         };
 
-        // Configurar el RetryPolicy personalizado
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                10000,  // Tiempo de espera inicial en milisegundos (10 segundos)
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, // Número de reintentos
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT // Multiplicador de backoff
-        ));
-
+        setTimeOut(stringRequest,4000);
         // Añadir la solicitud a la cola
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
         requestQueue.add(stringRequest);
@@ -1396,7 +920,7 @@ public class Server {
             Toast.makeText(context, mensaje, Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             System.out.println("No hay mensaje de respuesta");
-            Toast.makeText(context, "No hay mensaje de respuesta", Toast.LENGTH_SHORT).show();
+            Log.println(Log.INFO,"Mensaje", "No hay mensaje de respuesta");
         }
     }
 
@@ -1465,7 +989,7 @@ public class Server {
      * @param fin
      * @param listener
      */
-    public void getGPS(Date inicio, Date fin, String[] numerosVacas, int id_parcela,ServerCallback listener){
+    public void getGPS(Date inicio, Date fin, Integer[] numerosVacas, int id_parcela, String tipo,ServerCallback listener){
         String url = URL + "/gps";
         ArrayList<Vaca> listaVacas = new ArrayList<>();
 
@@ -1475,22 +999,24 @@ public class Server {
                 try {
                     Type listaTipo = new TypeToken<ArrayList<LatLng>>(){}.getType();
                     ArrayList<LatLng> coordenadas = gson.fromJson(response, listaTipo);
+                    if (coordenadas.isEmpty()){
+                        Toast.makeText(context, "No hay datos para mostrar", Toast.LENGTH_SHORT).show();
+                    }
                     listener.onResponse(coordenadas);
 
                 } catch (Exception e) {
-                    listener.onError(e.toString());
                 }
                 imprimirMensajeRespuesta(response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onError(error.toString());
+                imprimirError(error);
             }
         }){
             @Override
             public byte[] getBody() throws AuthFailureError {
-                Filtro filtro = new Filtro(inicio,fin,numerosVacas,id_parcela);
+                Filtro filtro = new Filtro(inicio,fin,numerosVacas,id_parcela,tipo);
                 String json = gson.toJson(filtro);
                 return json.getBytes(StandardCharsets.UTF_8);
             }
@@ -1506,26 +1032,38 @@ public class Server {
             }
         };
 
+        setTimeOut(stringRequest,4000);
         RequestQueue requestQueue = MyApplication.getInstance().getRequestQueue();
         requestQueue.add(stringRequest);
-
     }
 
     private class Filtro{
         Date inicio;
         Date fin;
-        String[] numerosVacas;
-
+        Integer[] numerosVacas;
+        String tipo;
         int id_parcela;
 
-        public Filtro(Date inicio, Date fin, String[] numerosVacas,int id_parcela) {
+        public Filtro(Date inicio, Date fin, Integer[] numerosVacas,int id_parcela, String tipo) {
             this.inicio = inicio;
             this.fin = fin;
             this.numerosVacas = numerosVacas;
             this.id_parcela = id_parcela;
+            this.tipo = tipo;
         }
     }
 
+    private void setTimeOut(StringRequest stringRequest, int timeOut){
+        // Configurar el RetryPolicy personalizado
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                timeOut,  // Tiempo de espera inicial en milisegundos (10 segundos)
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, // Número de reintentos
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT // Multiplicador de backoff
+        ));
+    }
 
-
+    private void imprimirError(VolleyError error){
+        System.out.println("ERROR. Error al intentar recomendar sector");
+        Toast.makeText(context, "ERROR. Ah ocurrido un error " + error.getCause(), Toast.LENGTH_SHORT).show();
+    }
 }

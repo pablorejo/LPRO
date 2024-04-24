@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".mapa.parcelas.ParcelaActivity">
+    tools:context=".mapa.parcelas.ParcelaActivity"
+    tools:ignore="MissingDefaultResource">
 
     <include
         android:id="@+id/include"
@@ -12,22 +13,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-
-    <EditText
-        android:id="@+id/editTextNombreParcela"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:minHeight="48dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center"
-        android:text="Fecha de nacimiento"
-        android:textSize="30sp" />
-
-
     <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
@@ -39,6 +26,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnTipoMapa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tipo de mapa" />
 
             <Button
                 android:id="@+id/btnFiltrarNumeroPendienteMapa"
@@ -69,12 +63,29 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <ScrollView
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_marginTop="128dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_datos_dia" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:foregroundGravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -82,34 +93,62 @@
             android:orientation="vertical">
 
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="400dp"
-                android:layout_height="500dp"
-                android:layout_gravity="center"
-                tools:layout="@layout/fragment_datos_dia" />
-
-
-            <LinearLayout
+            <EditText
+                android:id="@+id/editTextNombreParcela"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:text="Nombre"
+                android:textSize="30sp" />
 
-                <Button
-                    android:id="@+id/btnEditarParcela"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Editar" />
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <Button
-                    android:id="@+id/btnAñadirSectorParcela"
-                    android:layout_width="0dp"
+                <TableRow
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Añadir sector" />
-            </LinearLayout>
+                    android:layout_gravity="center">
+
+                    <Button
+                        android:id="@+id/btnEditarParcela"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Editar" />
+
+                    <Button
+                        android:id="@+id/btnAñadirSectorParcela"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Añadir sector" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <Button
+                        android:id="@+id/btneliminarSector"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Eliminar Sector" />
+
+                    <Button
+                        android:id="@+id/btnEditarSector"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Editar sector" />
+                </TableRow>
+
+            </TableLayout>
+
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

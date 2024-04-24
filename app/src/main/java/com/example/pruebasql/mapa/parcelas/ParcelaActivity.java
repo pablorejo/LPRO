@@ -26,6 +26,7 @@ import com.example.pruebasql.bbdd.parcelas.CoordenadaDensidad;
 import com.example.pruebasql.bbdd.parcelas.CoordenadasSector;
 import com.example.pruebasql.bbdd.parcelas.Parcela;
 import com.example.pruebasql.bbdd.parcelas.Sector;
+import com.example.pruebasql.bbdd.vacas.Gps;
 import com.example.pruebasql.bbdd.vacas.Vaca;
 import com.example.pruebasql.listeners.ServerCallback;
 import com.example.pruebasql.mapa.Poligono;
@@ -58,6 +59,8 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
     private Button btnEditarParcela,btnAñadirSectorParcela;
 
     private Button btnFiltrarNumeroPendienteMapa,btnFechaInicioFiltroMapa,btnFechaFinFiltroMapa, btnLlamada;
+    private Button btneliminarSector,btnEditarSector;
+    private Button btnTipoMapa;
 
     private boolean editarParcela = false;
 
@@ -69,7 +72,7 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
 
     private boolean[] elementosSeleccionados;
     private String[] numeros;
-
+    private Integer[] seleccionadosArray;
     private Date fechaInicio, fechaFin;
 
     private Vaca vaca;
@@ -78,6 +81,7 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
 
     private boolean ponerMapaCalorBol = true;
 
+    private String tipo = Gps.NORMAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,21 +134,33 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
         btnFiltrarNumeroPendienteMapa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 AlertDialog.Builder dialogoBuilder = new AlertDialog.Builder(ParcelaActivity.this);
                 dialogoBuilder.setTitle("Selecciona números");
+
+                // Array que guarda el estado de los elementos seleccionados
+                final boolean[] elementosSeleccionados = new boolean[numeros.length];
+                // Lista para almacenar los números seleccionados
+                final List<Integer> numerosSeleccionados = new ArrayList<>();
+
                 dialogoBuilder.setMultiChoiceItems(numeros, elementosSeleccionados, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
-                        // Actualiza el estado del elemento seleccionado
-                        elementosSeleccionados[i] = isChecked;
+                    public void onClick(DialogInterface dialogInterface, int index, boolean isChecked) {
+                        elementosSeleccionados[index] = isChecked;
+                        // Si está marcado, añadir a la lista, si no, remover
+                        if (isChecked) {
+                            numerosSeleccionados.add(Integer.valueOf(numeros[index]));
+                        } else {
+                            numerosSeleccionados.remove(Integer.valueOf(numeros[index]));
+                        }
                     }
                 });
 
                 dialogoBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // Aquí puedes procesar o usar la lista de números seleccionados
                         changes = true;
+                        seleccionadosArray = numerosSeleccionados.toArray(new Integer[0]);
                         redrawPolygon();
                     }
                 });
@@ -158,9 +174,9 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
 
                 AlertDialog dialogo = dialogoBuilder.create();
                 dialogo.show();
-
             }
         });
+
         btnFechaInicioFiltroMapa = findViewById(R.id.btnFechaInicioFiltroMapa);
         btnFechaInicioFiltroMapa.setOnClickListener(v -> {
             changes = true;
@@ -177,7 +193,49 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
             //server.call(numeroPendiente);
             server.call(34);
         });
+
+        btneliminarSector = findViewById(R.id.btneliminarSector);
+        btnEditarSector = findViewById(R.id.btnEditarSector);
+        btneliminarSector.setOnClickListener(v -> {
+            eliminarSector();
+        });
+        if (parcela.sector == null){
+            btneliminarSector.setVisibility(View.GONE);
+            btnEditarSector.setVisibility(View.GONE);
+        }
+
+        btnTipoMapa = findViewById(R.id.btnTipoMapa);
+        btnTipoMapa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String[] items = {Gps.NORMAL, Gps.PASTANDO, Gps.CAMINANDO, Gps.DESCANSANDO};
+                AlertDialog.Builder builder = new AlertDialog.Builder(ParcelaActivity.this);
+                builder.setTitle("Elige una opción");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        tipo = items[which];
+                        changes = true;
+                        redrawPolygon();
+                    }
+                });
+                builder.show();
+            }
+        });
     }
+
+    private void editarSector(){
+
+        //server.updateSector(parcela.sector);
+    }
+
+    private void eliminarSector(){
+        server.deleteSector(parcela.sector);
+        parcela.sector = null;
+        redrawPolygon();
+        btneliminarSector.setVisibility(View.GONE);
+    }
+
 
     private void funtionEditarParcela(){
         editTextNombreParcela.setEnabled(true);
@@ -209,6 +267,7 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
         btnEditarParcela.setText("Editar");
         btnEditarParcela.setOnClickListener(v -> {funtionEditarParcela();});
         funtionConfBtnAñadirSector();
+        server.updateParcela(parcela);
         redrawPolygon();
     }
 
@@ -233,7 +292,12 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
             if (existeSector){
                 server.updateSector(parcela.sector);
             }else{
-                server.addSector(parcela.sector);
+                server.addSector(parcela.sector, new ServerCallback() {
+                    @Override
+                    public void onResponse(Object response) {
+                        parcela.sector = (Sector) response;
+                    }
+                });
                 existeSector = true;
             }
             funtionConfBtnAñadirSector();
@@ -244,9 +308,10 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
             parcela.sector = new Sector(parcela.getId(),usuario.getId());
             parcela.sector.coordenadasSector = coordenadas;
             redrawPolygon();
-            funtionConfBtnAñadirSector();
-
+            btnAñadirSectorParcela.setText("Guardar sector");
+            //funtionConfBtnAñadirSector();
         }
+        redrawPolygon();
     }
 
     private void funtionRecomendarSector(){
@@ -291,16 +356,13 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
                     funtionConfBtnAñadirSector();
                     poligono.setMarcadoresSectorByPoints(parcela.sector.getLatLong() ,añadirSector);
                     redrawPolygon();
-
                 });
-            }
-
-            @Override
-            public void onError(String e) {
-
             }
         });
     }
+
+
+
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
@@ -323,7 +385,7 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
             poligono.setMarcadoresSectorByPoints(parcela.sector.getPuntosLatLong(),añadirSector);
         }
 
-        LatLng ubicacionCentro = poligono.getPolygonCenterLatLng(parcela.getPuntosLatLong());
+        LatLng ubicacionCentro = Poligono.getPolygonCenterLatLng(parcela.getPuntosLatLong());
         gMap.setOnMarkerClickListener(ParcelaActivity.this);
 
         float nivelZoom = 17.0f; // Ajusta este valor para el nivel de zoom que necesitas
@@ -412,47 +474,46 @@ public class ParcelaActivity extends BarraSuperior implements OnMapReadyCallback
     }
 
     private void ponerMapaCalor(){
-        server.getGPS(fechaInicio, fechaFin, numeros, parcela.getId(), new ServerCallback() {
+        server.getGPS(fechaInicio, fechaFin, seleccionadosArray, parcela.getId(), tipo, new ServerCallback() {
             @Override
             public void onResponse(Object response) {
                 ArrayList<LatLng> coordenadas = (ArrayList<LatLng>) response;
                 addHeatPointsCoordenadasDensidad(coordenadas);
                 changes = false;
             }
-
-            @Override
-            public void onError(String e) {
-
-            }
         });
     }
 
     public void redrawPolygon(){
-        if (changes && ponerMapaCalorBol){
-            ponerMapaCalor();
-        }
         // Pimpiamos el mapa
         gMap.clear(); // Limpia el mapa para eliminar polígonos y marcadores anteriores
         gMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         gMap.getUiSettings().setScrollGesturesEnabled(true);
 
-        if (vaca != null){
-            addHeatPointsVaca(vaca);
-        } else{
-            ArrayList<String> numerosSeleccionados = new ArrayList<>();
-            for (int j = 0; j < elementosSeleccionados.length; j++) {
-                if (elementosSeleccionados[j]) {
-                    numerosSeleccionados.add(numeros[j]);
-                }
-            }
-            if (numerosSeleccionados.size() != 0){
-                addHeatPointsVaca(numerosSeleccionados);
-            }else{
-                addHeatPointsVaca(usuario.getNumerosPendiente());
-            }
+        if (changes && ponerMapaCalorBol){
+            ponerMapaCalor();
         }
 
+        //if (vaca != null){
+        //    addHeatPointsVaca(vaca);
+        //} else{
 
+        /*ArrayList<String> numerosSeleccionados = new ArrayList<>();
+        for (int j = 0; j < elementosSeleccionados.length; j++) {
+            if (elementosSeleccionados[j]) {
+                numerosSeleccionados.add(numeros[j]);
+            }
+        }
+        if (numerosSeleccionados.size() != 0){
+            addHeatPointsVaca(numerosSeleccionados);
+        }else{
+            addHeatPointsVaca(usuario.getNumerosPendiente());
+        }*/
+
+
+        if (parcela.sector == null){
+            poligono.polygonOptionsSector = null;
+        }
         poligono.dibujar(editarParcela,0,usuario,añadirSector);
     }
 

@@ -30,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.pruebasql.bbdd.vacas.Vaca;
+import com.example.pruebasql.listeners.ServerCallback;
 import com.example.pruebasql.mapa.parcelas.ParcelaActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -51,7 +52,7 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
 
     private GoogleMap gMap;
 
-    private Button btnañadirParcela, btnEliminarParcela,  btnEditarCowFinder;
+    private Button btnEliminarParcela, btnañadirParcela, btnEditarCowFinder;
 
     private boolean añadirParcela = false;
 
@@ -63,6 +64,9 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
 
     private Vaca vaca;
 
+    private int indexCamara = 0; // El indice de la parcela donde se va poner la camara, inicio 0;
+
+    private Location lastKnownLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +93,6 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
         btnEliminarParcela = findViewById(R.id.btnEliminarParcela);
         btnEliminarParcela.setVisibility(View.GONE);
 
-
         btnañadirParcela = findViewById(R.id.btnAñadirParcela);
         btnañadirParcela.setOnClickListener(v -> {
             añadirParcela();
@@ -114,6 +117,30 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
 
     }
 
+    private void verParcelaAnterior(){
+        if (indexCamara -1 < 0){
+            indexCamara = poligonos.size() -1;
+        }else{
+            indexCamara --;
+        }
+        LatLng ubicacionCentro = Poligono.getPolygonCenterLatLng(poligonos.get(indexCamara).getPuntosLatLng());
+        float nivelZoom = 17.0f; // Ajusta este valor para el nivel de zoom que necesitas
+        // Centra el mapa en la ubicación deseada con el nivel de zoom especificado
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionCentro, nivelZoom));
+    }
+
+    private void verParcelaSiguiente(){
+        if (indexCamara + 1 >  poligonos.size() -1){
+            indexCamara = 0;
+        }else{
+            indexCamara ++;
+        }
+        LatLng ubicacionCentro = Poligono.getPolygonCenterLatLng(poligonos.get(indexCamara).getPuntosLatLng());
+        float nivelZoom = 17.0f; // Ajusta este valor para el nivel de zoom que necesitas
+        // Centra el mapa en la ubicación deseada con el nivel de zoom especificado
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionCentro, nivelZoom));
+    }
+
     private void añadirParcela(){
         if (añadirParcela){ // Si añadir parcela está a true hay que guardar la parcela.
             añadirParcela= false;
@@ -129,7 +156,13 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
 
             if (coordenadas.size()> 2){
                 parcela.setCoordenadas(coordenadas);
-                server.addParcela(parcela);
+                server.addParcela(parcela, new ServerCallback() {
+                    @Override
+                    public void onResponse(Object response) {
+                        Parcela parcela1 = (Parcela) response;
+                        usuario.parcelas.set(usuario.parcelas.size() - 1, parcela1);
+                    }
+                });
             }else{
                 Toast.makeText(this, "Puntos insuficientes, minimo 3", Toast.LENGTH_SHORT).show();
                 usuario.getParcelas().remove(parcela);
@@ -171,7 +204,7 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         gMap = googleMap;
-        LatLng ubicacionCentro = new LatLng(43.31195130632422, -8.416801609724955);
+        LatLng ubicacionCentro = new LatLng(0, 0);
         gMap.setOnMarkerClickListener(Mapa.this);
 
 
@@ -183,6 +216,11 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
         LocationManager locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
         String provider = LocationManager.GPS_PROVIDER;
 
+        List<LatLng> puntos = new ArrayList<>();
+        for (Poligono poligono: poligonos){
+            puntos.addAll(poligono.getPuntosLatLng());
+        }
+
         // Verificar permisos nuevamente antes de habilitar la ubicación
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED ||
@@ -193,18 +231,10 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
             gMap.getUiSettings().setMyLocationButtonEnabled(true); // Muestra el botón de ubicación
             Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 
-            if (lastKnownLocation != null) {
-                double latitude = lastKnownLocation.getLatitude();
-                double longitude = lastKnownLocation.getLongitude();
-                ubicacionCentro = new LatLng(latitude, longitude);
-            }
+
         }else{
-            List<LatLng> puntos = new ArrayList<>();
-            for (Poligono poligono: poligonos){
-                puntos.addAll(poligono.getPuntosLatLng());
-            }
-            if (poligonos.get(0) != null){
-                ubicacionCentro = poligonos.get(0).getPolygonCenterLatLng(puntos);
+            if (!poligonos.isEmpty()){
+                ubicacionCentro = Poligono.getPolygonCenterLatLng(poligonos.get(indexCamara).getPuntosLatLng());
             }
         }
 
@@ -271,6 +301,38 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
                 poligono.dibujar(añadirParcela,indiceParcela,usuario,false);
                 poligonos.add(poligono);
             }
+            float nivelZoom = 17.0f; // Ajusta este valor para el nivel de zoom que necesitas
+            LatLng ubicacionCentro;
+
+            if (!poligonos.isEmpty()){
+                ubicacionCentro = Poligono.getPolygonCenterLatLng(poligonos.get(0).getPuntosLatLng());
+            }else{
+                if (lastKnownLocation != null){
+                    ubicacionCentro = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude());
+
+                }else{
+                    ubicacionCentro = new LatLng(0,0);
+                }
+            }
+            // Centra el mapa en la ubicación deseada con el nivel de zoom especificado
+            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionCentro, nivelZoom));
+            confSiguienteAnterior();
+        }
+    }
+
+    private void confSiguienteAnterior(){
+        if (poligonos.size()>1){
+            btnEliminarParcela.setText("Parcela anterior");
+            btnEliminarParcela.setOnClickListener(v -> {
+                verParcelaAnterior();
+            });
+            btnEliminarParcela.setVisibility(View.VISIBLE);
+
+            btnEditarCowFinder.setText("Parcela siguiente");
+            btnEditarCowFinder.setOnClickListener(v -> {
+                verParcelaSiguiente();
+            });
+            btnEditarCowFinder.setVisibility(View.VISIBLE);
         }
     }
 
@@ -283,21 +345,28 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
     }
 
     private Poligono obtenerParcelaPorMarkerCentral(Marker marker){
-
+        indexCamara = 0;
         for (Poligono poligono: poligonos){
             if (poligono.isMarkerInsidePolygon(marker.getPosition(),poligono.getPuntosLatLng())){
                 return poligono;
             }
+            indexCamara ++;
         }
         return null;
     }
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
+
         marker.setTag(marker.getTitle());
         // Esta funcion la usamos par obtener el marcador que a sido pulsado y mostrar si queremos eliminar la parcela o no
         Poligono poligono = obtenerParcelaPorMarkerCentral(marker);
         if (poligono != null){
+            editTextNombreParcela.setVisibility(View.VISIBLE);
+            editTextNombreParcela.setText(poligono.parcela.getNombre());
+
+            // Configuramos el boton para eliminar la parcela
+            btnEliminarParcela.setText("Eliminar");
             btnEliminarParcela.setVisibility(View.VISIBLE);
             btnEliminarParcela.setOnClickListener(v -> {
                 server.deleteParcela(poligono.parcela);
@@ -307,13 +376,16 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
                 redrawPolygon();
             });
 
+            // Configuramos el boton para cancelar
             btnañadirParcela.setVisibility(View.VISIBLE);
             btnañadirParcela.setText("Cancelar");
-
             btnañadirParcela.setOnClickListener(v -> {
+                confSiguienteAnterior();
                 configurarBtnañadirParcela();
             });
 
+            // Configuramos el boton para editar la parcela
+            btnEditarCowFinder.setText("Editar");
             btnEditarCowFinder.setVisibility(View.VISIBLE);
             btnEditarCowFinder.setOnClickListener(v ->{
                 Intent intent = new Intent(getApplicationContext(), ParcelaActivity.class);
@@ -332,13 +404,8 @@ public class Mapa extends BarraSuperior implements OnMapReadyCallback, GoogleMap
 
     private void configurarBtnañadirParcela(){
         btnañadirParcela.setText("Añadir parcela");
-        btnEliminarParcela.setVisibility(View.GONE);
         btnañadirParcela.setOnClickListener(v1 -> {
             añadirParcela();
         });
-        btnEditarCowFinder.setVisibility(View.GONE);
     }
-
-
-
 }

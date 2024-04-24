@@ -21,7 +21,7 @@ public class Usuario {
 
     private String usu_password;
 
-    private ArrayList<Parcela> parcelas;
+    public ArrayList<Parcela> parcelas;
 
     private ArrayList<Vaca> vacas;
     protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
